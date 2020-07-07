@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<!--    Botão pressionado-->
+    <item android:state_pressed="true" android:state_focused="true">
+        <shape>
+            <solid android:color="#c47654a0"/>
+            <stroke
+                android:width="2.3dp"
+                android:color="#603695" />
+            <corners
+                android:radius="10dp" />
+        </shape>
+    </item>
+
+    <item android:state_pressed="true" android:state_focused="false">
+        <shape>
+            <solid android:color="#c47654a0"/>
+            <stroke
+                android:width="2.3dp"
+                android:color="#603695" />
+            <corners
+                android:radius="10dp" />
+        </shape>
+    </item>
+
+<!--    Botão não pressionado -->
+    <item android:state_pressed="false" android:state_focused="true">
+        <shape>
+            <solid android:color="#FFFFFF"/>
+            <stroke
+                android:width="2.3dp"
+                android:color="#c47654a0" />
+            <corners
+                android:radius="10dp" />
+        </shape>
+    </item>
+
+    <item android:state_pressed="false" android:state_focused="false">
+        <shape>
+            <gradient
+                android:startColor="#715098"
+                android:centerColor="#715098"
+                android:endColor="#715098"
+                android:angle="270"
+                />
+            <stroke
+                android:width="0.7dp"
+                android:color="#715098" />
+            <corners
+                android:radius="10dp" />
+        </shape>
+    </item>
+    <item android:state_enabled="true">
+        <shape>
+            <padding
+                android:left="4dp"
+                android:top="4dp"
+                android:right="4dp"
+                android:bottom="4dp"
+                />
+        </shape>
+    </item>
+
+</selector>

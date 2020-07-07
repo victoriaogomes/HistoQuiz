@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#603695</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="purple">#c47654a0</color>
+    <color name="darkPurple">#715098</color>
+    <color name="darkerPurple">#412f58</color>
+    <color name="panelPurple">#cd715098</color>
+    <color name="grey">#66000000</color>
+
+    <color name="black_overlay">#66000000</color>
+</resources>
