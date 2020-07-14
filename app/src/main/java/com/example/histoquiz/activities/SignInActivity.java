@@ -77,6 +77,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         senha.getEditText().setText("pjo30317512");
 //        email.getEditText().setText("eazevedo@hotmail.com");
 //        senha.getEditText().setText("eniale12345");
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+            Intent troca = new Intent(SignInActivity.this, MenuActivity.class);
+            startActivity(troca);
+        }
     }
 
 

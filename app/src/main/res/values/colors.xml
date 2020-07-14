@@ -12,6 +12,8 @@
     <color name="darkerPurple">#412f58</color>
     <color name="panelPurple">#cd715098</color>
     <color name="grey">#66000000</color>
+    <color name="red">#e83737</color>
+    <color name="green">#6fd664</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>

@@ -32,22 +32,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Classe utilizada para manipular a view "Amigos" que é exibida em "Minha conta", mostrando os
+ * amigos desse usuário, as solicitações de amizade dele e dando a opção para ele enviar convite
+ * para adicionar outro usuário
+ */
 public class FriendsFragment extends Fragment {
 
     protected RecyclerView friendsList;
     protected RecyclerView friendshipRequestList;
     protected View friendView;
     protected Context context;
-    // Array list for recycler view data source
     protected ArrayList<String> friendsSource, friendRequestSource;
     protected List<String> aux1, aux2;
-    // Layout Manager
     protected RecyclerView.LayoutManager RecyclerViewLayoutManager;
-    // adapter class object
     protected FriendsAdapter adapter;
     protected FriendshipRequestAdapter adapter2;
-    // Linear Layout Manager
     protected LinearLayoutManager HorizontalLayout1, HorizontalLayout2;
     protected Button sendFriendRequest;
     protected FormFieldValidator validateForm;
@@ -55,10 +55,26 @@ public class FriendsFragment extends Fragment {
     protected FirebaseUser user;
     protected FirebaseFirestore firestore;
 
+
+    /**
+     * Construtor da classe desse fragmento
+     * @param context - contexto da activity na qual ele está sendo criado
+     */
     public FriendsFragment(Context context) {
         this.context = context;
     }
 
+
+    /**
+     * Método chamado no instante que um fragment desse tipo é instanciado, para que ele instancie
+     * a view correspondente a ele na interface do usuário
+     * @param inflater - LayoutInflater que pode ser usado para exibir a view desse fragmento
+     * @param container - Se não for nulo, é a view pai à qual a view desse fragmento deve ser ane-
+     *                    xada
+     * @param savedInstanceState - Se não for nulo, este fragmento está sendo reconstruído a partir
+     *                             de um estado salvo anteriormente, conforme indicado nesse Bundle
+     * @return - retorna a view criada para esse fragmento
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +83,12 @@ public class FriendsFragment extends Fragment {
         return friendView;
     }
 
+
+    /**
+     * Método utilizado para obter uma referência para os elementos da view que está sendo exibida,
+     * que serão utilizados para mudar algumas de suas configurações. Além disso, inicializa algumas
+     * variáveis que serão utilizadas
+     */
     protected void initGui(){
         firestore = FirebaseFirestore.getInstance();
         sendFriendRequest = friendView.findViewById(R.id.enviarConviteButton);
@@ -165,5 +187,4 @@ public class FriendsFragment extends Fragment {
             });
         });
     }
-
 }

@@ -19,7 +19,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);View decorView = getWindow().getDecorView();
+        super.onCreate(savedInstanceState);
+        View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -63,6 +64,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             case "REVISAR":                setReviewOptions();     break;
             case "SOBRE_O_JOGO":           setAboutOptions();      break;
             case "JOGAR_ONLINE":           setPlayOnlineOptions(); break;
+            case "JOGAR_PC":               playAgainstPC();        break;
             case "CONVIDAR_AMIGO":         inviteFriend();         break;
             case "MODO_ALEATORIO":         randomMode();           break;
             case "O_QUE_E":                whatItIs();             break;
@@ -163,6 +165,18 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         voltar.setTag("JOGAR");
     }
 
+
+    /**
+     * Método utilizado para redirecionar o jogador diretamente para a tela de jogo,
+     * já que ele irá jogar contra o próprio celular
+     */
+    protected void playAgainstPC(){
+        Intent troca = new Intent(MenuActivity.this, GameActivity.class);
+        troca.putExtra("matchCreator", true);
+        troca.putExtra("PCopponent", true);
+        troca.putExtra("opponentUID", "0");
+        startActivityForResult(troca, 999);
+    }
 
     /**
      * Método utilizado para redirecionar dessa activity para a que exibe a tela

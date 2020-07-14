@@ -65,8 +65,8 @@
 
     <!--    Tela de jogo   -->
     <string name="rodada">#1 Rodada</string>
-    <string name="player1">Pontuação Jogador 1:</string>
-    <string name="player2">Pontuação Jogador 2:</string>
+    <string name="player1">Sua pontuação:</string>
+    <string name="player2">Pontuação do seu adversário:</string>
     <string name="lamina">lâminas</string>
     <string name="pontuacaoInicial">0</string>
     <string name="lentes">Lentes</string>
@@ -75,6 +75,16 @@
     <string name="centro">Imagem central do jogo</string>
     <string name="sim">Sim</string>
     <string name="nao">Não</string>
+    <string name="adivinharLamina">Qual é a lâmina?</string>
+    <string name="informeLamina">Lâmina</string>
+    <string name="enviar">Enviar</string>
+    <string name="escolherCat">Selecione uma categoria</string>
+    <string name="escolherPerg">Selecione uma pergunta</string>
+    <string name="feedbackPergunta">A resposta correta é </string>
+    <string name="adivinhar">Adivinhar lâmina</string>
+    <string name="proxima">Próxima rodada</string>
+    <string name="resp">NÃO!</string>
+    <string name="respAdversario">Resposta do seu adversário:</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>
