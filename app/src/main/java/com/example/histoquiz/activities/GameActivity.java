@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,8 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import android.widget.Toast;
-
 public class GameActivity extends AppCompatActivity {
 
     public Map<Integer, String> mySlides = new HashMap<>();
@@ -195,6 +194,7 @@ public class GameActivity extends AppCompatActivity {
         noAnswer.setVisibility(View.INVISIBLE);
     }
 
+
     public void closeTextToWaitOpponent(){
         this.questionText.setVisibility(View.INVISIBLE);
     }
@@ -265,15 +265,16 @@ public class GameActivity extends AppCompatActivity {
     public void handleAnswerButtons(){
         yesAnswer.setOnClickListener(v -> {
             if (PCopponent){
-                myOpponent._estado_001(true);
+                myOpponent._estado_0010(true);
             }
         });
-        noAnswer.setOnClickListener(v -> myOpponent._estado_001(false));
+        noAnswer.setOnClickListener(v -> myOpponent._estado_0010(false));
     }
+
 
     public void handleQuestionSelectionButton(){
         if(PCopponent){
-            myOpponent._estado_100();
+            myOpponent._estado_0101();
         }
     }
 
@@ -291,8 +292,15 @@ public class GameActivity extends AppCompatActivity {
 
     public void incrementPlayerScore(int player){
         switch (player){
-            case 1: scorePlayer1.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer1.getText().toString()) + 1)); break;
-            case 2: scorePlayer2.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer2.getText().toString()) + 1)); break;
+            case 1: scorePlayer1.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer1.getText().toString()) + 2)); break;
+            case 2: scorePlayer2.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer2.getText().toString()) + 2)); break;
+        }
+    }
+
+    public void decrementPlayerScore(int player){
+        switch (player){
+            case 1: scorePlayer1.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer1.getText().toString()) - 1)); break;
+            case 2: scorePlayer2.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer2.getText().toString()) - 1)); break;
         }
     }
 }

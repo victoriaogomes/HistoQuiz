@@ -54,6 +54,7 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        dialog.setCanceledOnTouchOutside(false);
         return dialog;
     }
 
@@ -121,11 +122,8 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
 
 
     protected void handleQuestionSelectionButton(){
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parentActivity.handleQuestionSelectionButton();
-            }
+        send.setOnClickListener(v -> {
+            parentActivity.handleQuestionSelectionButton();
         });
     }
 }

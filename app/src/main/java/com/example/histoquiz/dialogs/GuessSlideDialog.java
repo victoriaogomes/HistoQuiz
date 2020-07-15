@@ -53,6 +53,7 @@ public class GuessSlideDialog extends AppCompatDialogFragment {
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        dialog.setCanceledOnTouchOutside(false);
         return dialog;
     }
 
@@ -67,12 +68,13 @@ public class GuessSlideDialog extends AppCompatDialogFragment {
     protected void dealWithButtons(){
         send.setOnClickListener(v -> {
             if(formFieldValidator.preenchido(guess)){
-                if(Objects.requireNonNull(guess.getEditText()).getText().toString().toLowerCase().equals(parent.roomRef.child(parent.slideToGuess).toString().toLowerCase())){
-                    parent.roomRef.child("score").setValue(Integer.parseInt(parent.roomRef.child("score").toString()) + 1);
-                }
-                else{
-                    Toast.makeText(parent, "Esta não é a lâmina que você está tentando acertar.", Toast.LENGTH_SHORT).show();
-                }
+//                if(Objects.requireNonNull(guess.getEditText()).getText().toString().toLowerCase().equals(parent.roomRef.child(parent.slideToGuess).toString().toLowerCase())){
+//                    parent.incrementPlayerScore(1);
+//                }
+//                else{
+//                    Toast.makeText(parent, "Esta não é a lâmina que você está tentando acertar.", Toast.LENGTH_SHORT).show();
+//                }
+                parent.myOpponent._estado_1001(Objects.requireNonNull(guess.getEditText()).getText().toString());
             }
         });
     }

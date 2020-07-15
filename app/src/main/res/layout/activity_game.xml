@@ -202,19 +202,17 @@
                             />
                     </LinearLayout>
                 </LinearLayout>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:contentDescription="@string/microscopio"
-                    android:src="@drawable/ic_microscopio" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="10dp"
-                    android:gravity="center_horizontal"
                     android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="40dp"
+                        android:contentDescription="@string/microscopio"
+                        android:src="@drawable/ic_microscopio" />
                     <ImageButton
                         android:id="@+id/minhaLamina1"
                         android:layout_width="wrap_content"

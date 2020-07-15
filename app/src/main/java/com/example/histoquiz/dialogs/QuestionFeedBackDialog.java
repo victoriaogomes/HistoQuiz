@@ -52,6 +52,7 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
 //                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 //                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 //                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        dialog.setCanceledOnTouchOutside(false);
         return dialog;
     }
 
@@ -79,18 +80,13 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
 
 
     protected void handleButtonsClicks(){
-        nextRound.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parentActivity.closeQuestionFeedback();
-                parentActivity.myOpponent._estado_000();
-            }
+        nextRound.setOnClickListener(v -> {
+            parentActivity.closeQuestionFeedback();
+            parentActivity.myOpponent._estado_0000();
         });
-        guessSlide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parentActivity.showGuessSlide();
-            }
+        guessSlide.setOnClickListener(v -> {
+            parentActivity.closeQuestionFeedback();
+            parentActivity.myOpponent._estado_1000();
         });
     }
 }
