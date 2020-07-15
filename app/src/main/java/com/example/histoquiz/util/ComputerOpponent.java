@@ -4,6 +4,7 @@ import com.example.histoquiz.activities.GameActivity;
 
 import java.util.Objects;
 import java.util.Random;
+import android.os.Handler;
 
 public class ComputerOpponent {
 
@@ -27,7 +28,8 @@ public class ComputerOpponent {
         rndGenerator = new Random();
         raffledValue = generateRaffledValue(100, 1);
         if (raffledValue % 2 == 0) {
-            _estado_000();
+            game_scene.showTextToWaitOpponent("Aguardando oponente selecionar uma pergunta...");
+            (new Handler()).postDelayed(this::_estado_000, 5000);
         }
         else {
 //            _estado_011();
@@ -69,7 +71,7 @@ public class ComputerOpponent {
     }
 
     protected void _estado_011(){ // Estado 011: aguardar jogador escolher uma pergunta
-        game_scene.selectQuestion();
+        game_scene.showQuestionSelection();
     }
 
 
@@ -77,22 +79,25 @@ public class ComputerOpponent {
         raffledValue = generateRaffledValue(100, 1);
         myAnswer = raffledValue % 2 == 0;
         Object [] keySet = game_scene.mySlides.keySet().toArray();
+        game_scene.closeQuestionSelection();
         switch (game_scene.slideToGuess){
             case "firstSlide":
                 if(game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, Integer.parseInt(keySet[0].toString())) == myAnswer){
                     game_scene.incrementPlayerScore(2);
                 }
+                game_scene.showQuestionFeedback(myAnswer, game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), Integer.parseInt(keySet[0].toString())));
                 break;
             case "secondSlide":
                 if(game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, Integer.parseInt(keySet[1].toString())) == myAnswer){
                     game_scene.incrementPlayerScore(2);
                 }
+                game_scene.showQuestionFeedback(myAnswer, game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), Integer.parseInt(keySet[1].toString())));
                 break;
             case "thirdSlide":
                 if(game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, Integer.parseInt(keySet[2].toString())) == myAnswer){
                     game_scene.incrementPlayerScore(2);
-                    game_scene.giveQuestionFeedback(myAnswer, game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), Integer.parseInt(keySet[2].toString())));
                 }
+                game_scene.showQuestionFeedback(myAnswer, game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), Integer.parseInt(keySet[2].toString())));
                 break;
         }
     }

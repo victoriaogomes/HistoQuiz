@@ -85,6 +85,8 @@
     <string name="proxima">Próxima rodada</string>
     <string name="resp">NÃO!</string>
     <string name="respAdversario">Resposta do seu adversário:</string>
+    <string name="simCaps">SIM!</string>
+    <string name="naoCaps">NÃO!</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>

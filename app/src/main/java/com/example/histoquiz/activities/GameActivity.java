@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -47,6 +48,9 @@ public class GameActivity extends AppCompatActivity {
     protected TextView questionText, scorePlayer1, scorePlayer2;
     protected Button yesAnswer, noAnswer;
     public ComputerOpponent myOpponent;
+    protected SelectQuestionDialog selectQuestionDialog;
+    protected GuessSlideDialog guessSlideDialog;
+    protected QuestionFeedBackDialog questionFeedBackDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,14 +110,16 @@ public class GameActivity extends AppCompatActivity {
         questionText = findViewById(R.id.pergunta);
         yesAnswer = findViewById(R.id.respSim);
         noAnswer = findViewById(R.id.respNao);
+        scorePlayer1 = findViewById(R.id.pontuacaoJogador1);
+        scorePlayer2 = findViewById(R.id.pontuacaoJogador2);
         questionText.setVisibility(View.INVISIBLE);
         yesAnswer.setVisibility(View.INVISIBLE);
         noAnswer.setVisibility(View.INVISIBLE);
         user = FirebaseAuth.getInstance().getCurrentUser();
         realtimeDatabase = FirebaseDatabase.getInstance();
         firestoreDatabase = FirebaseFirestore.getInstance();
-        scorePlayer1 = findViewById(R.id.pontuacaoJogador1);
-        scorePlayer2 = findViewById(R.id.pontuacaoJogador2);
+        selectQuestionDialog = new SelectQuestionDialog(this);
+        guessSlideDialog = new GuessSlideDialog(this);
     }
 
 
@@ -131,15 +137,39 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    public void selectQuestion(){
-        SelectQuestionDialog selectQuestionDialog = new SelectQuestionDialog(this);
+
+    /**
+     * Método utilizado para exibir ao usuário a tela para que ele selecione uma questão para
+     * enviar para seu oponente responder
+     */
+    public void showQuestionSelection(){
         selectQuestionDialog.show(getSupportFragmentManager(), "choose question dialog");
     }
 
 
-    public void guessSlide(){
-        GuessSlideDialog guessSlideDialog = new GuessSlideDialog(this);
+    /**
+     * Método utilizado para deixar de exibir a tela utilizada para selecionar uma questão
+     * para o oponente responder
+     */
+    public void closeQuestionSelection(){
+        selectQuestionDialog.dismiss();
+    }
+
+
+    /**
+     * Método utilizado para exibir ao usuário a tela para que ele adivinhe a sua lâmina
+     * atual
+     */
+    public void showGuessSlide(){
         guessSlideDialog.show(getSupportFragmentManager(), "guess dialog");
+    }
+
+    /**
+     * Método utilizado para deixar de exibir ao usuário a tela para que ele adivinhe sua lâmina
+     * atual
+     */
+    public void closeGuessSlide(){
+        guessSlideDialog.dismiss();
     }
 
 
@@ -147,10 +177,28 @@ public class GameActivity extends AppCompatActivity {
      * Método utilizado para exibir ao usuário a resposta a sua pergunta dada pelo
      * seu oponente, bem como a resposta correta
      */
-    public void giveQuestionFeedback(boolean opponentAnswer, boolean correctAnswer){
-        QuestionFeedBackDialog questionFeedBackDialog = new QuestionFeedBackDialog(this, opponentAnswer, correctAnswer);
+    public void showQuestionFeedback(boolean opponentAnswer, boolean correctAnswer){
+        questionFeedBackDialog = new QuestionFeedBackDialog(this, opponentAnswer, correctAnswer);
         questionFeedBackDialog.show(getSupportFragmentManager(), "questionFeedBack");
     }
+
+
+    public void closeQuestionFeedback(){
+        questionFeedBackDialog.dismiss();
+    }
+
+
+    public void showTextToWaitOpponent(String text){
+        this.questionText.setText(text);
+        this.questionText.setVisibility(View.VISIBLE);
+        yesAnswer.setVisibility(View.INVISIBLE);
+        noAnswer.setVisibility(View.INVISIBLE);
+    }
+
+    public void closeTextToWaitOpponent(){
+        this.questionText.setVisibility(View.INVISIBLE);
+    }
+
 
 
     /**

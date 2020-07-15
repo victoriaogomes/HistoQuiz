@@ -40,9 +40,10 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         initGUI();
-//        builder.setView(view).setTitle("");
+        builder.setView(view).setTitle("");
         Dialog dialog = builder.create();
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+        handleButtonsClicks();
 
 //        View decorView = parentActivity.getWindow().getDecorView();
 //        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -67,10 +68,10 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
             opponentAnswer.setText(getString(R.string.nao));
         }
         if(auxCorrectAnswer){
-            correctAnswer.setText(getString(R.string.sim));
+            correctAnswer.setText(getString(R.string.simCaps));
         }
         else{
-            correctAnswer.setText(getString(R.string.nao));
+            correctAnswer.setText(getString(R.string.naoCaps));
         }
         guessSlide = view.findViewById(R.id.adivinharLamina);
         nextRound = view.findViewById(R.id.proximaRodada);
@@ -81,7 +82,14 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
         nextRound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                parentActivity.closeQuestionFeedback();
                 parentActivity.myOpponent._estado_000();
+            }
+        });
+        guessSlide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parentActivity.showGuessSlide();
             }
         });
     }
