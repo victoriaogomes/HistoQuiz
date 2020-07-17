@@ -87,6 +87,8 @@
     <string name="respAdversario">Resposta do seu adversário:</string>
     <string name="simCaps">SIM!</string>
     <string name="naoCaps">NÃO!</string>
+    <string name="prox">Próximo</string>
+    <string name="anterior">Anterior</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>

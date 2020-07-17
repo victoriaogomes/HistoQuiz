@@ -6,14 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.example.histoquiz.R;
 import com.example.histoquiz.dialogs.GuessSlideDialog;
 import com.example.histoquiz.dialogs.QuestionFeedBackDialog;
 import com.example.histoquiz.dialogs.SelectQuestionDialog;
+import com.example.histoquiz.dialogs.SlideImageDialog;
 import com.example.histoquiz.util.ComputerOpponent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -119,6 +124,8 @@ public class GameActivity extends AppCompatActivity {
         firestoreDatabase = FirebaseFirestore.getInstance();
         selectQuestionDialog = new SelectQuestionDialog(this);
         guessSlideDialog = new GuessSlideDialog(this);
+        SlideImageDialog slideImageDialog = new SlideImageDialog(this);
+        slideImageDialog.show(getSupportFragmentManager(), "slide");
     }
 
 
@@ -302,5 +309,9 @@ public class GameActivity extends AppCompatActivity {
             case 1: scorePlayer1.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer1.getText().toString()) - 1)); break;
             case 2: scorePlayer2.setText(String.format(Locale.ENGLISH, "%d", Integer.parseInt(scorePlayer2.getText().toString()) - 1)); break;
         }
+    }
+
+    public void showImages(){
+
     }
 }

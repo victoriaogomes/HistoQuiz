@@ -210,7 +210,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="40dp"
+                        android:layout_marginStart="45dp"
                         android:contentDescription="@string/microscopio"
                         android:src="@drawable/ic_microscopio" />
                     <ImageButton
@@ -253,39 +253,64 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_marginTop="10dp"
-                android:gravity="center_horizontal|center_vertical"
                 android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/oponenteLamina1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/lamina"
-                    android:src="@drawable/ic_card"
-                    android:text="@string/sobreJogo" />
-
-                <ImageButton
-                    android:id="@+id/oponenteLamina2"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/lamina"
-                    android:src="@drawable/ic_card"
-                    android:text="@string/sobreJogo" />
-
-                <ImageButton
-                    android:id="@+id/oponenteLamina3"
-                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_list_alt"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="TODO">
+                    </ImageButton>
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_question"
+                        android:background="@android:color/transparent">
+                    </ImageButton>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/lamina"
-                    android:src="@drawable/ic_card"
-                    android:text="@string/sobreJogo" />
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal|center_vertical">
+                    <ImageButton
+                        android:id="@+id/oponenteLamina1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/lamina"
+                        android:src="@drawable/ic_card"
+                        android:text="@string/sobreJogo">
+                    </ImageButton>
+                    <ImageButton
+                        android:id="@+id/oponenteLamina2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/lamina"
+                        android:src="@drawable/ic_card"
+                        android:text="@string/sobreJogo">
+                    </ImageButton>
+                    <ImageButton
+                        android:id="@+id/oponenteLamina3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/lamina"
+                        android:src="@drawable/ic_card"
+                        android:text="@string/sobreJogo">
+                    </ImageButton>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
