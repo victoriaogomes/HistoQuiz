@@ -19,7 +19,10 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.bumptech.glide.Glide;
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
+import com.example.histoquiz.util.GlideApp;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
@@ -30,6 +33,7 @@ public class SlideImageDialog extends AppCompatDialogFragment implements View.On
     protected View view;
     protected MaterialButton next;
     protected ImageSwitcher imageSwitcher;
+    protected StorageReference storageReference;
 
     public SlideImageDialog(GameActivity parent){
         this.parent = parent;
@@ -55,14 +59,15 @@ public class SlideImageDialog extends AppCompatDialogFragment implements View.On
     }
 
     protected void initGUI(){
+        storageReference = FirebaseStorage.getInstance().getReference("Laminas/osteoclasto_4.jpeg");
         inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_guess_slide, null);
+        view = inflater.inflate(R.layout.dialog_slide_image, null);
         imageSwitcher = view.findViewById(R.id.imageSW);
         imageSwitcher.setFactory(() -> {
             ImageView imageView = new ImageView(parent.getApplicationContext());
             imageView.setLayoutParams(new ImageSwitcher.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            Glide.with(parent).load("gs://histoquiz-lenda.appspot.com/Laminas/cartilagem_elastica_1.jpeg").into(imageView);
+            GlideApp.with(parent).load(storageReference).into(imageView);
 //                imageView.setImageResource(imagem);
             return imageView;
         });
