@@ -145,21 +145,21 @@ public class ComputerOpponent {
         boolean answerValidation = false;
         switch (game_scene.slideToGuess){
             case "firstSlide":
-                if(game_scene.mySlides.get(keySet[0]).equals(answer)){
+                if(Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getName().equals(answer)){
                     game_scene.incrementPlayerScore(2);
                     answerValidation = true;
                     game_scene.slideToGuess = "secondSlide";
                 }
                 break;
             case "secondSlide":
-                if(game_scene.mySlides.get(keySet[1]).equals(answer)){
+                if(Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getName().equals(answer)){
                     game_scene.incrementPlayerScore(2);
                     answerValidation = true;
                     game_scene.slideToGuess = "thirdSlide";
                 }
                 break;
             case "thirdSlide":
-                if(game_scene.mySlides.get(keySet[2]).equals(answer)){
+                if(Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getName().equals(answer)){
                     game_scene.incrementPlayerScore(2);
                     answerValidation = true;
                 }

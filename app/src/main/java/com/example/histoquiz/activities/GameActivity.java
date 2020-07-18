@@ -5,20 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.example.histoquiz.R;
 import com.example.histoquiz.dialogs.GuessSlideDialog;
 import com.example.histoquiz.dialogs.QuestionFeedBackDialog;
 import com.example.histoquiz.dialogs.SelectQuestionDialog;
 import com.example.histoquiz.dialogs.SlideImageDialog;
+import com.example.histoquiz.model.Slide;
 import com.example.histoquiz.util.ComputerOpponent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,7 +35,7 @@ import java.util.Objects;
 import java.util.Random;
 public class GameActivity extends AppCompatActivity {
 
-    public Map<Integer, String> mySlides = new HashMap<>();
+    public Map<Integer, Slide> mySlides = new HashMap<>();
     protected FirebaseDatabase realtimeDatabase;
     protected FirebaseFirestore firestoreDatabase;
     public DatabaseReference roomRef;
@@ -74,12 +70,20 @@ public class GameActivity extends AppCompatActivity {
         initGUI();
         handleAnswerButtons();
         firestoreDatabase.collection("laminas").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            HashMap<Integer, Slide> slides = new HashMap<>();
+            for(QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots){
+                Slide slide = documentSnapshot.toObject(Slide.class);
+                slide.setName(documentSnapshot.getId());
+                slides.put(slide.getCode(), slide);
+            }
             if(PCopponent) {
-                raffleSlides(queryDocumentSnapshots.size(), queryDocumentSnapshots, 6);
+                raffleSlides(queryDocumentSnapshots.size(), slides, 6);
             }
             else{
-                raffleSlides(queryDocumentSnapshots.size(), queryDocumentSnapshots, 3);
+                raffleSlides(queryDocumentSnapshots.size(), slides, 3);
             }
+            SlideImageDialog slideImageDialog = new SlideImageDialog(this);
+            slideImageDialog.show(getSupportFragmentManager(), "slide");
         });
         firestoreDatabase.collection("perguntas").get().addOnSuccessListener(queryDocumentSnapshots -> {
             perguntas = new HashMap<>();
@@ -124,8 +128,6 @@ public class GameActivity extends AppCompatActivity {
         firestoreDatabase = FirebaseFirestore.getInstance();
         selectQuestionDialog = new SelectQuestionDialog(this);
         guessSlideDialog = new GuessSlideDialog(this);
-        SlideImageDialog slideImageDialog = new SlideImageDialog(this);
-        slideImageDialog.show(getSupportFragmentManager(), "slide");
     }
 
 
@@ -213,16 +215,22 @@ public class GameActivity extends AppCompatActivity {
      * no firebase. Cada jogador é responsável por sortear suas lâminas e cadastrá-las na nuvem,
      * para que o seu oponente as obtenha
      */
-    protected void raffleSlides(int slidesAmount, QuerySnapshot queryDocumentSnapshot, int raffleNumber) {
+    protected void raffleSlides(int slidesAmount, HashMap<Integer, Slide> slides, int raffleNumber) {
         Random rndGenerator = new Random();
         int raffledValue;
-        for (int i = 0; i < raffleNumber; i++) {
-            raffledValue = rndGenerator.nextInt(slidesAmount);
-            while (mySlides.containsKey(raffledValue)) {
-                raffledValue = rndGenerator.nextInt(slidesAmount);
-            }
-            mySlides.put(raffledValue, queryDocumentSnapshot.getDocuments().get(raffledValue).getId());
-        }
+        mySlides.put(44, slides.get(44));
+        mySlides.put(45, slides.get(45));
+        mySlides.put(46, slides.get(46));
+        mySlides.put(47, slides.get(47));
+        mySlides.put(48, slides.get(48));
+        mySlides.put(49, slides.get(49));
+//        for (int i = 0; i < raffleNumber; i++) {
+//            raffledValue = rndGenerator.nextInt(slidesAmount);
+//            while (mySlides.containsKey(raffledValue)) {
+//                raffledValue = rndGenerator.nextInt(slidesAmount);
+//            }
+//            mySlides.put(raffledValue, slides.get(raffledValue));
+//        }
 //        roomRef.child("slides").setValue(mySlides);
 //        roomRef.child("score").setValue(0);
 //        roomRef.child("selectedCategory").setValue(0);
