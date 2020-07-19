@@ -32,61 +32,50 @@
             android:layout_height="3dp"
             android:layout_gravity="center"
             android:background="@color/white"/>
-        <ImageSwitcher
-            android:id="@+id/imageSW"
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/proximoButton"
-            android:fontFamily="@font/kabouter"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/prox">
-        </com.google.android.material.button.MaterialButton>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_horizontal|center_vertical">
-            <Button
-                style="?android:attr/buttonBarStyle"
-                android:id="@+id/voltar"
+            android:weightSum="100">
+            <ImageSwitcher
+                android:id="@+id/imageSW"
+                android:layout_margin="10dp"
+                android:layout_width="0dp"
+                android:layout_weight="95"
+                android:layout_gravity="center_vertical|start"
+                android:gravity="center_vertical|start"
+                android:layout_height="wrap_content"/>
+            <ImageButton
+                android:id="@+id/proximoButton"
+                android:src="@drawable/ic_next"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/kabouter"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical|end"
+                android:layout_gravity="center_vertical|end"
+                android:textAllCaps="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/kabouter"
-                android:layout_gravity="end"
-                android:textSize="20sp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:background="@drawable/button_light_style"
-                android:text="@string/voltar">
-            </Button>
-            <Button
-                style="?android:attr/buttonBarStyle"
-                android:id="@+id/enviar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/kabouter"
-                android:layout_gravity="end"
-                android:textSize="20sp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:background="@drawable/button_light_style"
-                android:text="@string/enviar">
-            </Button>
+                android:contentDescription="@string/prox">
+            </ImageButton>
         </LinearLayout>
+        <Button
+            style="?android:attr/buttonBarStyle"
+            android:id="@+id/voltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/kabouter"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:background="@drawable/button_light_style"
+            android:text="@string/voltar">
+        </Button>
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

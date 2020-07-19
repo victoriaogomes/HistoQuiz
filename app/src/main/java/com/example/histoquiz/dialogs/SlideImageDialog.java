@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,9 +20,10 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.util.GlideApp;
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.Locale;
 import java.util.Objects;
 
 public class SlideImageDialog extends AppCompatDialogFragment implements View.OnClickListener {
@@ -28,11 +31,14 @@ public class SlideImageDialog extends AppCompatDialogFragment implements View.On
     protected GameActivity parent;
     protected LayoutInflater inflater;
     protected View view;
-    protected MaterialButton next;
+    protected ImageButton next;
     protected ImageSwitcher imageSwitcher;
+    protected Button goBack;
     protected StorageReference storageReference;
-    protected int position = 0;
+    protected TextView slideName;
+    protected int position;
     protected ImageView myImageView;
+    protected int imagesAmount;
 
     public SlideImageDialog(GameActivity parent){
         this.parent = parent;
@@ -58,11 +64,16 @@ public class SlideImageDialog extends AppCompatDialogFragment implements View.On
     }
 
     protected void initGUI(){
+        position = 0;
         inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_slide_image, null);
+        goBack = view.findViewById(R.id.voltar);
+        goBack.setOnClickListener(this);
+        goBack.setTag("GO_BACK");
         next = view.findViewById(R.id.proximoButton);
         next.setTag("NEXT");
         next.setOnClickListener(this);
+        slideName = view.findViewById(R.id.nomeLamina);
         imageSwitcher = view.findViewById(R.id.imageSW);
         imageSwitcher.setFactory(() -> {
             myImageView = new ImageView(parent.getApplicationContext());
@@ -79,48 +90,37 @@ public class SlideImageDialog extends AppCompatDialogFragment implements View.On
 
     @Override
     public void onClick(View v) {
-        if(v.getTag() == "NEXT"){
-            position++;
-            imageToShow(position);
+        switch (v.getTag().toString()){
+            case "NEXT":
+                position++;
+                imageToShow(position);
+                break;
+            case "GO_BACK":
+                parent.closeSlideImages();
+                break;
         }
     }
 
     public void imageToShow(int position){
-        int imagesAmount;
         Object [] keySet = parent.mySlides.keySet().toArray();
         switch (parent.myOpponent.slideToGuess){
             case "firstSlide":
                 storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(keySet[0])).getImages().get(position));
                 imagesAmount = Objects.requireNonNull(parent.mySlides.get(keySet[0])).getImages().size();
-                Toast.makeText(parent, Integer.toString(imagesAmount), Toast.LENGTH_LONG).show();
-                if(imagesAmount > 1 && (position+1) < imagesAmount){
-                    next.setVisibility(View.VISIBLE);
-                }
-                else{
-                    next.setVisibility(View.GONE);
-                }
+                slideName.setText(String.format(Locale.getDefault(), "%s: foto %d de %d", Objects.requireNonNull(parent.mySlides.get(keySet[0])).getName(), position + 1, imagesAmount));
                 break;
             case "secondSlide":
                 storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(keySet[1])).getImages().get(position));
                 imagesAmount = Objects.requireNonNull(parent.mySlides.get(keySet[1])).getImages().size();
-                if(imagesAmount > 1 && (position+1) < imagesAmount){
-                    next.setVisibility(View.VISIBLE);
-                }
-                else{
-                    next.setVisibility(View.GONE);
-                }
                 break;
             case "thirdSlide":
                 storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(keySet[2])).getImages().get(position));
                 imagesAmount = Objects.requireNonNull(parent.mySlides.get(keySet[2])).getImages().size();
-                if(imagesAmount > 1 && (position+1) < imagesAmount){
-                    next.setVisibility(View.VISIBLE);
-                }
-                else{
-                    next.setVisibility(View.GONE);
-                }
                 break;
         }
-        GlideApp.with(parent).load(storageReference).into(myImageView);
+        if(imagesAmount == 1 || (position+1) == imagesAmount){
+            this.position = -1;
+        }
+        GlideApp.with(parent).load(storageReference).into((ImageView) imageSwitcher.getCurrentView());
     }
 }

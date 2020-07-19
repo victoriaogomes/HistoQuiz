@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.histoquiz.R;
@@ -25,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     public Map<Integer, Slide> mySlides = new HashMap<>();
     protected FirebaseDatabase realtimeDatabase;
@@ -51,6 +51,8 @@ public class GameActivity extends AppCompatActivity {
     protected SelectQuestionDialog selectQuestionDialog;
     protected GuessSlideDialog guessSlideDialog;
     protected QuestionFeedBackDialog questionFeedBackDialog;
+    protected ImageButton [] opponentSlidesButtons;
+    protected SlideImageDialog slideImageDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +84,6 @@ public class GameActivity extends AppCompatActivity {
             else{
                 raffleSlides(queryDocumentSnapshots.size(), slides, 3);
             }
-            SlideImageDialog slideImageDialog = new SlideImageDialog(this);
-            slideImageDialog.show(getSupportFragmentManager(), "slide");
         });
         firestoreDatabase.collection("perguntas").get().addOnSuccessListener(queryDocumentSnapshots -> {
             perguntas = new HashMap<>();
@@ -120,6 +120,13 @@ public class GameActivity extends AppCompatActivity {
         noAnswer = findViewById(R.id.respNao);
         scorePlayer1 = findViewById(R.id.pontuacaoJogador1);
         scorePlayer2 = findViewById(R.id.pontuacaoJogador2);
+        opponentSlidesButtons = new ImageButton[]{findViewById(R.id.oponenteLamina1), findViewById(R.id.oponenteLamina2), findViewById(R.id.oponenteLamina3)};
+        opponentSlidesButtons[0].setOnClickListener(this);
+        opponentSlidesButtons[0].setTag("OPPONENT_SLIDE_BUTTON");
+        opponentSlidesButtons[1].setOnClickListener(this);
+        opponentSlidesButtons[1].setTag("OPPONENT_SLIDE_BUTTON");
+        opponentSlidesButtons[2].setOnClickListener(this);
+        opponentSlidesButtons[2].setTag("OPPONENT_SLIDE_BUTTON");
         questionText.setVisibility(View.INVISIBLE);
         yesAnswer.setVisibility(View.INVISIBLE);
         noAnswer.setVisibility(View.INVISIBLE);
@@ -195,6 +202,15 @@ public class GameActivity extends AppCompatActivity {
         questionFeedBackDialog.dismiss();
     }
 
+
+    public void showSlideImages(){
+        slideImageDialog = new SlideImageDialog(this);
+        slideImageDialog.show(getSupportFragmentManager(), "slide");
+    }
+
+    public void closeSlideImages(){
+        slideImageDialog.dismiss();
+    }
 
     public void showTextToWaitOpponent(String text){
         this.questionText.setText(text);
@@ -321,5 +337,12 @@ public class GameActivity extends AppCompatActivity {
 
     public void showImages(){
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getTag().toString()){
+            case "OPPONENT_SLIDE_BUTTON": showSlideImages();
+        }
     }
 }
