@@ -59,6 +59,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected SlideImageDialog slideImageDialog;
     protected EndGameDialog endGameDialog;
     protected ImageButton selectQuestionButton;
+    public HashMap<Integer, Slide> slides = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         initGUI();
         handleAnswerButtons();
         firestoreDatabase.collection("laminas").get().addOnSuccessListener(queryDocumentSnapshots -> {
-            HashMap<Integer, Slide> slides = new HashMap<>();
             for(QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots){
                 Slide slide = documentSnapshot.toObject(Slide.class);
                 slide.setName(documentSnapshot.getId());

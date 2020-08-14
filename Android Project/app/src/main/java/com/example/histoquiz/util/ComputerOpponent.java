@@ -93,6 +93,8 @@ public class ComputerOpponent {
         (new Handler()).postDelayed(this::_estado_0100, 2000);
     }
 
+    //estado intermediário para o PC tentar adivinhar sua lâmina
+
     public void _estado_0100(){
         game_scene.showQuestionSelection();
     }
@@ -196,8 +198,8 @@ public class ComputerOpponent {
     public void _estado_1010(boolean answerValidation, boolean matchEnded){
         game_scene.closeGuessSlide();
         if(answerValidation){
-            if(matchEnded) game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 2 pontos! Fim de jogo...");
-            else game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 2 pontos! Vamos para a próxima rodada...");
+            if(matchEnded) game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
+            else game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         else{
             game_scene.showTextToWaitOpponent("Resposta incorreta! Vamos para a próxima rodada...");
