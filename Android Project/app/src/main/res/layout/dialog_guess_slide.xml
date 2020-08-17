@@ -31,28 +31,16 @@
             android:layout_height="3dp"
             android:layout_gravity="center"
             android:background="@color/white"/>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginTop="10dp"
-            android:id="@+id/lamina"
-            app:errorEnabled="true"
-            app:startIconDrawable="@drawable/ic_dna"
-            android:layout_width="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:hint="@string/informeLamina"
-            android:textColorHint="@color/grey"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autofillHints=""
-                android:fontFamily="@font/kabouter"
-                android:textSize="22sp"
-                android:textColor="@color/black"
-                android:background="@drawable/text_edit_style"
-                android:hint="@string/textBoxHint"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
+        <Spinner
+            android:id="@+id/spinner_laminas"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_width="fill_parent"
+            android:spinnerMode="dropdown"
+            android:layout_height="wrap_content"
+            android:theme="@style/SpinnerStyle"
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -68,6 +68,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/kabouter"
+                    android:textSize="23sp"
                     android:autofillHints=""
                     android:textColor="@color/black"
                     android:background="@drawable/text_edit_style"
@@ -89,6 +91,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:autofillHints=""
+                    android:fontFamily="@font/kabouter"
+                    android:textSize="23sp"
                     android:background="@drawable/text_edit_style"
                     android:hint="@string/textBoxHint"
                     android:inputType="textPassword"/>

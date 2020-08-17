@@ -37,24 +37,24 @@ public class ComputerOpponent {
 //        }
     }
 
-    public void _estado_0000(){
+    public void _estado_0000(){//A
         game_scene.showTextToWaitOpponent("Aguardando oponente selecionar uma pergunta...");
         (new Handler()).postDelayed(this::_estado_0001, 2000);
     }
 
-    public void _estado_0001(){
+    public void _estado_0001(){//B
         raffledCategory = generateRaffledValue(game_scene.perguntas.keySet().size(), 0);
         numberOfQuestions = Objects.requireNonNull(game_scene.perguntas.get(game_scene.perguntas.keySet().toArray()[raffledCategory])).size();
         raffledQuestion = generateRaffledValue(numberOfQuestions, 0);
         game_scene.setQuestionForPlayerAnswer(game_scene.getQuestionText(raffledCategory, raffledQuestion));
     }
 
-    public void _estado_0010(boolean answer){
+    public void _estado_0010(boolean answer){//C
         game_scene.showTextToWaitOpponent("Validando resposta...");
         (new Handler()).postDelayed(() -> _estado_0011(answer), 2000);
     }
 
-    public void _estado_0011(boolean answer){
+    public void _estado_0011(boolean answer){//D
         Object [] keySet = game_scene.mySlides.keySet().toArray();
         String text = "";
         switch (slideToGuess){
@@ -95,11 +95,11 @@ public class ComputerOpponent {
 
     //estado intermediário para o PC tentar adivinhar sua lâmina
 
-    public void _estado_0100(){
+    public void _estado_0100(){//E
         game_scene.showQuestionSelection();
     }
 
-    public void _estado_0101(){
+    public void _estado_0101(){//F
         game_scene.closeQuestionSelection();
         game_scene.showTextToWaitOpponent("Enviando...");
         (new Handler()).postDelayed(this::_estado_0110, 2000);

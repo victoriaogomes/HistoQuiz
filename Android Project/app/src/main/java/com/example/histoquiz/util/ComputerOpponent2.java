@@ -159,6 +159,61 @@ public class ComputerOpponent2 {
         game_scene.showQuestionFeedback(myAnswer, game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), slide));
     }
 
+    public void _estado_J(){
+        game_scene.showGuessSlide();
+    }
+
+    public void _estado_K(String answer){
+        Object [] keySet = game_scene.mySlides.keySet().toArray();
+        boolean answerValidation = false, matchEnded = false;
+        String trueSlide = "";
+        int position = 0;
+        switch (game_scene.slideToGuess){
+            case "firstSlide":
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getName().toLowerCase();
+                position = 0;
+                break;
+            case "secondSlide":
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getName().toLowerCase();
+                position = 1;
+                break;
+            case "thirdSlide":
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getName().toLowerCase();
+                position = 2;
+        }
+        if(trueSlide.equals(answer.toLowerCase())){
+            game_scene.changePlayerScore(1, 3);
+            answerValidation = true;
+            if(game_scene.slideToGuess.equals("thirdSlide")) matchEnded = true;
+            game_scene.checkMySlide(position);
+        }
+        else{
+            game_scene.changePlayerScore(2, 3);
+        }
+        _estado_L(answerValidation, matchEnded);
+    }
+
+    public void _estado_L(boolean answerValidation, boolean matchEnded){
+        game_scene.closeGuessSlide();
+        if(answerValidation){
+            if(matchEnded) game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
+            else game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
+        }
+        else{
+            game_scene.showTextToWaitOpponent("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
+        }
+        if(matchEnded){
+            (new Handler()).postDelayed(this::_estado_M, 2000);
+        }
+        else{
+            (new Handler()).postDelayed(this::_estado_A, 2000);
+        }
+    }
+
+    public void _estado_M(){
+        game_scene.showEndGameDialog();
+    }
+
     protected int generateRaffledValue(int limit, int start){
         return rndGenerator.nextInt(limit) + start;
     }
