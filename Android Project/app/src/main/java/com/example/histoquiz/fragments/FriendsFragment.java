@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.example.histoquiz.R;
 import com.example.histoquiz.adapters.FriendsAdapter;
 import com.example.histoquiz.adapters.FriendshipRequestAdapter;
+import com.example.histoquiz.model.FriendRequest;
 import com.example.histoquiz.util.FormFieldValidator;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -43,7 +44,9 @@ public class FriendsFragment extends Fragment {
     protected RecyclerView friendshipRequestList;
     protected View friendView;
     protected Context context;
-    protected ArrayList<String> friendsSource, friendRequestSource;
+    protected ArrayList<String> friendsSource;
+    protected ArrayList<FriendRequest> friendRequestSource;
+    protected HashMap<String, String> friendRequestUID;
     protected List<String> aux1, aux2;
     protected RecyclerView.LayoutManager RecyclerViewLayoutManager;
     protected FriendsAdapter adapter;
@@ -99,8 +102,6 @@ public class FriendsFragment extends Fragment {
         friendshipRequestList = friendView.findViewById(R.id.recyclerview2);
         RecyclerViewLayoutManager = new LinearLayoutManager(context);
         friendsList.setLayoutManager(RecyclerViewLayoutManager);
-        friendsSource = new ArrayList<>();
-        friendRequestSource = new ArrayList<>();
         HorizontalLayout1 = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         friendsList.setLayoutManager(HorizontalLayout1);
         HorizontalLayout2 = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -131,8 +132,9 @@ public class FriendsFragment extends Fragment {
      * Método utilizado para obter do firebase os amigos desse usuário e, após obtê-los, setar o
      * adapter que será utilizado para exibi-los
      */
-    protected void getFriends(){
+    public void getFriends(){
         aux1 = new ArrayList<>();
+        friendsSource = new ArrayList<>();
         Task<QuerySnapshot> friends = firestore.document("amizades/amigos").collection(user.getUid()).get();
         friends.addOnSuccessListener(queryDocumentSnapshots -> {
             CollectionReference usuarios = firestore.collection("usuarios");
@@ -164,6 +166,7 @@ public class FriendsFragment extends Fragment {
      */
     protected void getFriendRequests(){
         aux2 = new ArrayList<>();
+        friendRequestSource = new ArrayList<>();
         Task<QuerySnapshot> friends = firestore.document("amizades/solicitacoes").collection(user.getUid()).get();
         friends.addOnSuccessListener(queryDocumentSnapshots -> {
             CollectionReference usuarios = firestore.collection("usuarios");
@@ -180,9 +183,9 @@ public class FriendsFragment extends Fragment {
                     else {
                         name = separatedName[0];
                     }
-                    friendRequestSource.add(name);
+                    friendRequestSource.add(new FriendRequest(name, documentSnapshot.getId()));
                 }
-                adapter2 = new FriendshipRequestAdapter(friendRequestSource);
+                adapter2 = new FriendshipRequestAdapter(friendRequestSource, this);
                 friendshipRequestList.setAdapter(adapter2);
             });
         });

@@ -37,18 +37,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#fff"/>
-        <ImageButton
-            style="?android:attr/buttonBarStyle"
-            android:src="@drawable/ic_window_close"
-            android:id="@+id/enviarConviteButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginEnd="5dp"
-            android:fontFamily="@font/kabouter"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:text="@string/enviarConvite"
-            android:contentDescription="@string/removerAmigo" />
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:gravity="center_horizontal">
+            <ImageButton
+                style="?android:attr/buttonBarStyle"
+                android:src="@drawable/ic_check_square"
+                android:id="@+id/aceitarAmigo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginEnd="5dp"
+                android:fontFamily="@font/kabouter"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:text="@string/enviarConvite"
+                android:contentDescription="@string/removerAmigo" />
+            <ImageButton
+                style="?android:attr/buttonBarStyle"
+                android:src="@drawable/ic_window_close"
+                android:id="@+id/recusarAmigo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginEnd="5dp"
+                android:fontFamily="@font/kabouter"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:text="@string/enviarConvite"
+                android:contentDescription="@string/removerAmigo"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

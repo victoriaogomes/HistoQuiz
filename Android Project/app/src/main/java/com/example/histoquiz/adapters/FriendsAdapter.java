@@ -3,6 +3,7 @@ package com.example.histoquiz.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,12 +37,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsH
     }
 
     public class FriendsHolder extends RecyclerView.ViewHolder{
-        TextView textView;
-
+        protected TextView textView;
+        protected ImageButton accept;
         public FriendsHolder(View itemView){
             super(itemView);
-            textView = (TextView)itemView
-                    .findViewById(R.id.textview);
+            textView = (TextView)itemView.findViewById(R.id.textview);
+            accept = (ImageButton) itemView.findViewById(R.id.aceitarAmigo);
+            accept.setVisibility(View.GONE);
         }
     }
 }
