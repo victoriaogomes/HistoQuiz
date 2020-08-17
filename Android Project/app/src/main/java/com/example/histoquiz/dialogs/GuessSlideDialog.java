@@ -76,7 +76,7 @@ public class GuessSlideDialog extends AppCompatDialogFragment {
 
     protected void dealWithButtons(){
         send.setOnClickListener(v -> {
-            parent.myOpponent._estado_1001(guess.getSelectedItem().toString());
+            parent.myOpponent._estado_K(guess.getSelectedItem().toString());
         });
     }
 }

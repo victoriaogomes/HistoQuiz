@@ -1,11 +1,13 @@
 package com.example.histoquiz.util;
 
 import android.os.Handler;
+import android.widget.Toast;
 
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.model.Slide;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -17,16 +19,17 @@ public class ComputerOpponent2 {
     protected Random rndGenerator;
     protected int raffledCategory, raffledQuestion, numberOfQuestions, raffledValue;
     boolean myAnswer;
-    protected String currentState;
     protected boolean general = true; // Variável para indicar se o PC já pode selecionar perguntas de outra categoria
     protected HashMap<String, Map<String, Object>> perguntas;
     protected HashMap<Integer, Slide> slides;
     protected boolean trueAnswer;
+    protected LinkedList<String> askedQuestions;
 
     public ComputerOpponent2(GameActivity game_scene, HashMap<String, Map<String, Object>> perguntas, HashMap<Integer, Slide> slides){
         this.game_scene = game_scene;
         this.perguntas = perguntas;
         this.slides = slides;
+        askedQuestions = new LinkedList<>();
         for(int i=0; i<perguntas.keySet().size(); i++){
             if(perguntas.keySet().toArray()[i].equals("Gerais")){
                 raffledCategory = i;
@@ -43,12 +46,19 @@ public class ComputerOpponent2 {
     }
 
     public void _estado_B(){
+        String questionText;
         if(!general){
             raffledCategory = generateRaffledValue(perguntas.keySet().size(), 0);
         }
         numberOfQuestions = Objects.requireNonNull(perguntas.get(perguntas.keySet().toArray()[raffledCategory])).size();
         raffledQuestion = generateRaffledValue(numberOfQuestions, 0);
-        game_scene.setQuestionForPlayerAnswer(game_scene.getQuestionText(raffledCategory, raffledQuestion));
+        questionText = game_scene.getQuestionText(raffledCategory, raffledQuestion);
+        while (askedQuestions.contains(questionText)){
+            raffledQuestion = generateRaffledValue(numberOfQuestions, 0);
+            questionText = game_scene.getQuestionText(raffledCategory, raffledQuestion);
+        }
+        askedQuestions.add(questionText);
+        game_scene.setQuestionForPlayerAnswer(questionText);
     }
 
     public void _estado_C(boolean answer){
@@ -72,7 +82,7 @@ public class ComputerOpponent2 {
         }
         if(trueAnswer == answer){
             game_scene.changePlayerScore(1, 1);
-            text = "ganhou 2 pontos!";
+            text = "ganhou 1 ponto!";
         }
         else{
             game_scene.changePlayerScore(1, -1);
@@ -84,38 +94,52 @@ public class ComputerOpponent2 {
     }
 
     public void _estado_E(boolean trueAnswer){
-        for (Map.Entry<Integer,Slide> pair : slides.entrySet()) {
+        int delay = 1000;
+        HashMap<Integer, Slide> copy = (HashMap<Integer, Slide>) slides.clone();
+        for (Map.Entry<Integer,Slide> pair : copy.entrySet()) {
             if (game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, pair.getKey()) != trueAnswer){
                 slides.remove(pair.getKey());
             }
         }
+        Toast.makeText(game_scene, "Possibilidades: " + slides.size(), Toast.LENGTH_LONG).show();
         if(slides.size() <= 3){
+            int position = 0;
+            delay = 3000;
             Object [] keySet = game_scene.mySlides.keySet().toArray();
             String slideName = "";
             switch (slideToGuess){
                 case "firstSlide":
                     slideName = game_scene.mySlides.get(Integer.parseInt(keySet[3].toString())).getName();
+                    position = 0;
                     break;
                 case "secondSlide":
                     slideName = game_scene.mySlides.get(Integer.parseInt(keySet[4].toString())).getName();
+                    position = 1;
                     break;
                 case "thirdSlide":
                     slideName = game_scene.mySlides.get(Integer.parseInt(keySet[5].toString())).getName();
+                    position = 2;
                     break;
             }
             if(slideName.equals(slides.get(slides.keySet().toArray()[0]).getName())){
                 game_scene.showTextToWaitOpponent("Seu oponente adivinhou sua lâmina e ganhou 3 pontos!");
+                game_scene.checkSlide(position, 2);
                 game_scene.changePlayerScore(2, 3);
                 slides = game_scene.slides;
+                general = true;
+                for(int i=0; i<perguntas.keySet().size(); i++){
+                    if(perguntas.keySet().toArray()[i].equals("Gerais")){
+                        raffledCategory = i;
+                    }
+                }
             }
             else{
                 game_scene.showTextToWaitOpponent("Seu oponente tentou adivinhar sua lâmina e errou. Você ganhou 3 pontos!");
                 game_scene.changePlayerScore(1, 3);
                 slides.remove(slides.keySet().toArray()[0]);
             }
-            (new Handler()).postDelayed(this::_estado_F, 2000);
         }
-        _estado_F();
+        (new Handler()).postDelayed(this::_estado_F, delay);
     }
 
     public void _estado_F(){
@@ -150,7 +174,7 @@ public class ComputerOpponent2 {
                 slide =  Integer.parseInt(keySet[2].toString());
                 break;
         }
-        if(game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, slide) == myAnswer){
+        if(game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), slide) == myAnswer){
             game_scene.changePlayerScore(2, 1);
         }
         else{
@@ -185,7 +209,7 @@ public class ComputerOpponent2 {
             game_scene.changePlayerScore(1, 3);
             answerValidation = true;
             if(game_scene.slideToGuess.equals("thirdSlide")) matchEnded = true;
-            game_scene.checkMySlide(position);
+            game_scene.checkSlide(position, 1);
         }
         else{
             game_scene.changePlayerScore(2, 3);

@@ -73,6 +73,8 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
         else{
             correctAnswer.setText(getString(R.string.naoCaps));
         }
+        if(auxCorrectAnswer == auxOpponentAnswer) cardOpponentAnswer.setCardBackgroundColor(getResources().getColor(R.color.green));
+        else cardOpponentAnswer.setCardBackgroundColor(getResources().getColor(R.color.red));
         guessSlide = view.findViewById(R.id.adivinharLamina);
         nextRound = view.findViewById(R.id.proximaRodada);
     }
@@ -81,11 +83,11 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
     protected void handleButtonsClicks(){
         nextRound.setOnClickListener(v -> {
             parentActivity.closeQuestionFeedback();
-            parentActivity.myOpponent._estado_0000();
+            parentActivity.myOpponent._estado_A();
         });
         guessSlide.setOnClickListener(v -> {
             parentActivity.closeQuestionFeedback();
-            parentActivity.myOpponent._estado_1000();
+            parentActivity.myOpponent._estado_J();
         });
     }
 }

@@ -93,24 +93,24 @@ public class ComputerOpponent {
         (new Handler()).postDelayed(this::_estado_0100, 2000);
     }
 
-    //estado intermediário para o PC tentar adivinhar sua lâmina
+    //estado intermediário para o PC tentar adivinhar sua lâmina E
 
     public void _estado_0100(){//E
         game_scene.showQuestionSelection();
-    }
+    } // F
 
-    public void _estado_0101(){//F
+    public void _estado_0101(){//G
         game_scene.closeQuestionSelection();
         game_scene.showTextToWaitOpponent("Enviando...");
         (new Handler()).postDelayed(this::_estado_0110, 2000);
     }
 
-    public void _estado_0110(){
+    public void _estado_0110(){ //H
         game_scene.showTextToWaitOpponent("Aguardando resposta do oponente...");
         (new Handler()).postDelayed(this::_estado_0111, 2000);
     }
 
-    public void _estado_0111(){
+    public void _estado_0111(){//I
         raffledValue = generateRaffledValue(100, 1);
         myAnswer = raffledValue % 2 == 0;
         Object [] keySet = game_scene.mySlides.keySet().toArray();
@@ -147,12 +147,12 @@ public class ComputerOpponent {
     }
 
 
-    public void _estado_1000(){
+    public void _estado_1000(){ //J
         game_scene.showGuessSlide();
     }
 
 
-    public void _estado_1001(String answer){
+    public void _estado_1001(String answer){ //K
         Object [] keySet = game_scene.mySlides.keySet().toArray();
         boolean answerValidation = false;
         switch (game_scene.slideToGuess){
@@ -160,7 +160,7 @@ public class ComputerOpponent {
                 if(Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getName().toLowerCase().equals(answer.toLowerCase())){
                     game_scene.changePlayerScore(1, 3);
                     answerValidation = true;
-                    game_scene.checkMySlide(0);
+                    game_scene.checkSlide(0, 1);
                     game_scene.slideToGuess = "secondSlide";
                 }
                 else{
@@ -172,7 +172,7 @@ public class ComputerOpponent {
                 if(Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getName().toLowerCase().equals(answer.toLowerCase())){
                     game_scene.changePlayerScore(1, 3);
                     answerValidation = true;
-                    game_scene.checkMySlide(1);
+                    game_scene.checkSlide(1, 1);
                     game_scene.slideToGuess = "thirdSlide";
                 }
                 else{
@@ -183,7 +183,7 @@ public class ComputerOpponent {
             case "thirdSlide":
                 if(Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getName().toLowerCase().equals(answer.toLowerCase())){
                     game_scene.changePlayerScore(1, 3);
-                    game_scene.checkMySlide(2);
+                    game_scene.checkSlide(2,1);
                     answerValidation = true;
                     _estado_1010(answerValidation, true);
                 }

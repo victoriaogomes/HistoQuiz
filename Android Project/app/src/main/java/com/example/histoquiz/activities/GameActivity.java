@@ -18,7 +18,6 @@ import com.example.histoquiz.dialogs.QuestionFeedBackDialog;
 import com.example.histoquiz.dialogs.SelectQuestionDialog;
 import com.example.histoquiz.dialogs.SlideImageDialog;
 import com.example.histoquiz.model.Slide;
-import com.example.histoquiz.util.ComputerOpponent;
 import com.example.histoquiz.util.ComputerOpponent2;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -317,7 +316,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void handleQuestionSelectionButton(){
         if(PCopponent){
-            myOpponent._estado_F();
+            myOpponent._estado_G();
         }
     }
 
@@ -362,12 +361,24 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void checkMySlide(int position){
-        mySlidesCheck[position].setVisibility(View.VISIBLE);
-        switch (position){
-            case 0: slideToGuess = "secondSlide"; break;
-            case 1: slideToGuess = "thirdSlide"; break;
-            case 2: break;
+    public void checkSlide(int position, int player){
+        switch (player){
+            case 1:
+                mySlidesCheck[position].setVisibility(View.VISIBLE);
+                switch (position){
+                    case 0: slideToGuess = "secondSlide"; break;
+                    case 1: slideToGuess = "thirdSlide"; break;
+                    case 2: break;
+                }
+                break;
+            case 2:
+                opponentSlidesCheck[position].setVisibility(View.VISIBLE);
+                switch (position){
+                    case 0: myOpponent.slideToGuess = "secondSlide"; break;
+                    case 1: myOpponent.slideToGuess = "thirdSlide"; break;
+                    case 2: break;
+                }
+                break;
         }
     }
 
