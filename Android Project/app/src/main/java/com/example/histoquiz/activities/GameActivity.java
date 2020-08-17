@@ -18,7 +18,7 @@ import com.example.histoquiz.dialogs.QuestionFeedBackDialog;
 import com.example.histoquiz.dialogs.SelectQuestionDialog;
 import com.example.histoquiz.dialogs.SlideImageDialog;
 import com.example.histoquiz.model.Slide;
-import com.example.histoquiz.util.ComputerOpponent2;
+import com.example.histoquiz.util.ComputerOpponent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +49,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected int category, question;
     protected TextView questionText, scorePlayer1, scorePlayer2;
     protected Button yesAnswer, noAnswer;
-    public ComputerOpponent2 myOpponent;
+    public ComputerOpponent myOpponent;
     protected ImageButton [] opponentSlidesButtons;
     protected ImageView [] opponentSlidesCheck;
     protected ImageView [] mySlidesCheck;
@@ -97,7 +97,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 perguntas.put(document.getId(), document.getData());
             }
             if(PCopponent){
-                myOpponent = new ComputerOpponent2(this, perguntas, slides);
+                myOpponent = new ComputerOpponent(this, perguntas, slides);
             }
         });
         if(!PCopponent) {
