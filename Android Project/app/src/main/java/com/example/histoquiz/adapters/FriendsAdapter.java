@@ -9,13 +9,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.histoquiz.R;
+import com.example.histoquiz.model.Friend;
+import com.example.histoquiz.model.FriendRequest;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
+import java.util.Objects;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsHolder> {
 
-    private List<String> list;
+    private List<Friend> list;
 
-    public FriendsAdapter(List<String> horizontalList){
+    public FriendsAdapter(List<Friend> horizontalList){
         this.list = horizontalList;
     }
 
@@ -28,7 +34,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsH
 
     @Override
     public void onBindViewHolder(@NonNull FriendsHolder holder, int position) {
-        holder.textView.setText(list.get(position));
+        holder.textView.setText(list.get(position).getName());
     }
 
     @Override
@@ -38,12 +44,29 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsH
 
     public class FriendsHolder extends RecyclerView.ViewHolder{
         protected TextView textView;
-        protected ImageButton accept;
+        protected ImageButton accept, removeFriend;
         public FriendsHolder(View itemView){
             super(itemView);
-            textView = (TextView)itemView.findViewById(R.id.textview);
-            accept = (ImageButton) itemView.findViewById(R.id.aceitarAmigo);
+            textView = itemView.findViewById(R.id.textview);
+            accept = itemView.findViewById(R.id.aceitarAmigo);
             accept.setVisibility(View.GONE);
+            removeFriend = itemView.findViewById(R.id.recusarAmigo);
+            configureRemoveFriend();
+        }
+
+        protected void configureRemoveFriend(){
+            removeFriend.setOnClickListener(v -> {
+                for (Friend friend : list) {
+                    if(friend.getName().contentEquals(textView.getText())){
+                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                        firestore.document("amizades/amigos/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid() + "/" + friend.getUID()).delete();
+                        list.remove(getAdapterPosition());
+                        notifyItemRemoved(getAdapterPosition());
+                        notifyItemRangeChanged(getAdapterPosition(),list.size());
+                        break;
+                    }
+                }
+            });
         }
     }
 }

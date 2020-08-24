@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.example.histoquiz.R;
 import com.example.histoquiz.adapters.FriendsAdapter;
 import com.example.histoquiz.adapters.FriendshipRequestAdapter;
+import com.example.histoquiz.model.Friend;
 import com.example.histoquiz.model.FriendRequest;
 import com.example.histoquiz.util.FormFieldValidator;
 import com.google.android.gms.tasks.Task;
@@ -44,9 +45,8 @@ public class FriendsFragment extends Fragment {
     protected RecyclerView friendshipRequestList;
     protected View friendView;
     protected Context context;
-    protected ArrayList<String> friendsSource;
+    protected ArrayList<Friend> friendsSource;
     protected ArrayList<FriendRequest> friendRequestSource;
-    protected HashMap<String, String> friendRequestUID;
     protected List<String> aux1, aux2;
     protected RecyclerView.LayoutManager RecyclerViewLayoutManager;
     protected FriendsAdapter adapter;
@@ -151,7 +151,7 @@ public class FriendsFragment extends Fragment {
                     else {
                         name = separatedName[0];
                     }
-                    friendsSource.add(name);
+                    friendsSource.add(new Friend(name, documentSnapshot.getId()));
                 }
                 adapter = new FriendsAdapter(friendsSource);
                 friendsList.setAdapter(adapter);

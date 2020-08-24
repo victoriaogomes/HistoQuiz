@@ -96,6 +96,7 @@
     <string name="seuOponente">seu oponente!</string>
     <string name="pontFinalVc">Você:</string>
     <string name="pontFinalOponente">Oponente:</string>
+    <string name="configJogo">Configurando jogo. Por favor, aguarde...</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>

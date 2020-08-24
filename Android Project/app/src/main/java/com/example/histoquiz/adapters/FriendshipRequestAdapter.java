@@ -12,13 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.histoquiz.R;
 import com.example.histoquiz.fragments.FriendsFragment;
 import com.example.histoquiz.model.FriendRequest;
-import com.example.histoquiz.model.Slide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipRequestAdapter.FriendshipRequestHolder> {
@@ -53,10 +51,11 @@ public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipReq
         protected ImageButton removeRequest, acceptRequest;
         public FriendshipRequestHolder(View itemView){
             super(itemView);
-            textView = (TextView)itemView.findViewById(R.id.textview);
-            acceptRequest = (ImageButton) itemView.findViewById(R.id.aceitarAmigo);
-            removeRequest = (ImageButton) itemView.findViewById(R.id.recusarAmigo);
+            textView = itemView.findViewById(R.id.textview);
+            acceptRequest = itemView.findViewById(R.id.aceitarAmigo);
+            removeRequest = itemView.findViewById(R.id.recusarAmigo);
             configureAcceptFriendship();
+            configureRejectFriendship();
         }
 
         protected void configureAcceptFriendship(){
@@ -72,6 +71,21 @@ public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipReq
                        manager.getFriends();
                        break;
                    }
+                }
+            });
+        }
+
+        protected void configureRejectFriendship(){
+            removeRequest.setOnClickListener(view -> {
+                for (FriendRequest request : list) {
+                    if(request.getName().contentEquals(textView.getText())){
+                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                        firestore.document("amizades/solicitacoes/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid() + "/" + request.getUID()).delete();
+                        list.remove(getAdapterPosition());
+                        notifyItemRemoved(getAdapterPosition());
+                        notifyItemRangeChanged(getAdapterPosition(),list.size());
+                        break;
+                    }
                 }
             });
         }

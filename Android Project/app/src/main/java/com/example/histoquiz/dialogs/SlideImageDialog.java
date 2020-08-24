@@ -7,9 +7,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -20,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.histoquiz.R;
@@ -54,7 +50,7 @@ public class SlideImageDialog extends DialogFragment implements View.OnClickList
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        Objects.requireNonNull(this.getActivity()).getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -100,10 +96,8 @@ public class SlideImageDialog extends DialogFragment implements View.OnClickList
             return myImageView;
         });
         imageToShow(0);
-        Animation out = AnimationUtils.loadAnimation(parent, android.R.anim.slide_out_right);
-        Animation in = AnimationUtils.loadAnimation(parent, android.R.anim.slide_in_left);
-        imageSwitcher.setOutAnimation(out);
-        imageSwitcher.setInAnimation(in);
+        imageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(parent, android.R.anim.slide_out_right));
+        imageSwitcher.setInAnimation(AnimationUtils.loadAnimation(parent, android.R.anim.slide_in_left));
     }
 
     @Override
@@ -121,26 +115,30 @@ public class SlideImageDialog extends DialogFragment implements View.OnClickList
 
     public void imageToShow(int position){
         Object [] keySet = parent.mySlides.keySet().toArray();
+        Integer aux = 0;
         Toast.makeText(parent, Arrays.toString(keySet), Toast.LENGTH_LONG).show();
         switch (parent.myOpponent.slideToGuess){
             case "firstSlide":
-                storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(keySet[3])).getImages().get(position));
-                imagesAmount = Objects.requireNonNull(parent.mySlides.get(keySet[3])).getImages().size();
-                slideName.setText(String.format(Locale.getDefault(), "%s: foto %d de %d", Objects.requireNonNull(parent.mySlides.get(keySet[3])).getName(), position + 1, imagesAmount));
+                aux = (Integer) keySet[3];
                 break;
             case "secondSlide":
-                storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(keySet[4])).getImages().get(position));
-                imagesAmount = Objects.requireNonNull(parent.mySlides.get(keySet[4])).getImages().size();
-                slideName.setText(String.format(Locale.getDefault(), "%s: foto %d de %d", Objects.requireNonNull(parent.mySlides.get(keySet[4])).getName(), position + 1, imagesAmount));
+                aux = (Integer) keySet[4];
                 break;
             case "thirdSlide":
-                storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(keySet[5])).getImages().get(position));
-                imagesAmount = Objects.requireNonNull(parent.mySlides.get(keySet[5])).getImages().size();
-                slideName.setText(String.format(Locale.getDefault(), "%s: foto %d de %d", Objects.requireNonNull(parent.mySlides.get(keySet[5])).getName(), position + 1, imagesAmount));
+                aux = (Integer) keySet[5];
                 break;
         }
+        storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(aux)).getImages().get(position));
+        imagesAmount = Objects.requireNonNull(parent.mySlides.get(aux)).getImages().size();
+        slideName.setText(String.format(Locale.getDefault(), "%s: foto %d de %d", Objects.requireNonNull(parent.mySlides.get(aux)).getName(), position + 1, imagesAmount));
         if(imagesAmount == 1 || (position+1) == imagesAmount){
             this.position = -1;
+        }
+        if(imagesAmount == 1){
+            next.setVisibility(View.GONE);
+        }
+        else{
+            next.setVisibility(View.VISIBLE);
         }
         GlideApp.with(parent).load(storageReference).into((ImageView) imageSwitcher.getCurrentView());
     }

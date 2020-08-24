@@ -1,5 +1,6 @@
 package com.example.histoquiz.util;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -25,6 +26,12 @@ public class ComputerOpponent {
     protected boolean trueAnswer;
     protected LinkedList<String> askedQuestions;
 
+    protected static final long START_TIME_IN_MILLIS = 120000;
+    protected CountDownTimer countDownTimer;
+    protected boolean mTimerRunning;
+    protected long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+    protected String state;
+
     public ComputerOpponent(GameActivity game_scene, HashMap<String, Map<String, Object>> perguntas, HashMap<Integer, Slide> slides){
         this.game_scene = game_scene;
         this.perguntas = perguntas;
@@ -35,41 +42,56 @@ public class ComputerOpponent {
                 raffledCategory = i;
             }
         }
+        countDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
+            @Override
+            public void onTick(long l) {
+                mTimeLeftInMillis = l;
+                int minutes = (int) (mTimeLeftInMillis/1000)/60;
+                int seconds = (int) (mTimeLeftInMillis/1000)%60;
+                game_scene.timer.setText("Tempo para realizar uma jogada: " + minutes + ":" + seconds);
+            }
+            @Override
+            public void onFinish() {
+                endTimer();
+            }
+        };
         rndGenerator = new Random();
         raffledValue = generateRaffledValue(100, 1);
         _estado_A();
     }
 
     public void _estado_A(){
-        game_scene.showTextToWaitOpponent("Aguardando oponente selecionar uma pergunta...");
+        game_scene.showTextToPlayer("Aguardando oponente selecionar uma pergunta...");
         (new Handler()).postDelayed(this::_estado_B, 2000);
     }
 
     public void _estado_B(){
-        String questionText;
         if(!general){
             raffledCategory = generateRaffledValue(perguntas.keySet().size(), 0);
         }
-        numberOfQuestions = Objects.requireNonNull(perguntas.get(perguntas.keySet().toArray()[raffledCategory])).size();
+        numberOfQuestions = Objects.requireNonNull(perguntas.get(game_scene.getCategoryName(raffledCategory))).size();
         raffledQuestion = generateRaffledValue(numberOfQuestions, 0);
-        questionText = game_scene.getQuestionText(raffledCategory, raffledQuestion);
-        while (askedQuestions.contains(questionText)){
+        while (askedQuestions.contains(game_scene.getQuestionText(raffledCategory, raffledQuestion))){
+            if(!general) raffledCategory = generateRaffledValue(perguntas.keySet().size(), 0);
+            numberOfQuestions = Objects.requireNonNull(perguntas.get(game_scene.getCategoryName(raffledCategory))).size();
             raffledQuestion = generateRaffledValue(numberOfQuestions, 0);
-            questionText = game_scene.getQuestionText(raffledCategory, raffledQuestion);
         }
-        askedQuestions.add(questionText);
-        game_scene.setQuestionForPlayerAnswer(questionText);
+        askedQuestions.add(game_scene.getQuestionText(raffledCategory, raffledQuestion));
+        game_scene.setQuestionForPlayerAnswer(game_scene.getQuestionText(raffledCategory, raffledQuestion));
+        state = "B";
+        startTimer();
     }
 
     public void _estado_C(boolean answer){
-        game_scene.showTextToWaitOpponent("Validando resposta...");
+        stopTimer();
+        game_scene.showTextToPlayer("Validando resposta...");
         (new Handler()).postDelayed(() -> _estado_D(answer), 2000);
     }
 
-    public void _estado_D(boolean answer){
-        Object [] keySet = game_scene.mySlides.keySet().toArray();
-        String text = "";
-        switch (slideToGuess){
+    public void _estado_D(Boolean answer){
+        Object[] keySet = game_scene.mySlides.keySet().toArray();
+        String text;
+        switch (slideToGuess) {
             case "firstSlide":
                 trueAnswer = game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, Integer.parseInt(keySet[3].toString()));
                 break;
@@ -80,17 +102,18 @@ public class ComputerOpponent {
                 trueAnswer = game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, Integer.parseInt(keySet[5].toString()));
                 break;
         }
-        if(trueAnswer == answer){
-            game_scene.changePlayerScore(1, 1);
-            text = "ganhou 1 ponto!";
+        if (trueAnswer) general = false;
+        if(answer != null) {
+            if (trueAnswer == answer) {
+                game_scene.changePlayerScore(1, 1);
+                text = "ganhou 1 ponto!";
+            } else {
+                game_scene.changePlayerScore(1, -1);
+                text = "perdeu 1 ponto!";
+            }
+            game_scene.showTextToPlayer("Você " + text + " Aguardando oponente analisar sua resposta...");
         }
-        else{
-            game_scene.changePlayerScore(1, -1);
-            text = "perdeu 1 ponto!";
-        }
-        if(trueAnswer) general = false;
-        game_scene.showTextToWaitOpponent("Você " + text + " Aguardando oponente analisar sua resposta...");
-        (new Handler()).postDelayed(() ->_estado_E(trueAnswer), 2000);
+        (new Handler()).postDelayed(() -> _estado_E(trueAnswer), 2000);
     }
 
     public void _estado_E(boolean trueAnswer){
@@ -102,27 +125,27 @@ public class ComputerOpponent {
             }
         }
         Toast.makeText(game_scene, "Possibilidades: " + slides.size(), Toast.LENGTH_LONG).show();
-        if(slides.size() <= 3){
+        if(slides.size() <= 3 && slides.size()>0){
             int position = 0;
             delay = 3000;
             Object [] keySet = game_scene.mySlides.keySet().toArray();
             String slideName = "";
             switch (slideToGuess){
                 case "firstSlide":
-                    slideName = game_scene.mySlides.get(Integer.parseInt(keySet[3].toString())).getName();
+                    slideName = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[3].toString()))).getName();
                     position = 0;
                     break;
                 case "secondSlide":
-                    slideName = game_scene.mySlides.get(Integer.parseInt(keySet[4].toString())).getName();
+                    slideName = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[4].toString()))).getName();
                     position = 1;
                     break;
                 case "thirdSlide":
-                    slideName = game_scene.mySlides.get(Integer.parseInt(keySet[5].toString())).getName();
+                    slideName = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[5].toString()))).getName();
                     position = 2;
                     break;
             }
-            if(slideName.equals(slides.get(slides.keySet().toArray()[0]).getName())){
-                game_scene.showTextToWaitOpponent("Seu oponente adivinhou sua lâmina e ganhou 3 pontos!");
+            if(slideName.equals(Objects.requireNonNull(slides.get(slides.keySet().toArray()[0])).getName())){
+                game_scene.showTextToPlayer("Seu oponente adivinhou sua lâmina e ganhou 3 pontos!");
                 game_scene.checkSlide(position, 2);
                 game_scene.changePlayerScore(2, 3);
                 slides = (HashMap<Integer, Slide>) game_scene.slides.clone();
@@ -133,9 +156,12 @@ public class ComputerOpponent {
                     }
                 }
                 askedQuestions = new LinkedList<>();
+                if(position == 2){
+                    _estado_M();
+                }
             }
             else{
-                game_scene.showTextToWaitOpponent("Seu oponente tentou adivinhar sua lâmina e errou. Você ganhou 3 pontos!");
+                game_scene.showTextToPlayer("Seu oponente tentou adivinhar sua lâmina e errou. Você ganhou 3 pontos!");
                 game_scene.changePlayerScore(1, 3);
                 slides.remove(slides.keySet().toArray()[0]);
             }
@@ -145,16 +171,19 @@ public class ComputerOpponent {
 
     public void _estado_F(){
         game_scene.showQuestionSelection();
+        state = "F";
+        startTimer();
     }
 
     public void _estado_G(){
+        stopTimer();
         game_scene.closeQuestionSelection();
-        game_scene.showTextToWaitOpponent("Enviando...");
+        game_scene.showTextToPlayer("Enviando...");
         (new Handler()).postDelayed(this::_estado_H, 2000);
     }
 
     public void _estado_H(){
-        game_scene.showTextToWaitOpponent("Aguardando resposta do oponente...");
+        game_scene.showTextToPlayer("Aguardando resposta do oponente...");
         (new Handler()).postDelayed(this::_estado_I, 2000);
     }
 
@@ -182,13 +211,17 @@ public class ComputerOpponent {
             game_scene.changePlayerScore(2, -1);
         }
         game_scene.showQuestionFeedback(myAnswer, game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), slide));
+        state = "I";
+        startTimer();
     }
 
     public void _estado_J(){
+        state = "J";
         game_scene.showGuessSlide();
     }
 
     public void _estado_K(String answer){
+        stopTimer();
         Object [] keySet = game_scene.mySlides.keySet().toArray();
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
@@ -221,11 +254,11 @@ public class ComputerOpponent {
     public void _estado_L(boolean answerValidation, boolean matchEnded){
         game_scene.closeGuessSlide();
         if(answerValidation){
-            if(matchEnded) game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
-            else game_scene.showTextToWaitOpponent("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
+            if(matchEnded) game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
+            else game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         else{
-            game_scene.showTextToWaitOpponent("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
+            game_scene.showTextToPlayer("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         if(matchEnded){
             (new Handler()).postDelayed(this::_estado_M, 2000);
@@ -241,6 +274,43 @@ public class ComputerOpponent {
 
     protected int generateRaffledValue(int limit, int start){
         return rndGenerator.nextInt(limit) + start;
+    }
+
+    protected void startTimer(){
+        if(mTimerRunning) stopTimer();
+        //Toast.makeText(game_scene, "Iniciando timer para o estado " + state + " com " + mTimeLeftInMillis + " segundos", Toast.LENGTH_LONG).show();
+        countDownTimer.start();
+        mTimerRunning = true;
+    }
+
+    protected void stopTimer(){
+        //Toast.makeText(game_scene, "Cancelando timer para o estado " + state, Toast.LENGTH_LONG).show();
+        countDownTimer.cancel();
+        mTimerRunning = false;
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+    }
+
+    protected void endTimer(){
+        game_scene.showTextToPlayer("Acabou o tempo para você realizar uma ação. Vamos para a próxima rodada!");
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+        mTimerRunning = false;
+        switch (state){
+            case "B":
+                (new Handler()).postDelayed(() -> _estado_D(null), 2000);
+                break;
+            case "F":
+                game_scene.closeQuestionSelection();
+                (new Handler()).postDelayed(this::_estado_A, 2000);
+                break;
+            case "I":
+                game_scene.closeQuestionFeedback();
+                (new Handler()).postDelayed(this::_estado_A, 2000);
+                break;
+            case "J":
+                game_scene.closeGuessSlide();
+                (new Handler()).postDelayed(this::_estado_A, 2000);
+                break;
+        }
     }
 
 }

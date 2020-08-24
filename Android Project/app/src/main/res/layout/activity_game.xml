@@ -118,15 +118,22 @@
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
+        <TextView
+            android:id="@+id/timer"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tempo para realizar uma jogada: 00:00"
+            android:fontFamily="@font/kabouter"
+            android:textSize="25sp"
+            android:textColor="@color/black">
+        </TextView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_vertical|center_horizontal"
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical">
-
-
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
