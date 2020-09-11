@@ -118,9 +118,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         button1.setTag("SISTEMA_REPRODUTOR");
         button2.setText(R.string.sistemaDigestorio);
         button2.setTag("SISTEMA_DIGESTORIO");
-        button3.setText(R.string.sistemaRespiratorio);
+        button3.setText(R.string.sistemaCardiopulmonar);
         button3.setTag("SISTEMA_RESPIRATORIO");
-        button4.setText(R.string.sistemaCardiovascular);
+        button4.setText(R.string.sistemaOsteomuscular);
         button4.setTag("SISTEMA_CARDIOVASCULAR");
         voltar.setVisibility(View.VISIBLE);
         voltar.setEnabled(true);

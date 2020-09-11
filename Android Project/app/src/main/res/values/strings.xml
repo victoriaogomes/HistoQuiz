@@ -35,10 +35,10 @@
     <string name="faleConosco">Fale conosco</string>
 
     <!--    Sistemas que podem ser revisados   -->
-    <string name="sistemaReprodutor">Sistema reprodutor</string>
-    <string name="sistemaDigestorio">Sistema digestório</string>
-    <string name="sistemaRespiratorio">Sistema respiratório</string>
-    <string name="sistemaCardiovascular">Sistema cardiovascular</string>
+    <string name="sistemaReprodutor">Sistema Reprodutor</string>
+    <string name="sistemaDigestorio">Sistema Digestório</string>
+    <string name="sistemaCardiopulmonar">Sistema Cardiopulmonar</string>
+    <string name="sistemaOsteomuscular">Sistema Osteomuscular</string>
 
     <!--    Erros durante o login   -->
     <string name="informeEmail">Informe seu email para realizar o login.</string>
