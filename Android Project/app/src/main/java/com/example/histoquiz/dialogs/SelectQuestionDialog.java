@@ -17,6 +17,10 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
 
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.Objects;
 
 public class SelectQuestionDialog extends AppCompatDialogFragment{
@@ -28,6 +32,7 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
     protected Spinner categories, questions;
     protected Object[] aux;
     protected String[] categoryNames;
+    protected int question, category;
 
 
     public SelectQuestionDialog(GameActivity parentActivity){
@@ -69,11 +74,11 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
 
 
     protected void populateCategoriesSpinner(){
-        aux =  parentActivity.perguntas.keySet().toArray();
-        categoryNames =  new String[aux.length];
-        for (int i=0;i<aux.length;i++) {
-            categoryNames[i] = aux[i].toString();
-        }
+        categoryNames =  parentActivity.perguntas.keySet().toArray(new String[0]);
+        Arrays.sort(categoryNames, (o1, o2) -> {
+            Collator usCollator = Collator.getInstance(new Locale("pt", "BR"));
+            return usCollator.compare(o1, o2);
+        });
         ArrayAdapter<String> adapter = new ArrayAdapter<>(parentActivity, R.layout.spinner_layout, categoryNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
         categories.setAdapter(adapter);
@@ -82,11 +87,11 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
 
 
     protected void populateQuestionSpinner(int category){
-        aux =  Objects.requireNonNull(parentActivity.perguntas.get(categoryNames[category])).keySet().toArray();
-        String[] questionTexts =  new String[aux.length];
-        for (int i=0;i<aux.length;i++) {
-            questionTexts[i] = aux[i].toString();
-        }
+        String[] questionTexts =  Objects.requireNonNull(parentActivity.perguntas.get(categoryNames[category])).keySet().toArray(new String[0]);
+        Arrays.sort(questionTexts, (o1, o2) -> {
+            Collator usCollator = Collator.getInstance(new Locale("pt", "BR"));
+            return usCollator.compare(o1, o2);
+        });
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(parentActivity, R.layout.spinner_layout, questionTexts);
         adapter2.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
         questions.setAdapter(adapter2);
@@ -98,7 +103,7 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
         categories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                parentActivity.setCategory(position);
+                category = position;
                 populateQuestionSpinner(position);
             }
 
@@ -110,7 +115,7 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
         questions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                parentActivity.setQuestion(position);
+                question = position;
             }
 
             @Override
@@ -123,6 +128,14 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
 
     protected void handleQuestionSelectionButton(){
         send.setOnClickListener(v -> {
+            if(parentActivity.PCopponent){
+                parentActivity.setCategory(category);
+                parentActivity.setQuestion(question);
+            }
+            else{
+                parentActivity.onlineOpponent.category = category;
+                parentActivity.onlineOpponent.question = question;
+            }
             parentActivity.handleQuestionSelectionButton();
         });
     }

@@ -60,11 +60,27 @@ public class ComputerOpponent {
         _estado_A();
     }
 
+
+    /**
+     * Método utilizado para solicitar ao jogador que aguarde o seu oponente selecionar uma pergunta
+     * para que ele responda
+     */
     public void _estado_A(){
         game_scene.showTextToPlayer("Aguardando oponente selecionar uma pergunta...");
         (new Handler()).postDelayed(this::_estado_B, 2000);
     }
 
+
+    /**
+     * Método utilizado para sortear uma categoria e uma pergunta e enviá-la para o jogador respon-
+     * der, vinda do seu oponente, que no caso é o computador. Inicialmente, o computador só pode
+     * selecionar perguntas da categoria "geral". Após selecionar uma pergunta e receber "sim" como
+     * resposta, o computador estará liberado para selecionar perguntas de todas as características
+     * disponíveis
+     * Não é possível selecionar a mesma pergunta mais de uma vez para uma mesma lâmina.
+     * Um timer de 2 minutos deve ser iniciado, que é o tempo que o jogador tem para responder a
+     * pergunta
+     */
     public void _estado_B(){
         if(!general){
             raffledCategory = generateRaffledValue(perguntas.keySet().size(), 0);
@@ -82,12 +98,26 @@ public class ComputerOpponent {
         startTimer();
     }
 
+
+    /**
+     * Método utilizado para informar ao jogador que sua resposta fornecida a pergunta do seu opo-
+     * nente (Computador) está sendo validada. Esse método também deve pausar o timer iniciado no
+     * método anterior (_estado_B())
+     * @param answer - resposta fornecida pelo jogador a pergunta que ele recebeu do PC
+     */
     public void _estado_C(boolean answer){
         stopTimer();
         game_scene.showTextToPlayer("Validando resposta...");
         (new Handler()).postDelayed(() -> _estado_D(answer), 2000);
     }
 
+
+    /**
+     * Método que efetivamente verifica se a resposta fornecida pelo jogador está correta, realiza a
+     * distribuição da pontuação de acordo com isso e fornece o feedback ao jogador. Caso tenha acer-
+     * tado a pergunta, o jogador ganha um ponto, e caso tenha errado, ele perde um ponto.
+     * @param answer - resposta fornecida pelo jogador
+     */
     public void _estado_D(Boolean answer){
         Object[] keySet = game_scene.mySlides.keySet().toArray();
         String text;
@@ -116,6 +146,15 @@ public class ComputerOpponent {
         (new Handler()).postDelayed(() -> _estado_E(trueAnswer), 2000);
     }
 
+
+    /**
+     * Método utilizado para remover do roll de possibilidades as lâminas cuja resposta a pergunta
+     * feita pelo PC não se adequam a resposta verdadeira recebida. Além disso, aqui é verificado
+     * quantas possibilidades de lâminas ainda estão disponíveis para serem advinhadas e, caso sejam
+     * 3 ou menos, o PC tenta adivinhar sua lâmina
+     * @param trueAnswer - resposta verdadeira da pergunta selecionada pelo PC para o jogador
+     *                     responder
+     */
     public void _estado_E(boolean trueAnswer){
         int delay = 1000;
         HashMap<Integer, Slide> copy = (HashMap<Integer, Slide>) slides.clone();
@@ -144,7 +183,7 @@ public class ComputerOpponent {
                     position = 2;
                     break;
             }
-            if(slideName.equals(Objects.requireNonNull(slides.get(slides.keySet().toArray()[0])).getName())){
+            if(slideName.equals(Objects.requireNonNull(slides.get(Integer.parseInt(slides.keySet().toArray()[0].toString()))).getName())){
                 game_scene.showTextToPlayer("Seu oponente adivinhou sua lâmina e ganhou 3 pontos!");
                 game_scene.checkSlide(position, 2);
                 game_scene.changePlayerScore(2, 3);
@@ -163,18 +202,29 @@ public class ComputerOpponent {
             else{
                 game_scene.showTextToPlayer("Seu oponente tentou adivinhar sua lâmina e errou. Você ganhou 3 pontos!");
                 game_scene.changePlayerScore(1, 3);
-                slides.remove(slides.keySet().toArray()[0]);
+                slides.remove(Integer.parseInt(slides.keySet().toArray()[0].toString()));
             }
         }
         (new Handler()).postDelayed(this::_estado_F, delay);
     }
 
+
+    /**
+     * Método utilizado para solicitar ao jogador que ele escolha uma categoria e uma pergunta para
+     * enviar para o PC responder. Além disso, um timer é iniciado, pois o jogador tem 2 minutos
+     * para realizar essa ação
+     */
     public void _estado_F(){
         game_scene.showQuestionSelection();
         state = "F";
         startTimer();
     }
 
+
+    /**
+     * Método utilizado para enviar ao jogador uma mensagem informando que sua pergunta está
+     * sendo repassada ao seu oponente (nesse caso, o computador)
+     */
     public void _estado_G(){
         stopTimer();
         game_scene.closeQuestionSelection();
@@ -182,11 +232,28 @@ public class ComputerOpponent {
         (new Handler()).postDelayed(this::_estado_H, 2000);
     }
 
+
+    /**
+     * Método utilizado para informar ao jogador que a resposta do seu oponente (o PC) a sua pergun-
+     * ta está sendo aguardada
+     */
     public void _estado_H(){
         game_scene.showTextToPlayer("Aguardando resposta do oponente...");
         (new Handler()).postDelayed(this::_estado_I, 2000);
     }
 
+
+    /**
+     * Método utilizado para sortear uma resposta para o computador fornecer a pergunta do jogador,
+     * e para fazer a modificação da pontuação do computador da seguinte forma:
+     *      - Caso tenha respondido corretamente, o computador ganha 1 ponto
+     *      - Caso tenha respondido erroneamente, o computador perde 1 ponto
+     * Além disso, após essa verificação é exibido para o jogador um feedback, exibindo a resposta
+     * que o PC forneceu a sua pergunta, a resposta correta e a modificação de pontuação que foi
+     * feita no score do seu adversário
+     * Em seguida, é perguntado para o jogador se ele deseja seguir para a próxima rodada, ou se
+     * quer tentar advinhar sua lâmina; ele terá também 2 minutos para tomar essa decisão.
+     */
     public void _estado_I(){
         raffledValue = generateRaffledValue(100, 1);
         myAnswer = raffledValue % 2 == 0;
@@ -215,11 +282,25 @@ public class ComputerOpponent {
         startTimer();
     }
 
+
+    /**
+     * Método utilizado para exibir ao jogador uma lista contendo todas as lâminas disponíveis no
+     * jogo, para que ele selecione a que ele acha que está tentando adivinhar
+     */
     public void _estado_J(){
         state = "J";
         game_scene.showGuessSlide();
     }
 
+
+    /**
+     * Método utilizado para verificar se a lâmina informada pelo jogador é realmente a que ele
+     * está tentando adivinhar, atribuindo pontuação da seguinte forma:
+     *      - Caso tenha acertado, o jogador ganha 3 pontos
+     *      - Caso tenha errado, o PC ganha 3 pontos
+     * Em seguida, o timer iniciado para o jogador selecionar a lâmina será pausado
+     * @param answer - lâmina informada pelo jogador
+     */
     public void _estado_K(String answer){
         stopTimer();
         Object [] keySet = game_scene.mySlides.keySet().toArray();
@@ -228,15 +309,15 @@ public class ComputerOpponent {
         int position = 0;
         switch (game_scene.slideToGuess){
             case "firstSlide":
-                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[0].toString()))).getName().toLowerCase();
                 position = 0;
                 break;
             case "secondSlide":
-                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[1].toString()))).getName().toLowerCase();
                 position = 1;
                 break;
             case "thirdSlide":
-                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[2].toString()))).getName().toLowerCase();
                 position = 2;
         }
         if(trueSlide.equals(answer.toLowerCase())){
@@ -251,6 +332,16 @@ public class ComputerOpponent {
         _estado_L(answerValidation, matchEnded);
     }
 
+
+    /**
+     * Método utilizado para exibir ao jogador o feedback relativo a sua tentativa de advinhar sua
+     * lâmina e:
+     *      - Seguir para a próxima rodada,caso ainda hajam lâminas para serem adivinhadas
+     *      - Seguir para o fim do jogo, caso o jogador já tenha advinhado todas as suas lâminas
+     * @param answerValidation - validação da resposta; true se o jogador tiver acertado a lâmina,
+     *                          e false caso tenha errado
+     * @param matchEnded - variável que indica se a partida deve ser finalizada ou não
+     */
     public void _estado_L(boolean answerValidation, boolean matchEnded){
         game_scene.closeGuessSlide();
         if(answerValidation){
@@ -268,28 +359,52 @@ public class ComputerOpponent {
         }
     }
 
+
+    /**
+     * Método utilizado para exibir o dialog que informa ao jogador que a partida foi finalizada,
+     * exibir as pontuações e informar quem ganhou o jogo
+     */
     public void _estado_M(){
         game_scene.showEndGameDialog();
     }
 
+
+    /**
+     * Método que retorna um valor aleatório gerado entre o máximo e o mínimo recebido por parâmetro
+     * @param limit - valor máximo do número aleatório que deve ser sorteado
+     * @param start - valor mínimo do número aleatório que deve ser sorteado
+     * @return - número aleatório gerado
+     */
     protected int generateRaffledValue(int limit, int start){
         return rndGenerator.nextInt(limit) + start;
     }
 
+
+    /**
+     * Método utilizado para iniciar o timer utilizado na partida
+     */
     protected void startTimer(){
         if(mTimerRunning) stopTimer();
-        //Toast.makeText(game_scene, "Iniciando timer para o estado " + state + " com " + mTimeLeftInMillis + " segundos", Toast.LENGTH_LONG).show();
         countDownTimer.start();
         mTimerRunning = true;
     }
 
+
+    /**
+     * Método utilizado para pausar o timer utilizado na partida
+     */
     protected void stopTimer(){
-        //Toast.makeText(game_scene, "Cancelando timer para o estado " + state, Toast.LENGTH_LONG).show();
         countDownTimer.cancel();
         mTimerRunning = false;
         mTimeLeftInMillis = START_TIME_IN_MILLIS;
     }
 
+
+    /**
+     * Método chamado quando o timer utilizado chega a 00min:00s. Ele exibe ao usuário uma mensagem
+     * informando a ele que o tempo para realização de uma ação acabou, aguarda um tempo e segue
+     * para a próxima ação do jogo
+     */
     protected void endTimer(){
         game_scene.showTextToPlayer("Acabou o tempo para você realizar uma ação. Vamos para a próxima rodada!");
         mTimeLeftInMillis = START_TIME_IN_MILLIS;

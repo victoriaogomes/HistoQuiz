@@ -1,6 +1,5 @@
 package com.example.histoquiz.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,17 +19,15 @@ import com.example.histoquiz.dialogs.SelectQuestionDialog;
 import com.example.histoquiz.dialogs.SlideImageDialog;
 import com.example.histoquiz.model.Slide;
 import com.example.histoquiz.util.ComputerOpponent;
+import com.example.histoquiz.util.OnlineOpponent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -39,18 +36,23 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     public Map<Integer, Slide> mySlides = new HashMap<>();
-    protected FirebaseDatabase realtimeDatabase;
-    protected FirebaseFirestore firestoreDatabase;
-    public DatabaseReference roomRef;
-    protected String roomName, opponentUID;
+
+
+    public FirebaseFirestore firestoreDatabase;
+
+
+    protected String opponentUID;
     protected FirebaseUser user;
-    protected boolean matchCreator, PCopponent;
+
+    public boolean matchCreator, PCopponent;
+
     public HashMap<String, Map<String, Object>> perguntas;
     public String slideToGuess = "firstSlide";
     protected int category, question;
-    protected TextView questionText, scorePlayer1, scorePlayer2;
+    public TextView questionText, scorePlayer1, scorePlayer2;
     protected Button yesAnswer, noAnswer;
-    public ComputerOpponent myOpponent;
+    public ComputerOpponent computerOpponent;
+    public OnlineOpponent onlineOpponent;
     protected ImageButton [] opponentSlidesButtons;
     protected ImageView [] opponentSlidesCheck;
     protected ImageView [] mySlidesCheck;
@@ -90,36 +92,27 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         initGUI();
         getSlides();
         getQuestions();
-        if(!PCopponent) { // Caso o oponente dessa partida NÃO seja o computador
-            if (matchCreator) {
-                //Cria uma sala para o jogo e se adiciona como jogador número 1
-                roomName = user.getUid();
-                roomRef = realtimeDatabase.getReference("partida/jogo/" + roomName + "/player1");
-            } else {//NÃO TESTADO AINDA
-                //Entra numa sala para o jogo que foi convidado e se adiciona como jogador número 2
-                roomName = opponentUID;
-                roomRef = realtimeDatabase.getReference("partida/jogo/" + roomName + "/player2");
-            }
-            roomRef.setValue(roomName);
-            addRoomEventListener();
-        }
-        else{
-            countDownTimer = new CountDownTimer(1000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
+        countDownTimer = new CountDownTimer(1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
 
+            }
+            @Override
+            public void onFinish() {
+                if(!(questionsDone && slidesDone)){
+                    countDownTimer.start();
                 }
-                @Override
-                public void onFinish() {
-                    if(!(questionsDone && slidesDone)){
-                        countDownTimer.start();
+                else{
+                    if(!PCopponent){ // Caso o oponente dessa partida NÃO seja o computador
+                        onlineOpponent = new OnlineOpponent(GameActivity.this, opponentUID, matchCreator);
                     }
-                    else{
-                        myOpponent = new ComputerOpponent(GameActivity.this, perguntas, slides);
+                    else {
+                        computerOpponent = new ComputerOpponent(GameActivity.this, perguntas, slides);
                     }
                 }
-            }.start();
-        }
+            }
+        }.start();
+
     }
 
 
@@ -148,12 +141,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 slide.setName(documentSnapshot.getId());
                 slides.put(slide.getCode(), slide);
             }
-            if(PCopponent) {
-                raffleSlides(queryDocumentSnapshots.size(), slides, 6);
-            }
-            else{
-                raffleSlides(queryDocumentSnapshots.size(), slides, 3);
-            }
+            raffleSlides(queryDocumentSnapshots.size(), slides, 6);
+//            if(PCopponent) {
+//                raffleSlides(queryDocumentSnapshots.size(), slides, 6);
+//            }
+//            else{
+//                raffleSlides(queryDocumentSnapshots.size(), slides, 3);
+//            }
             slidesDone = true;
         });
     }
@@ -188,32 +182,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         noAnswer.setTag("NO_ANSWER");
         noAnswer.setOnClickListener(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        realtimeDatabase = FirebaseDatabase.getInstance();
         firestoreDatabase = FirebaseFirestore.getInstance();
         selectQuestionDialog = new SelectQuestionDialog(this);
         guessSlideDialog = new GuessSlideDialog(this);
         endGameDialog = new EndGameDialog(this);
     }
-
-
-    /**
-     * Método para sincronizar as partidas virtuais
-     * AINDA NÃO IMPLEMENTADO
-     */
-    protected void addRoomEventListener(){
-        roomRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
 
     /**
      * Método utilizado para exibir ao usuário a tela para que ele selecione uma questão para
@@ -318,12 +291,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void raffleSlides(int slidesAmount, HashMap<Integer, Slide> slides, int raffleNumber) {
         Random rndGenerator = new Random();
         int raffledValue;
-        mySlides.put(41, slides.get(41));
-        mySlides.put(40, slides.get(40));
-        mySlides.put(42, slides.get(42));
-        mySlides.put(43, slides.get(43));
-        mySlides.put(46, slides.get(46));
-        mySlides.put(44, slides.get(44));
+        mySlides.put(41, slides.get(41)); // Fibrocartilagem
+        mySlides.put(40, slides.get(40)); // Cartilagem hialina
+        mySlides.put(42, slides.get(42)); // Cartilagem elástica
+        mySlides.put(43, slides.get(43)); // Tecido ósseo
+        mySlides.put(46, slides.get(46)); // Placa metafisária
+        mySlides.put(44, slides.get(44)); // Osteócito
+
 //        for (int i = 0; i < raffleNumber; i++) {
 //            raffledValue = rndGenerator.nextInt(slidesAmount);
 //            while (mySlides.containsKey(raffledValue)) {
@@ -420,9 +394,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * que deseja enviar ao oponente
      */
     public void handleQuestionSelectionButton(){
-        if(PCopponent){
-            myOpponent._estado_G();
-        }
+        if(PCopponent) computerOpponent._estado_G();
+        else onlineOpponent._estado_F();
+
     }
 
 
@@ -434,7 +408,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @return - texto da questão selecionada
      */
     public String getQuestionText(int category, int question){
-        return Objects.requireNonNull(perguntas.get(getCategoryName(category))).keySet().toArray()[question].toString();
+        String[] questions = Objects.requireNonNull(perguntas.get(getCategoryName(category))).keySet().toArray(new String[0]);
+        Arrays.sort(questions, (o1, o2) -> {
+            Collator usCollator = Collator.getInstance(new Locale("pt", "BR"));
+            return usCollator.compare(o1, o2);
+        });
+        return questions[question];
     }
 
 
@@ -444,7 +423,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @return - nome da categoria associada ao inteiro recebido por parâmetro
      */
     public String getCategoryName(int category){
-        return (String) perguntas.keySet().toArray()[category];
+        String[] categories = perguntas.keySet().toArray(new String[0]);
+        Arrays.sort(categories, (o1, o2) -> {
+            Collator usCollator = Collator.getInstance(new Locale("pt", "BR"));
+            return usCollator.compare(o1, o2);
+        });
+        return categories[category];
     }
 
 
@@ -458,8 +442,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     @SuppressWarnings("unchecked") // usado para suprimir o warning relativo ao cast no ArrayList
     public boolean getQuestionRealAnswer(int category, int question, int slide){
-        String cat = perguntas.keySet().toArray()[category].toString();
-        String quest = Objects.requireNonNull(perguntas.get(cat)).keySet().toArray()[question].toString();
+        String cat = getCategoryName(category);
+        String quest = getQuestionText(category, question);
         ArrayList<Boolean> respostas = (ArrayList<Boolean>) Objects.requireNonNull(perguntas.get(cat)).get(quest);
         assert respostas != null;
         return respostas.get(slide);
@@ -520,16 +504,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             case 1:
                 mySlidesCheck[position].setVisibility(View.VISIBLE);
                 switch (position){
-                    case 0: slideToGuess = "secondSlide"; break;
-                    case 1: slideToGuess = "thirdSlide"; break;
+                    case 0:
+                        if(PCopponent) slideToGuess = "secondSlide";
+                        else onlineOpponent.myRoomRef.child("slideToGuess").setValue("secondSlide");
+                        break;
+                    case 1:
+                        if(PCopponent) slideToGuess = "thirdSlide";
+                        else onlineOpponent.myRoomRef.child("slideToGuess").setValue("thirdSlide");
+                        break;
                     case 2: break;
                 }
                 break;
             case 2:
                 opponentSlidesCheck[position].setVisibility(View.VISIBLE);
                 switch (position){
-                    case 0: myOpponent.slideToGuess = "secondSlide"; break;
-                    case 1: myOpponent.slideToGuess = "thirdSlide"; break;
+                    case 0: computerOpponent.slideToGuess = "secondSlide"; break;
+                    case 1: computerOpponent.slideToGuess = "thirdSlide"; break;
                     case 2: break;
                 }
                 break;
@@ -549,12 +539,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case "YES_ANSWER":             // botão de responder pergunta afirmativamente
                 if (PCopponent){
-                    myOpponent._estado_C(true);
+                    computerOpponent._estado_C(true);
+                }
+                else{
+                    onlineOpponent._estado_C(true);
                 }
                 break;
             case "NO_ANSWER":              // botão de responder pergunta negativamente
                 if(PCopponent) {
-                    myOpponent._estado_C(false);
+                    computerOpponent._estado_C(false);
+                }
+                else{
+                    onlineOpponent._estado_C(false);
                 }
                 break;
         }

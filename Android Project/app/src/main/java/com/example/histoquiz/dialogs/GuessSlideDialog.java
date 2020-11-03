@@ -76,7 +76,8 @@ public class GuessSlideDialog extends AppCompatDialogFragment {
 
     protected void dealWithButtons(){
         send.setOnClickListener(v -> {
-            parent.myOpponent._estado_K(guess.getSelectedItem().toString());
+            if(parent.PCopponent) parent.computerOpponent._estado_K(guess.getSelectedItem().toString());
+            else parent.onlineOpponent._estado_J(guess.getSelectedItem().toString());
         });
     }
 }

@@ -14,9 +14,19 @@ import android.widget.Toast;
 import com.example.histoquiz.R;
 import com.example.histoquiz.util.FormFieldValidator;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.database.annotations.NotNull;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Objects;
 
@@ -93,6 +103,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if(checarTodosOsCampos()){
             firebase.signInWithEmailAndPassword(emailTxt, senhaTxt).addOnCompleteListener(this, task -> {
                 if (task.isSuccessful()) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
+                        assert user != null;
+                        DocumentReference ref = FirebaseFirestore.getInstance().collection("usuarios").document(user.getUid());
+                        ref.update("registrationToken", s);
+                    });
                     Intent troca = new Intent(SignInActivity.this, MenuActivity.class);
                     startActivity(troca);
                 } else {

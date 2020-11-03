@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Android Project-HistoQuiz.iml" filepath="$PROJECT_DIR$/.idea/modules/Android Project-HistoQuiz.iml" group="HistoQuiz" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HistoQuiz.iml" filepath="$PROJECT_DIR$/.idea/modules/HistoQuiz.iml" group="HistoQuiz" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HistoQuiz-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HistoQuiz-app.iml" group="HistoQuiz/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="HistoQuiz/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HistoQuiz.iml" filepath="$PROJECT_DIR$/.idea/modules/HistoQuiz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HistoQuiz.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HistoQuiz.app.iml" />
     </modules>
   </component>
 </project>

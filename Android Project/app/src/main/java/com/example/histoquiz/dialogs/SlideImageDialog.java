@@ -117,7 +117,7 @@ public class SlideImageDialog extends DialogFragment implements View.OnClickList
         Object [] keySet = parent.mySlides.keySet().toArray();
         Integer aux = 0;
         Toast.makeText(parent, Arrays.toString(keySet), Toast.LENGTH_LONG).show();
-        switch (parent.myOpponent.slideToGuess){
+        switch (parent.computerOpponent.slideToGuess){
             case "firstSlide":
                 aux = (Integer) keySet[3];
                 break;

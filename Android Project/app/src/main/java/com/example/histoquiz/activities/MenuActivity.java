@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.histoquiz.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
 

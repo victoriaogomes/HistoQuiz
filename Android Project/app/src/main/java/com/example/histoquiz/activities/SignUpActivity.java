@@ -17,7 +17,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -121,6 +124,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
              */
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                FirebaseUser user = firebase.getCurrentUser();
+                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                assert user != null;
                 if (task.isSuccessful()) {
                     String dataConta = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
                     Map<String, Object> dadosUsuario = new HashMap<>();
@@ -128,15 +134,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     dadosUsuario.put("univers", Objects.requireNonNull(universidade.getEditText()).getText().toString());
                     dadosUsuario.put("anoIng",  Objects.requireNonNull(anoIngresso.getEditText()).getText().toString());
                     dadosUsuario.put("dataConta", dataConta);
-                    FirebaseUser usuario = firebase.getCurrentUser();
-                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                    assert usuario != null;
-                    firestore.collection("usuarios").document(usuario.getUid()).set(dadosUsuario);
-                    dadosUsuario.clear();
-                    dadosUsuario.put("UID", usuario.getUid());
-                    firestore.collection("tabelaAuxiliar").document(Objects.requireNonNull(usuario.getEmail())).set(dadosUsuario);
-                    Intent troca = new Intent(SignUpActivity.this, MenuActivity.class);
-                    startActivity(troca);
+                    FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
+                        DocumentReference ref = FirebaseFirestore.getInstance().collection("usuarios").document(user.getUid());
+                        dadosUsuario.put("registrationToken", s);
+                        firestore.collection("usuarios").document(user.getUid()).set(dadosUsuario);
+                        dadosUsuario.clear();
+                        dadosUsuario.put("UID", user.getUid());
+                        firestore.collection("tabelaAuxiliar").document(Objects.requireNonNull(user.getEmail())).set(dadosUsuario);
+                        Intent troca = new Intent(SignUpActivity.this, MenuActivity.class);
+                        startActivity(troca);
+                    });
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
                     builder.setMessage(Objects.requireNonNull(task.getException()).getMessage()).setNeutralButton(R.string.ok, null);

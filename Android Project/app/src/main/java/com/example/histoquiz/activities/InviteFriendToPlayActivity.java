@@ -95,6 +95,7 @@ public class InviteFriendToPlayActivity extends AppCompatActivity {
                 Intent troca = new Intent(InviteFriendToPlayActivity.this, GameActivity.class);
                 troca.putExtra("matchCreator", true);
                 troca.putExtra("opponentUID", friendUID);
+                troca.putExtra("PCopponent", false);
                 startActivityForResult(troca, 999);
             }
             else if(Objects.equals(documentSnapshot.get("inviteAccepted"), "recusado")){

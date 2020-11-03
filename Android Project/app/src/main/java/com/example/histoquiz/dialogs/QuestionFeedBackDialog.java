@@ -83,11 +83,16 @@ public class QuestionFeedBackDialog extends AppCompatDialogFragment {
     protected void handleButtonsClicks(){
         nextRound.setOnClickListener(v -> {
             parentActivity.closeQuestionFeedback();
-            parentActivity.myOpponent._estado_A();
+            if(parentActivity.PCopponent) parentActivity.computerOpponent._estado_A();
+            else{
+                parentActivity.onlineOpponent.myRoomRef.child("nextRound").setValue("sim");
+                parentActivity.onlineOpponent._estado_A();
+            }
         });
         guessSlide.setOnClickListener(v -> {
             parentActivity.closeQuestionFeedback();
-            parentActivity.myOpponent._estado_J();
+            if(parentActivity.PCopponent) parentActivity.computerOpponent._estado_J();
+            else parentActivity.onlineOpponent._estado_I();
         });
     }
 }
