@@ -1,34 +1,29 @@
 package com.example.histoquiz.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.histoquiz.R;
 import com.example.histoquiz.util.FormFieldValidator;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.util.Objects;
+
 
 /**
  * Classe utilizada para lidar com o login e a criação de novas contas no HistoQuiz
@@ -41,6 +36,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     protected TextView esqueceuSenha, cadastrar;
     protected FormFieldValidator validarCampo;
 
+    // Variáveis para o controle da tela como fullscreen
+    private final Handler mHideHandler = new Handler();
+    private View mContentView;
+    private final Runnable mHideRunnable = this::hide;
+
 
     /**
      * Método chamado assim que essa activity é invocada.
@@ -50,16 +50,76 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_FULLSCREEN);
         initGui();
         validarCampo.monitorarCampo(email);
         validarCampo.monitorarCampo(senha);
+        mContentView = findViewById(R.id.fullContent);
+    }
+
+
+    /**
+     * Runnable utilizado para remover automaticamente a barra de botões e a de status dessa
+     * activity
+     */
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+
+
+    /**
+     * Runnable utilizado para exibir a barra de botões e a de status dessa activity quando o
+     * usuário solicitar
+     */
+    private final Runnable mShowPart2Runnable = () -> {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+    };
+
+
+    /**
+     * Método utilizado para fazer a primeira chamada ao método delayedHide, logo após a activitie
+     * ser criada, unicamente para exibir brevemente ao usuário que os controles de tela estão
+     * disponíveis
+     * @param savedInstanceState - contém o estado anteriormente salvo da atividade (pode ser nulo)
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        delayedHide();
+    }
+
+
+    /**
+     * Programa uma chamada ao método hide() após uma quantidade delayMillis de millisegundos,
+     * cancelando qualquer chamada programada previamente
+     */
+    private void delayedHide() {
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, 100);
+    }
+
+
+    /**
+     * Método utilizado para esconder a barra de botões
+     */
+    private void hide() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, 300);
     }
 
 
@@ -82,10 +142,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         cadastrar.setOnClickListener(this);
         firebase = FirebaseAuth.getInstance();
         validarCampo = new FormFieldValidator(this);
-//        email.getEditText().setText("victoria.oliveiragomes@gmail.com");
-//        senha.getEditText().setText("pjo30317512");
-//        email.getEditText().setText("eazevedo@hotmail.com");
-//        senha.getEditText().setText("eniale12345");
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
             Intent troca = new Intent(SignInActivity.this, MenuActivity.class);
             startActivity(troca);

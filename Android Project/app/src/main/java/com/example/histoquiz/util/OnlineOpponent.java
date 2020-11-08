@@ -3,9 +3,8 @@ package com.example.histoquiz.util;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
+import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.model.Slide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,7 +15,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,14 +41,26 @@ public class OnlineOpponent {
     protected int opponentCategoryId, opponentQuestionId;
     protected boolean trueAnswer;
     protected Boolean myOpponentAnswer;
-    protected String mySlideToGuess, opponentSlideToGuess;
+    public String mySlideToGuess, opponentSlideToGuess;
 
     protected String matchState = "onHold";
     protected String myPersonalMatchState = "onHold";
+    protected boolean matchCreator;
+    protected String opponentUID;
 
 
+    /**
+     * Método construtor da classe, utilizado para fazer as devidas ligações entre os listenners e
+     * certos campos no realtimeDatabase, bem como para criar a sala de jogo e realizar algumas con-
+     * figurações necessárias para a execução da partida
+     * @param game_scene - activity do tipo GameActivity, que instanciou essa classe e irá manipulá-la
+     * @param opponentUID - UID do oponente dessa partida
+     * @param matchCreator - variável booleana que informa se esse jogador é o criador da partida
+     */
     public OnlineOpponent(GameActivity game_scene, String opponentUID, boolean matchCreator){
         this.mySlideToGuess = "firstSlide";
+        this.opponentUID = opponentUID;
+        this.matchCreator = matchCreator;
         this.opponentSlideToGuess = "firstSlide";
         this.game_scene = game_scene;
         realtimeDatabase = FirebaseDatabase.getInstance();
@@ -77,7 +87,6 @@ public class OnlineOpponent {
             myRoomRef = realtimeDatabase.getReference("partida/jogo/" + roomName + "/player2");
             opponentRoomRef = realtimeDatabase.getReference("partida/jogo/" + roomName + "/player1");
             myRoomRef.child("UID").setValue(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-            myRoomRef.child("slides").setValue(new ArrayList<>(Arrays.asList(-1, -1, -1)));
             addListenerToSlides();
         }
         myRoomRef.child("slideToGuess").setValue("firstSlide");
@@ -89,10 +98,15 @@ public class OnlineOpponent {
         countDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
             @Override
             public void onTick(long l) {
+                String minutos, segundos;
                 mTimeLeftInMillis = l;
                 int minutes = (int) (mTimeLeftInMillis/1000)/60;
                 int seconds = (int) (mTimeLeftInMillis/1000)%60;
-                game_scene.timer.setText("Tempo para realizar uma jogada: " + minutes + ":" + seconds);
+                if(minutes < 10) minutos = "0" + minutes;
+                else minutos = Integer.toString(minutes);
+                if(seconds < 10) segundos = "0" + seconds;
+                else segundos = Integer.toString(seconds);
+                game_scene.timer.setText("Tempo: " + minutos + ":" + segundos);
             }
             @Override
             public void onFinish() {
@@ -117,6 +131,13 @@ public class OnlineOpponent {
         }
     }
 
+
+    /**
+     * Método chamado sempre que o estado atual da partida é alterado. Os estados podem ser:
+     *      - onHold: aguardando para começar
+     *      - running: partida rolando
+     *      - ended: partida finalizada
+     */
     protected void addListenerToMatch(){
         realtimeDatabase.getReference("partida/jogo/" + roomName).child("matchState").addValueEventListener(new ValueEventListener() {
             @Override
@@ -136,6 +157,11 @@ public class OnlineOpponent {
         });
     }
 
+
+    /**
+     * Método utilizado para obter as lâminas a serem utilizadas nessa partida, as quais são sortea-
+     * das e enviadas pelo usuário que criou essa partida
+     */
     protected void addListenerToSlides(){
         realtimeDatabase.getReference("partida/jogo/" + roomName).child("slides").addValueEventListener(new ValueEventListener() {
             @Override
@@ -163,12 +189,26 @@ public class OnlineOpponent {
     }
 
 
+    /**
+     * Método chamado sempre que seu oponente adivinhar uma das suas lâminas disponíveis, para indi-
+     * car que o alvo agora é a lâmina seguinte
+     */
     protected void addListenerToSlideToGuess(){
         opponentRoomRef.child("slideToGuess").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue()!=null) {
                     opponentSlideToGuess = snapshot.getValue().toString();
+                    switch(opponentSlideToGuess){
+                        case "firstSlide":
+                            break;
+                        case "secondSlide":
+                            game_scene.checkSlide(0, 2);
+                            break;
+                        case "thirdSlide":
+                            game_scene.checkSlide(1, 2);
+                            break;
+                    }
                 }
             }
 
@@ -180,13 +220,18 @@ public class OnlineOpponent {
     }
 
 
+    /**
+     * Método invocado sempre que o oponente responder a pergunta solicitada por esse usuário e ar-
+     * mazená-la no firebae
+     */
     protected void addListenerToAnswer(){
         opponentRoomRef.child("answer").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {
                     if (myPersonalMatchState.equals("waiting") && matchState.equals("running") && !snapshot.getValue().toString().equals("-")){
-                        myOpponentAnswer = snapshot.getValue().toString().equals("sim");
+                        if(snapshot.getValue().toString().equals("null")) myOpponentAnswer = null;
+                        else myOpponentAnswer = snapshot.getValue().toString().equals("sim");
                         opponentRoomRef.child("answer").setValue("-");
                         _estado_H();
                     }
@@ -224,6 +269,12 @@ public class OnlineOpponent {
         });
     }
 
+
+    /**
+     * Método chamado sempre que o oponente informar que a partida deve seguir para a próxima roda-
+     * da, que pode ocorrer porque ele não realizou uma ação no tempo estipulado, ou porque ele não
+     * deseja tentar adivinhar sua lâmina no momento
+     */
     protected void addListenerToNextRound(){
         opponentRoomRef.child("nextRound").addValueEventListener(new ValueEventListener() {
             @Override
@@ -304,7 +355,7 @@ public class OnlineOpponent {
     }
 
 
-    ////////////////////////// CÓDIGO DO OPPONENT  /////////////////////////////
+    //////////////////////////////////   MÁQUINA DE ESTADOS   /////////////////////////////////////
 
     /**
      * Método utilizado para solicitar ao jogador que aguarde o seu oponente selecionar uma pergunta
@@ -378,6 +429,10 @@ public class OnlineOpponent {
             if(answer) myRoomRef.child("answer").setValue("sim");
             else myRoomRef.child("answer").setValue("não");
         }
+        else{
+            game_scene.showTextToPlayer("Aguardando seu oponente analisar a resposta correta da sua pergunta...");
+            myRoomRef.child("answer").setValue("null");
+        }
     }
 
 
@@ -432,7 +487,6 @@ public class OnlineOpponent {
         myPersonalMatchState = "playing";
         int slide = 0;
         Object [] keySet = mySlides.keySet().toArray();
-        //game_scene.closeQuestionSelection();
         switch (mySlideToGuess){
             case "firstSlide":
                 slide =  Integer.parseInt(keySet[0].toString());
@@ -444,11 +498,13 @@ public class OnlineOpponent {
                 slide =  Integer.parseInt(keySet[2].toString());
                 break;
         }
-        if(game_scene.getQuestionRealAnswer(category, question, slide) == myOpponentAnswer){
-            game_scene.changePlayerScore(2, 1);
-        }
-        else{
-            game_scene.changePlayerScore(2, -1);
+        if(myOpponentAnswer != null){
+            if(game_scene.getQuestionRealAnswer(category, question, slide) == myOpponentAnswer){
+                game_scene.changePlayerScore(2, 1);
+            }
+            else{
+                game_scene.changePlayerScore(2, -1);
+            }
         }
         game_scene.showQuestionFeedback(myOpponentAnswer, game_scene.getQuestionRealAnswer(category, question, slide));
         state = "H";
@@ -478,21 +534,21 @@ public class OnlineOpponent {
     public void _estado_J(String answer){
         myPersonalMatchState = "playing";
         stopTimer();
-        Object [] keySet = game_scene.mySlides.keySet().toArray();
+        Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
         int position = 0;
         switch (mySlideToGuess){
             case "firstSlide":
-                trueSlide = Objects.requireNonNull(mySlides.get(Integer.parseInt(keySet[0].toString()))).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(mySlides.get(keySet[0])).getName().toLowerCase();
                 position = 0;
                 break;
             case "secondSlide":
-                trueSlide = Objects.requireNonNull(mySlides.get(Integer.parseInt(keySet[1].toString()))).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(mySlides.get(keySet[1])).getName().toLowerCase();
                 position = 1;
                 break;
             case "thirdSlide":
-                trueSlide = Objects.requireNonNull(mySlides.get(Integer.parseInt(keySet[2].toString()))).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(mySlides.get(keySet[2])).getName().toLowerCase();
                 position = 2;
         }
         if(trueSlide.equals(answer.toLowerCase())){
@@ -532,6 +588,7 @@ public class OnlineOpponent {
             realtimeDatabase.getReference("partida/jogo/" + roomName).child("matchState").setValue("ended");
         }
         else{
+            myRoomRef.child("nextRound").setValue("sim");
             (new Handler()).postDelayed(this::_estado_A, 2000);
         }
     }
@@ -539,9 +596,15 @@ public class OnlineOpponent {
 
     /**
      * Método utilizado para exibir o dialog que informa ao jogador que a partida foi finalizada,
-     * exibir as pontuações e informar quem ganhou o jogo
+     * exibir as pontuações, informar quem ganhou o jogo, apagar as informações desse convite de
+     * jogo armazenadas no firebase e apagar os dados dessa partida no realtime database
      */
     public void _estado_L(){
+        if(!matchCreator){
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.document("partida/convites/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid() + "/" + opponentUID).delete();
+            realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
+        }
         game_scene.showEndGameDialog();
     }
 
@@ -563,7 +626,7 @@ public class OnlineOpponent {
         countDownTimer.cancel();
         mTimerRunning = false;
         mTimeLeftInMillis = START_TIME_IN_MILLIS;
-        game_scene.timer.setText("Jogada do seu oponente...Aguarde!");
+        game_scene.timer.setText(game_scene.getString(R.string.vezOponente));
     }
 
 
@@ -582,14 +645,17 @@ public class OnlineOpponent {
                 break;
             case "E":
                 game_scene.closeQuestionSelection();
+                myRoomRef.child("nextRound").setValue("sim");
                 (new Handler()).postDelayed(this::_estado_A, 2000);
                 break;
             case "H":
                 game_scene.closeQuestionFeedback();
+                myRoomRef.child("nextRound").setValue("sim");
                 (new Handler()).postDelayed(this::_estado_A, 2000);
                 break;
             case "I":
                 game_scene.closeGuessSlide();
+                myRoomRef.child("nextRound").setValue("sim");
                 (new Handler()).postDelayed(this::_estado_A, 2000);
                 break;
         }

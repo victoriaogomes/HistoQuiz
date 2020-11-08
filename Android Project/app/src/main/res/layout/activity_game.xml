@@ -7,6 +7,7 @@
     android:background="@drawable/background"
     tools:context=".activities.GameActivity">
     <LinearLayout
+        android:id="@+id/fullContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -30,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/rodada"
                     android:textColor="@color/white"
@@ -60,7 +61,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:text="@string/player1"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
@@ -71,7 +72,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:layout_marginStart="2dp"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:gravity="end"
                             android:text="@string/pontuacaoInicial"
                             android:textColor="@color/white"
@@ -98,7 +99,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:text="@string/player2"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
@@ -109,7 +110,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:layout_marginStart="2dp"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:gravity="end"
                             android:text="@string/pontuacaoInicial"
                             android:textColor="@color/white"
@@ -124,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tempo para realizar uma jogada: 00:00"
-            android:fontFamily="@font/kabouter"
+            android:fontFamily="@font/pinkchicken"
             android:textSize="25sp"
             android:textColor="@color/black">
         </TextView>
@@ -157,6 +158,7 @@
                     android:paddingRight="60dp"
                     android:paddingBottom="10dp" />
                 <LinearLayout
+                    android:id="@+id/dialogs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
@@ -169,7 +171,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
-                        android:fontFamily="@font/kabouter"
+                        android:fontFamily="@font/pinkchicken"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="@string/pergunta"
                         android:textColor="@color/black"
@@ -189,7 +191,7 @@
                             android:textStyle="bold"
                             android:textAllCaps="false"
                             android:textSize="20sp"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:layout_gravity="center_horizontal|center_vertical"
                             android:background="@drawable/button_yes_style" />
                         <Button
@@ -203,7 +205,7 @@
                             android:textStyle="bold"
                             android:textAllCaps="false"
                             android:textSize="20sp"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:layout_gravity="center_horizontal|center_vertical"
                             android:background="@drawable/button_no_style"
                             />

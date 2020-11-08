@@ -1,9 +1,7 @@
 package com.example.histoquiz.util;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
@@ -13,6 +11,9 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 
+/**
+ * Classe necessária para auxiliar o Glide na aquisição de imagens do storage do firebase
+ */
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
     @Override

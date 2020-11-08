@@ -3,7 +3,7 @@
     android:id="@android:id/text1"
     android:background="@color/panelPurple"
     android:textSize="20sp"
-    android:fontFamily="@font/kabouter"
+    android:fontFamily="@font/pinkchicken"
     android:textColor="@color/white"
     style="?android:attr/spinnerItemStyle"
     android:layout_width="match_parent"

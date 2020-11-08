@@ -29,6 +29,7 @@
             app:startIconDrawable="@drawable/ic_pen"
             android:layout_width="match_parent"
             android:paddingTop="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
             android:paddingBottom="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -36,13 +37,13 @@
             android:textColorHint="@color/grey"
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
+                android:background="@drawable/text_edit_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints=""
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="22sp"
                 android:textColor="@color/black"
-                android:background="@drawable/text_edit_style"
                 android:hint="@string/textBoxHint"
                 android:inputType="textPersonName"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -56,6 +57,7 @@
             android:layout_marginEnd="5dp"
             app:errorEnabled="true"
             android:hint="@string/email"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
             android:textColorHint="@color/grey"
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
@@ -64,9 +66,9 @@
                 android:autofillHints=""
                 android:textSize="22sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/kabouter"
-                android:background="@drawable/text_edit_style"
+                android:fontFamily="@font/pinkchicken"
                 android:hint="@string/textBoxHint"
+                android:background="@drawable/text_edit_style"
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
@@ -74,6 +76,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:layout_marginStart="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
             android:layout_marginEnd="5dp"
             android:hint="@string/senha"
             android:textColorHint="@color/grey"
@@ -85,8 +88,9 @@
                 android:background="@drawable/text_edit_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="22sp"
+                android:textColor="@color/black"
                 android:autofillHints=""
                 android:hint="@string/textBoxHint"
                 android:inputType="textPassword"/>
@@ -101,16 +105,17 @@
             app:startIconDrawable="@drawable/ic_graduation_cap"
             android:hint="@string/universidade"
             app:errorEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
             android:textColorHint="@color/grey"
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
+                android:background="@drawable/text_edit_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="22sp"
                 android:autofillHints=""
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textColor="@color/black"
-                android:background="@drawable/text_edit_style"
                 android:hint="@string/textBoxHint"
                 android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -122,18 +127,19 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:hint="@string/anoIngresso"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
             android:textColorHint="@color/grey"
             app:errorEnabled="true"
             app:startIconDrawable="@drawable/ic_calendar"
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
+                android:background="@drawable/text_edit_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints=""
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="22sp"
                 android:textColor="@color/black"
-                android:background="@drawable/text_edit_style"
                 android:hint="@string/textBoxHint"
                 android:inputType="date"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -143,7 +149,7 @@
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:fontFamily="@font/kabouter"
+            android:fontFamily="@font/pinkchicken"
             android:textSize="20sp"
             android:textAllCaps="false"
             android:textColor="@color/white"

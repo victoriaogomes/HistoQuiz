@@ -3,19 +3,24 @@
     package="com.example.histoquiz">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.InviteFriendToPlayActivity"/>
+        <activity
+            android:name=".activities.FullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fullscreen"
+            android:theme="@style/AppTheme.Fullscreen"></activity>
+        <activity android:name=".activities.InviteFriendToPlayActivity" />
         <activity android:name=".activities.GameActivity" />
         <activity android:name=".activities.MyAccountActivity" />
         <activity android:name=".activities.SignUpActivity" />
@@ -23,6 +28,7 @@
         <activity android:name=".activities.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -33,18 +39,14 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-<!--Os trechos de código abaixo tratam o recebimento de notificações com o app em segundo plano-->
-        <!--        Ícone que aparece na notificação       -->
+        </service> <!-- Os trechos de código abaixo tratam o recebimento de notificações com o app em segundo plano -->
+        <!-- Ícone que aparece na notificação -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_microscope"/>
-        <!--        Cor do texto da notificação       -->
+            android:resource="@drawable/ic_microscope" /> <!-- Cor do texto da notificação -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/darkPurple"/>
-        <!--        Texto da notificação       -->
+            android:resource="@color/darkPurple" /> <!-- Texto da notificação -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />

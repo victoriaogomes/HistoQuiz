@@ -13,7 +13,13 @@
     <color name="panelPurple">#cd715098</color>
     <color name="grey">#66000000</color>
     <color name="red">#e83737</color>
+    <color name="yellow">#E2FFEB3B</color>
     <color name="green">#6fd664</color>
+    <color name="mtrl_textinput_default_box_stroke_color">#715098</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
 </resources>

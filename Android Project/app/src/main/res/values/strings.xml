@@ -75,6 +75,8 @@
     <string name="centro">Imagem central do jogo</string>
     <string name="sim">Sim</string>
     <string name="nao">Não</string>
+    <string name="naoResp">Não \n respondeu</string>
+    <string name="vezOponente">Jogada do seu oponente…Aguarde!</string>
     <string name="adivinharLamina">Qual é a lâmina?</string>
     <string name="informeLamina">Lâmina</string>
     <string name="enviar">Enviar</string>
@@ -97,10 +99,15 @@
     <string name="pontFinalVc">Você:</string>
     <string name="pontFinalOponente">Oponente:</string>
     <string name="configJogo">Configurando jogo. Por favor, aguarde...</string>
+    <string name="semSolic">Não há nenhuma solicitação de amizade para você no momento!</string>
+    <string name="semAmg">Poxa, você ainda não adicionou nenhum amigo!</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

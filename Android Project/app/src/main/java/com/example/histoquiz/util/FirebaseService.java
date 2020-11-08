@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.activities.SignInActivity;
@@ -21,10 +19,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
 import java.util.Objects;
 
+/**
+ * Classe utilizada para manipular o recebimento de notificações pelo FirebaseMessagingService
+ */
 public class FirebaseService extends FirebaseMessagingService {
+
 
     /**
      * Método utilizado para tratar o recebimento de notificações quando o aplicativo
@@ -40,6 +41,7 @@ public class FirebaseService extends FirebaseMessagingService {
             sendNotification(Objects.requireNonNull(remoteMessage.getNotification().getTitle()), remoteMessage.getNotification().getBody());
         }
     }
+
 
     /**
      * Método responsável por gerar uma notificação na barra de notificações do android
@@ -77,6 +79,7 @@ public class FirebaseService extends FirebaseMessagingService {
         }
         notificationManager.notify(0, notification.build());
     }
+
 
     /**
      * Método chamado sempre que um novo token é criado para essa instância do aplicativo que se

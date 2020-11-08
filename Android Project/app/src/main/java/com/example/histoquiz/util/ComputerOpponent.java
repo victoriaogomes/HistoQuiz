@@ -3,10 +3,8 @@ package com.example.histoquiz.util;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.widget.Toast;
-
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.model.Slide;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,6 +30,15 @@ public class ComputerOpponent {
     protected long mTimeLeftInMillis = START_TIME_IN_MILLIS;
     protected String state;
 
+
+    /**
+     * Método construtor da classe, recebe a activity responsável por criá-la e gerenciá-la, as per-
+     * guntas armazenadas no firebase e as lâminas disponíveis
+     * @param game_scene - scene que instanciou essa classe
+     * @param perguntas - perguntas relativas a lâminas, e separadas por categorias, que estão dis-
+     *                    poníveis no firebase
+     * @param slides - lâminas cadastradas no firebase
+     */
     public ComputerOpponent(GameActivity game_scene, HashMap<String, Map<String, Object>> perguntas, HashMap<Integer, Slide> slides){
         this.game_scene = game_scene;
         this.perguntas = perguntas;
@@ -45,10 +52,15 @@ public class ComputerOpponent {
         countDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
             @Override
             public void onTick(long l) {
+                String minutos, segundos;
                 mTimeLeftInMillis = l;
                 int minutes = (int) (mTimeLeftInMillis/1000)/60;
                 int seconds = (int) (mTimeLeftInMillis/1000)%60;
-                game_scene.timer.setText("Tempo para realizar uma jogada: " + minutes + ":" + seconds);
+                if(minutes < 10) minutos = "0" + minutes;
+                else minutos = Integer.toString(minutes);
+                if(seconds < 10) segundos = "0" + seconds;
+                else segundos = Integer.toString(seconds);
+                game_scene.timer.setText("Tempo: " + minutos + ":" + segundos);
             }
             @Override
             public void onFinish() {
@@ -167,23 +179,23 @@ public class ComputerOpponent {
         if(slides.size() <= 3 && slides.size()>0){
             int position = 0;
             delay = 3000;
-            Object [] keySet = game_scene.mySlides.keySet().toArray();
+            Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
             String slideName = "";
             switch (slideToGuess){
                 case "firstSlide":
-                    slideName = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[3].toString()))).getName();
+                    slideName = Objects.requireNonNull(game_scene.mySlides.get(keySet[3])).getName();
                     position = 0;
                     break;
                 case "secondSlide":
-                    slideName = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[4].toString()))).getName();
+                    slideName = Objects.requireNonNull(game_scene.mySlides.get(keySet[4])).getName();
                     position = 1;
                     break;
                 case "thirdSlide":
-                    slideName = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[5].toString()))).getName();
+                    slideName = Objects.requireNonNull(game_scene.mySlides.get(keySet[5])).getName();
                     position = 2;
                     break;
             }
-            if(slideName.equals(Objects.requireNonNull(slides.get(Integer.parseInt(slides.keySet().toArray()[0].toString()))).getName())){
+            if(slideName.equals(Objects.requireNonNull(slides.get(slides.keySet().toArray(new Integer[0])[0])).getName())){
                 game_scene.showTextToPlayer("Seu oponente adivinhou sua lâmina e ganhou 3 pontos!");
                 game_scene.checkSlide(position, 2);
                 game_scene.changePlayerScore(2, 3);
@@ -258,17 +270,17 @@ public class ComputerOpponent {
         raffledValue = generateRaffledValue(100, 1);
         myAnswer = raffledValue % 2 == 0;
         int slide = 0;
-        Object [] keySet = game_scene.mySlides.keySet().toArray();
+        Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
         game_scene.closeQuestionSelection();
         switch (game_scene.slideToGuess){
             case "firstSlide":
-                slide =  Integer.parseInt(keySet[0].toString());
+                slide = keySet[0];
                 break;
             case "secondSlide":
-                slide =  Integer.parseInt(keySet[1].toString());
+                slide = keySet[1];
                 break;
             case "thirdSlide":
-                slide =  Integer.parseInt(keySet[2].toString());
+                slide = keySet[2];
                 break;
         }
         if(game_scene.getQuestionRealAnswer(game_scene.getCategory(), game_scene.getQuestion(), slide) == myAnswer){
@@ -303,21 +315,21 @@ public class ComputerOpponent {
      */
     public void _estado_K(String answer){
         stopTimer();
-        Object [] keySet = game_scene.mySlides.keySet().toArray();
+        Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
         int position = 0;
         switch (game_scene.slideToGuess){
             case "firstSlide":
-                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[0].toString()))).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getName().toLowerCase();
                 position = 0;
                 break;
             case "secondSlide":
-                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[1].toString()))).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getName().toLowerCase();
                 position = 1;
                 break;
             case "thirdSlide":
-                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(Integer.parseInt(keySet[2].toString()))).getName().toLowerCase();
+                trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getName().toLowerCase();
                 position = 2;
         }
         if(trueSlide.equals(answer.toLowerCase())){

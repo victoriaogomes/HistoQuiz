@@ -19,33 +19,71 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Classe utilizada para auxiliar na exibição da lista de solicitações de amizade que o usuário
+ * logado no momento possui
+ */
 public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipRequestAdapter.FriendshipRequestHolder> {
 
-    private List<FriendRequest> list;
-    private FriendsFragment manager;
+    private final List<FriendRequest> list;
+    private final FriendsFragment manager;
 
+
+    /**
+     * Método construtor da classe, recebe a lista de solicitações de amizade desse usuário que deve
+     * ser exibida
+     * @param horizontalList - lista de solicitações de amizade do usuário logado no momento
+     * @param manager - fragmento que onde essa lista será exibida
+     */
     public FriendshipRequestAdapter(List<FriendRequest> horizontalList, FriendsFragment manager){
         this.manager = manager;
         this.list = horizontalList;
     }
 
+
+    /**
+     * Método chamado quando o RecyclerView precisa de um novo ViewHolder para listar mais um
+     * item (nesse caso, mais uma solicitação de amizade)
+     * @param parent - ViewGroup no qual a nova View será adicionada após ser vinculada a uma
+     *                 posição do adapter.
+     * @param viewType - O tipo da nova view
+     * @return - um novo ViewHolder do tipo FriendshipRequestHolder
+     */
     @NonNull
     @Override
-    public FriendshipRequestAdapter.FriendshipRequestHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FriendshipRequestHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend, parent, false);
         return new FriendshipRequestAdapter.FriendshipRequestHolder(itemView);
     }
 
+
+    /**
+     * Método chamado pelo RecyclerView para exibir os dados na posição especificada. Esse método
+     * deve atualizar o conteúdo do amigo exibido para refletir a solicitação de amizade presente
+     * na posição especificada da lista.
+     * @param holder - o usuário que deve ser atualizado para representar o conteúdo
+     * @param position - A posição do item no conjunto de dados do adapter
+     */
     @Override
     public void onBindViewHolder(@NonNull FriendshipRequestAdapter.FriendshipRequestHolder holder, int position) {
         holder.textView.setText(list.get(position).getName());
     }
 
+
+    /**
+     * Método que retorna o número de solicitações de amizade que o usuário logado atualmente possui
+     * @return - número de solicitações de amizade
+     */
     @Override
     public int getItemCount() {
         return list.size();
     }
 
+
+    /**
+     * Classe interna utilizada para exibir cada uma das solicitações de amizade desse usuário, e
+     * lidar com os cliques no botão de aceitar ou recusar solicitação de amizade
+     */
     public class FriendshipRequestHolder extends RecyclerView.ViewHolder{
         TextView textView;
         protected ImageButton removeRequest, acceptRequest;
@@ -58,6 +96,10 @@ public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipReq
             configureRejectFriendship();
         }
 
+
+        /**
+         * Método utilizado para aceitar a solicitação de amizade de um usuário
+         */
         protected void configureAcceptFriendship(){
             acceptRequest.setOnClickListener(view -> {
                 for (FriendRequest request : list) {
@@ -65,16 +107,22 @@ public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipReq
                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                        firestore.document("amizades/solicitacoes/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid() + "/" + request.getUID()).delete();
                        firestore.document("amizades/amigos").collection(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).document(request.getUID()).set(new HashMap<String, Object>());
+                       firestore.document("amizades/amigos").collection(request.getUID()).document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).set(new HashMap<String, Object>());
                        list.remove(getAdapterPosition());
                        notifyItemRemoved(getAdapterPosition());
                        notifyItemRangeChanged(getAdapterPosition(),list.size());
                        manager.getFriends();
+                       manager.getFriendRequests();
                        break;
                    }
                 }
             });
         }
 
+
+        /**
+         * Método utilizado para rejeitar uma solicitação de amizade feita por um usuário
+         */
         protected void configureRejectFriendship(){
             removeRequest.setOnClickListener(view -> {
                 for (FriendRequest request : list) {
@@ -84,6 +132,7 @@ public class FriendshipRequestAdapter extends RecyclerView.Adapter<FriendshipReq
                         list.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
                         notifyItemRangeChanged(getAdapterPosition(),list.size());
+                        manager.getFriendRequests();
                         break;
                     }
                 }

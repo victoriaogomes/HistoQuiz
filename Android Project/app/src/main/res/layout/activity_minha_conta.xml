@@ -9,6 +9,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.MyAccountActivity">
     <androidx.cardview.widget.CardView
+        android:id="@+id/fullContent"
         android:layout_width="match_parent"
         app:cardCornerRadius="10dp"
         app:cardBackgroundColor="@color/panelPurple"
@@ -35,7 +36,7 @@
                 app:tabIconTint="@color/white"
                 app:tabIndicatorColor="@color/darkPurple"
                 app:tabSelectedTextColor="@color/darkerPurple"
-                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                app:tabTextAppearance="@style/MineCustomTabText"
                 app:tabTextColor="@color/white">
 
                 <com.google.android.material.tabs.TabItem

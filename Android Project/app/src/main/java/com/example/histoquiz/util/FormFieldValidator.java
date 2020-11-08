@@ -5,17 +5,18 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
-
 import com.example.histoquiz.R;
 import com.google.android.material.textfield.TextInputLayout;
-
 import java.util.Objects;
 
 public class FormFieldValidator {
 
     Context context;
 
-
+    /**
+     * Método construtor da classe
+     * @param context - contexto da activity que o criou
+     */
     public FormFieldValidator(Context context){
         this.context = context;
     }

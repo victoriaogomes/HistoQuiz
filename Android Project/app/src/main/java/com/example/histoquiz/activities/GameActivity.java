@@ -1,16 +1,20 @@
 package com.example.histoquiz.activities;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.example.histoquiz.R;
 import com.example.histoquiz.dialogs.EndGameDialog;
 import com.example.histoquiz.dialogs.GuessSlideDialog;
@@ -24,7 +28,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,40 +36,50 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+
+
+/**
+ * Classe utilizada para manipular atividades relativas a uma partida que são comuns a todas as mo-
+ * dalidades de jogo (online - 1 vs 1, contra o computador e local - 2 vs 2)
+ */
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     public Map<Integer, Slide> mySlides = new HashMap<>();
-
-
     public FirebaseFirestore firestoreDatabase;
-
-
+    public LinearLayout dialogs;
     protected String opponentUID;
     protected FirebaseUser user;
-
     public boolean matchCreator, PCopponent;
-
     public HashMap<String, Map<String, Object>> perguntas;
     public String slideToGuess = "firstSlide";
     protected int category, question;
     public TextView questionText, scorePlayer1, scorePlayer2;
     protected Button yesAnswer, noAnswer;
-    public ComputerOpponent computerOpponent;
-    public OnlineOpponent onlineOpponent;
+    protected ImageButton selectQuestionButton;
+    public HashMap<Integer, Slide> slides = new HashMap<>();
+    protected CountDownTimer countDownTimer;
+    public TextView timer;
+    protected volatile boolean questionsDone = false, slidesDone = false;
     protected ImageButton [] opponentSlidesButtons;
     protected ImageView [] opponentSlidesCheck;
     protected ImageView [] mySlidesCheck;
+
+    //Instância de classes utilizadas para controlar especificidades de certos modos de jogo
+    public ComputerOpponent computerOpponent;
+    public OnlineOpponent onlineOpponent;
+
+    // Dialogs utilizados para exibir as "subtelas" necessárias no jogo
     protected SelectQuestionDialog selectQuestionDialog;
     protected GuessSlideDialog guessSlideDialog;
     protected QuestionFeedBackDialog questionFeedBackDialog;
     protected SlideImageDialog slideImageDialog;
     protected EndGameDialog endGameDialog;
-    protected ImageButton selectQuestionButton;
-    public HashMap<Integer, Slide> slides = new HashMap<>();
-    protected CountDownTimer countDownTimer;
-    public TextView timer;
 
-    protected volatile boolean questionsDone = false, slidesDone = false;
+    // Variáveis para o controle da tela como fullscreen
+    private static final int UI_ANIMATION_DELAY = 300;
+    private final Handler mHideHandler = new Handler();
+    private View mContentView;
+    private final Runnable mHideRunnable = this::hide;
 
 
     /**
@@ -76,18 +89,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
         Intent intent = getIntent();
         matchCreator = intent.getBooleanExtra("matchCreator", true);
         opponentUID = intent.getStringExtra("opponentUID");
         PCopponent = intent.getBooleanExtra("PCopponent", true);
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game);
         initGUI();
         getSlides();
@@ -112,7 +118,73 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }.start();
+        mContentView = findViewById(R.id.fullContent);
+    }
 
+
+    /**
+     * Runnable utilizado para remover automaticamente a barra de botões e a de status dessa
+     * activity
+     */
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+
+
+    /**
+     * Runnable utilizado para exibir a barra de botões e a de status dessa activity quando o
+     * usuário solicitar
+     */
+    private final Runnable mShowPart2Runnable = () -> {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+    };
+
+
+    /**
+     * Método utilizado para fazer a primeira chamada ao método delayedHide, logo após a activitie
+     * ser criada, unicamente para exibir brevemente ao usuário que os controles de tela estão
+     * disponíveis
+     * @param savedInstanceState - contém o estado anteriormente salvo da atividade (pode ser nulo)
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(null);
+        delayedHide();
+    }
+
+
+    /**
+     * Programa uma chamada ao método hide() após uma quantidade delayMillis de millisegundos,
+     * cancelando qualquer chamada programada previamente
+     */
+    private void delayedHide() {
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, 100);
+    }
+
+
+    /**
+     * Método utilizado para esconder a barra de botões
+     */
+    private void hide() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
 
@@ -142,12 +214,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 slides.put(slide.getCode(), slide);
             }
             raffleSlides(queryDocumentSnapshots.size(), slides, 6);
-//            if(PCopponent) {
-//                raffleSlides(queryDocumentSnapshots.size(), slides, 6);
-//            }
-//            else{
-//                raffleSlides(queryDocumentSnapshots.size(), slides, 3);
-//            }
             slidesDone = true;
         });
     }
@@ -159,6 +225,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     protected void initGUI(){
         questionText = findViewById(R.id.pergunta);
+        dialogs = findViewById(R.id.dialogs);
         yesAnswer = findViewById(R.id.respSim);
         noAnswer = findViewById(R.id.respNao);
         scorePlayer1 = findViewById(R.id.pontuacaoJogador1);
@@ -188,12 +255,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         endGameDialog = new EndGameDialog(this);
     }
 
+
     /**
      * Método utilizado para exibir ao usuário a tela para que ele selecione uma questão para
      * enviar para seu oponente responder
      */
     public void showQuestionSelection(){
         selectQuestionDialog.show(getSupportFragmentManager(), "choose question dialog");
+        hide();
     }
 
 
@@ -212,6 +281,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void showGuessSlide(){
         guessSlideDialog.show(getSupportFragmentManager(), "guess dialog");
+        hide();
     }
 
 
@@ -228,9 +298,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * Método utilizado para exibir ao usuário a resposta a sua pergunta dada pelo seu oponente,
      * bem como a resposta correta dela
      */
-    public void showQuestionFeedback(boolean opponentAnswer, boolean correctAnswer){
+    public void showQuestionFeedback(Boolean opponentAnswer, boolean correctAnswer){
         questionFeedBackDialog = new QuestionFeedBackDialog(this, opponentAnswer, correctAnswer);
         questionFeedBackDialog.show(getSupportFragmentManager(), "questionFeedBack");
+        hide();
     }
 
 
@@ -250,6 +321,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void showSlideImages(){
         slideImageDialog = new SlideImageDialog(this);
         slideImageDialog.show(getSupportFragmentManager(), "slide");
+        hide();
     }
 
 
@@ -279,7 +351,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * jogadores da partida que acabou de ser finalizada, informando quem é o ganhador
      */
     public void showEndGameDialog(){
-        endGameDialog.show(getSupportFragmentManager(), "endGame");
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(endGameDialog, "endGame").commitAllowingStateLoss();
+        hide();
     }
 
 
@@ -305,13 +380,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //            mySlides.put(raffledValue, slides.get(raffledValue));
 //        }
-//        roomRef.child("slides").setValue(mySlides);
-//        roomRef.child("score").setValue(0);
-//        roomRef.child("selectedCategory").setValue(0);
-//        roomRef.child("selectedQuestion").setValue(0);
-//        roomRef.child("firstSlide").setValue(false);
-//        roomRef.child("secondSlide").setValue(false);
-//        roomRef.child("thirdSlide").setValue(false);
     }
 
 
@@ -466,6 +534,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 else{
                     scorePlayer1.setText("0");
                 }
+                if(!PCopponent) onlineOpponent.myRoomRef.child("score").setValue(getPlayerScore(1));
                 break;
             case 2:
                 if(getPlayerScore(2) + pontuation > 0) {
@@ -474,6 +543,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 else{
                     scorePlayer2.setText("0");
                 }
+                if(!PCopponent) onlineOpponent.opponentRoomRef.child("score").setValue(getPlayerScore(2));
                 break;
         }
     }
@@ -506,11 +576,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 switch (position){
                     case 0:
                         if(PCopponent) slideToGuess = "secondSlide";
-                        else onlineOpponent.myRoomRef.child("slideToGuess").setValue("secondSlide");
+                        else{
+                            onlineOpponent.myRoomRef.child("slideToGuess").setValue("secondSlide");
+                            onlineOpponent.mySlideToGuess = "secondSlide";
+                        }
                         break;
                     case 1:
                         if(PCopponent) slideToGuess = "thirdSlide";
-                        else onlineOpponent.myRoomRef.child("slideToGuess").setValue("thirdSlide");
+                        else{
+                            onlineOpponent.myRoomRef.child("slideToGuess").setValue("thirdSlide");
+                            onlineOpponent.mySlideToGuess = "thirdSlide";
+                        }
                         break;
                     case 2: break;
                 }
@@ -518,8 +594,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             case 2:
                 opponentSlidesCheck[position].setVisibility(View.VISIBLE);
                 switch (position){
-                    case 0: computerOpponent.slideToGuess = "secondSlide"; break;
-                    case 1: computerOpponent.slideToGuess = "thirdSlide"; break;
+                    case 0:
+                        if(PCopponent) slideToGuess = "secondSlide";
+                        break;
+                    case 1:
+                        if(PCopponent) slideToGuess = "thirdSlide";
+                        break;
                     case 2: break;
                 }
                 break;
@@ -553,6 +633,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     onlineOpponent._estado_C(false);
                 }
                 break;
+            case "BACK_MENU":
+                endGameDialog.dismiss();
+                Intent troca = new Intent(this, MenuActivity.class);
+                startActivity(troca);
         }
     }
 }

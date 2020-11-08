@@ -1,22 +1,27 @@
 package com.example.histoquiz.activities;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-
 import com.example.histoquiz.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
 
+/**
+ * Classe utilizada para manipular os cliques recebidos na tela de menu do jogo, redirecionando o
+ * usuário para as activities corretas relativas a cada interação
+ */
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected Button button1, button2, button3, button4, voltar;
+
+    // Variáveis para o controle da tela como fullscreen
+    private final Handler mHideHandler = new Handler();
+    private View mContentView;
+
 
     /**
      * Método chamado assim que essa activity é invocada.
@@ -25,16 +30,55 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.activity_menu);
         initGui();
         setInicialMenuOptions();
+        mContentView = findViewById(R.id.fullContent);
+        hideNow();
+    }
+
+
+    /**
+     * Runnable utilizado para remover automaticamente a barra de botões e a de status dessa
+     * activity
+     */
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+
+
+    /**
+     * Runnable utilizado para exibir a barra de botões e a de status dessa activity quando o
+     * usuário solicitar
+     */
+    private final Runnable mShowPart2Runnable = () -> {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+    };
+
+
+    /**
+     * Programa uma chamada ao método hide() após uma quantidade delayMillis de millisegundos,
+     * cancelando qualquer chamada programada previamente
+     */
+    public void hideNow() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, 0);
     }
 
 

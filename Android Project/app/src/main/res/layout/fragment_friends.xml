@@ -12,8 +12,8 @@
     tools:context=".fragments.FriendsFragment">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:gravity="center_vertical|center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <androidx.cardview.widget.CardView
@@ -33,7 +33,7 @@
                     android:textColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="20sp"
                     android:text="@string/adicionar"/>
                 <View
@@ -50,6 +50,7 @@
                     app:startIconDrawable="@drawable/ic_add_user"
                     android:layout_width="match_parent"
                     android:layout_marginStart="5dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
                     android:layout_marginEnd="5dp"
                     android:hint="@string/email"
                     android:textColorHint="@color/grey"
@@ -58,7 +59,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints=""
-                        android:fontFamily="@font/kabouter"
+                        android:fontFamily="@font/pinkchicken"
                         android:textSize="22sp"
                         android:textColor="@color/black"
                         android:background="@drawable/text_edit_style"
@@ -73,7 +74,7 @@
                     android:textStyle="bold"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:layout_gravity="end"
                     android:textSize="20sp"
                     android:textAllCaps="false"
@@ -90,6 +91,7 @@
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="@color/darkPurple">
             <LinearLayout
+                android:id="@+id/friendsPlace"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -100,7 +102,7 @@
                     android:textColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="20sp"
                     android:text="@string/amigos"/>
                 <View
@@ -128,6 +130,7 @@
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="@color/darkPurple">
             <LinearLayout
+                android:id="@+id/pedidosAmz"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -138,7 +141,7 @@
                     android:textColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="20sp"
                     android:text="@string/pedidosAmizade"/>
                 <View

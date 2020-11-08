@@ -1,16 +1,16 @@
 package com.example.histoquiz.fragments;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.histoquiz.R;
 
-
+/**
+ * Classe responsável por exibir métricas relativas ao desempenho desse usuário no jogo
+ * (FALTA IMPLEMENTAR)
+ */
 public class PerformanceFragment extends Fragment {
 
     public PerformanceFragment() {

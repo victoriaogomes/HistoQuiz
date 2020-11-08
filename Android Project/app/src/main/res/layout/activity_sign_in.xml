@@ -7,6 +7,7 @@
     android:background="@drawable/background"
     tools:context=".activities.SignInActivity">
     <LinearLayout
+        android:id="@+id/fullContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -59,41 +60,46 @@
             android:background="@drawable/ic_ball">
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="25dp"
                 app:startIconDrawable="@drawable/ic_arroba"
+                app:startIconTint="@color/darkPurple"
                 android:layout_width="match_parent"
                 android:hint="@string/email"
                 android:textColorHint="@color/grey"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:background="@drawable/text_edit_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="23sp"
                     android:autofillHints=""
                     android:textColor="@color/black"
-                    android:background="@drawable/text_edit_style"
                     android:hint="@string/textBoxHint"
                     android:inputType="textEmailAddress"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/senha"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/black"
+                app:passwordToggleTint="@color/darkerPurple"
+                app:boxStrokeColor="@color/purple"
                 android:hint="@string/senha"
+                app:startIconTint="@color/darkPurple"
                 app:startIconDrawable="@drawable/ic_password"
                 android:textColorHint="@color/grey"
                 android:layout_width="match_parent"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:background="@drawable/text_edit_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:autofillHints=""
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="23sp"
-                    android:background="@drawable/text_edit_style"
                     android:hint="@string/textBoxHint"
                     android:inputType="textPassword"/>
             </com.google.android.material.textfield.TextInputLayout>
@@ -103,7 +109,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="20sp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
@@ -114,7 +120,7 @@
                 android:id="@+id/esqueceuSenha"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="21sp"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -130,7 +136,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="21sp"
                     android:textColor="@color/black"
                     android:textStyle="bold"
@@ -140,7 +146,7 @@
                     android:id="@+id/cadastrar"
                     android:layout_marginStart="2.5dp"
                     android:layout_width="wrap_content"
-                    android:fontFamily="@font/kabouter"
+                    android:fontFamily="@font/pinkchicken"
                     android:textSize="21sp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"

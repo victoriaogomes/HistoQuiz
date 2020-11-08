@@ -10,6 +10,7 @@
     app:cardCornerRadius="8dp"
     android:layout_height="wrap_content">
     <LinearLayout
+        android:id="@+id/fullContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -24,7 +25,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
@@ -33,7 +34,7 @@
                 android:id="@+id/ganhadorPartida"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="20sp"
                 android:layout_marginStart="5dp"
                 android:textStyle="bold"
@@ -58,7 +59,7 @@
                 android:id="@+id/respAdv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/kabouter"
+                android:fontFamily="@font/pinkchicken"
                 android:textSize="20sp"
                 android:textColor="@color/white"
                 android:text="@string/pontuacao"
@@ -89,7 +90,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:textSize="20sp"
                             android:textColor="@color/white"
                             android:text="@string/pontFinalVc"/>
@@ -98,7 +99,7 @@
                             android:layout_marginStart="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:textSize="20sp"
                             android:textColor="@color/white"
                             android:text="@string/pontuacaoInicial"/>
@@ -125,7 +126,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:textSize="20sp"
                             android:textColor="@color/white"
                             android:text="@string/pontFinalOponente"/>
@@ -134,7 +135,7 @@
                             android:layout_marginStart="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/kabouter"
+                            android:fontFamily="@font/pinkchicken"
                             android:textSize="20sp"
                             android:textColor="@color/white"
                             android:text="@string/pontuacaoInicial"/>
@@ -149,7 +150,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
-            android:fontFamily="@font/kabouter"
+            android:fontFamily="@font/pinkchicken"
             android:layout_gravity="center_horizontal|center_vertical"
             android:textSize="20sp"
             android:textAllCaps="false"
