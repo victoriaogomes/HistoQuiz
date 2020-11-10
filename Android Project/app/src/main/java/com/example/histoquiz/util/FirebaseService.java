@@ -38,7 +38,8 @@ public class FirebaseService extends FirebaseMessagingService {
         if(remoteMessage.getNotification() != null){
             Log.d("Histoquiz", remoteMessage.getNotification().getTitle());
             Log.d("Histoquiz", remoteMessage.getNotification().getBody());
-            sendNotification(Objects.requireNonNull(remoteMessage.getNotification().getTitle()), remoteMessage.getNotification().getBody());
+            sendNotification(Objects.requireNonNull(remoteMessage.getNotification().getTitle()), remoteMessage.getNotification().getBody(),
+                    remoteMessage.getData().get("opponentUID"));
         }
     }
 
@@ -48,14 +49,12 @@ public class FirebaseService extends FirebaseMessagingService {
      * @param title - título da notificação a ser gerada
      * @param msg - mensagem a ser exibida na notificação que será gerada
      */
-    public void sendNotification(String title, String msg){
+    public void sendNotification(String title, String msg, String opponentUID){
         Intent intent;
         if(title.equals("Novo convite de jogo!")){
-            String[] data = msg.split(":");
-            msg = data[0] + "  te convidou para jogar uma partida.";
             intent = new Intent(this, GameActivity.class); //GameActivity é a classe que será aberta ao usuário clicar na notificação
             intent.putExtra("matchCreator", false);
-            intent.putExtra("opponentUID", data[1]);
+            intent.putExtra("opponentUID", opponentUID);
             intent.putExtra("PCopponent", false);
         }
         else{

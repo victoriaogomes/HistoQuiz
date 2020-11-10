@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin'
 admin.initializeApp()
 
 
-export const sendGameRequest = functions.firestore.document('/partida/convites/{invitedUid}/{inviterUid}').onWrite(async (snap, context) => {
+export const sendGameRequest = functions.firestore.document('/partida/convites/{invitedUid}/{inviterUid}').onCreate(async (snap, context) => {
     const invitedUid = context.params.invitedUid;
     const inviterUid = context.params.inviterUid;
 
@@ -18,9 +18,11 @@ export const sendGameRequest = functions.firestore.document('/partida/convites/{
     // Detalhes da notificação
     const payload = {
         notification: {
+            click_action: '.activities.GameActivity',
             title: 'Novo convite de jogo!',
-            body: inviterUserProfile.get('nome') + ':' + inviterUid
-        }
+            body: inviterUserProfile.get('nome') + ' te convidou para jogar uma partida.',
+        },
+        data: {'opponentUID': inviterUid}
     };
 
 

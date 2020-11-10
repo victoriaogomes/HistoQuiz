@@ -481,12 +481,9 @@ public class OnlineOpponent {
 
 
     /**
-     * Método utilizado para fazer a modificação da pontuação do oponente da seguinte forma:
-     *      - Caso tenha respondido corretamente, o oponente ganha 1 ponto
-     *      - Caso tenha respondido erroneamente, o oponente perde 1 ponto
-     * Além disso, após essa verificação é exibido para o jogador um feedback, exibindo a resposta
-     * que seu oponente forneceu a sua pergunta, a resposta correta e a modificação de pontuação que
-     * foi feita no score do seu adversário
+     * Método utilizado para exibir para o jogador um feedback, exibindo a resposta que seu oponente
+     * forneceu a sua pergunta, a resposta correta e a modificação de pontuação que foi feita no
+     * score do seu adversário
      * Em seguida, é perguntado para o jogador se ele deseja seguir para a próxima rodada, ou se
      * quer tentar advinhar sua lâmina; ele terá também 2 minutos para tomar essa decisão.
      */
@@ -504,14 +501,6 @@ public class OnlineOpponent {
             case "thirdSlide":
                 slide =  Integer.parseInt(keySet[2].toString());
                 break;
-        }
-        if(myOpponentAnswer != null){
-            if(game_scene.getQuestionRealAnswer(category, question, slide) == myOpponentAnswer){
-                game_scene.changePlayerScore(2, 1);
-            }
-            else{
-                game_scene.changePlayerScore(2, -1);
-            }
         }
         game_scene.showQuestionFeedback(myOpponentAnswer, game_scene.getQuestionRealAnswer(category, question, slide));
         state = "H";

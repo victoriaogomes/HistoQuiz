@@ -92,9 +92,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
         Intent intent = getIntent();
-        matchCreator = intent.getBooleanExtra("matchCreator", true);
+        matchCreator = intent.getBooleanExtra("matchCreator", false);
         opponentUID = intent.getStringExtra("opponentUID");
-        PCopponent = intent.getBooleanExtra("PCopponent", true);
+        PCopponent = intent.getBooleanExtra("PCopponent", false);
         setContentView(R.layout.activity_game);
         initGUI();
         getSlides();
