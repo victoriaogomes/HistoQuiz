@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:paddingTop="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
-            android:paddingBottom="5dp"
+
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:hint="@string/nome"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="22sp"
+                android:textSize="@dimen/_18sdp"
                 android:textColor="@color/black"
                 android:hint="@string/textBoxHint"
                 android:inputType="textPersonName"/>
@@ -50,7 +50,6 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/email"
             android:layout_width="match_parent"
-            android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:layout_marginStart="5dp"
             app:startIconDrawable="@drawable/ic_arroba"
@@ -64,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints=""
-                android:textSize="22sp"
+                android:textSize="@dimen/_18sdp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/pinkchicken"
                 android:hint="@string/textBoxHint"
@@ -73,8 +72,6 @@
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/senha"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
             android:layout_marginStart="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
             android:layout_marginEnd="5dp"
@@ -89,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="22sp"
+                android:textSize="@dimen/_18sdp"
                 android:textColor="@color/black"
                 android:autofillHints=""
                 android:hint="@string/textBoxHint"
@@ -98,8 +95,6 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/universidade"
             android:layout_width="match_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             app:startIconDrawable="@drawable/ic_graduation_cap"
@@ -112,7 +107,7 @@
                 android:background="@drawable/text_edit_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
+                android:textSize="@dimen/_18sdp"
                 android:autofillHints=""
                 android:fontFamily="@font/pinkchicken"
                 android:textColor="@color/black"
@@ -122,8 +117,6 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/anoIngresso"
             android:layout_width="match_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:hint="@string/anoIngresso"
@@ -138,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="22sp"
+                android:textSize="@dimen/_18sdp"
                 android:textColor="@color/black"
                 android:hint="@string/textBoxHint"
                 android:inputType="date"/>
@@ -150,7 +143,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:fontFamily="@font/pinkchicken"
-            android:textSize="20sp"
+            android:textSize="@dimen/_18sdp"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:background="@drawable/button_dark_style"

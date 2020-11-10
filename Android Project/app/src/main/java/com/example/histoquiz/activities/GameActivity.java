@@ -26,6 +26,7 @@ import com.example.histoquiz.util.ComputerOpponent;
 import com.example.histoquiz.util.OnlineOpponent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.Collator;
@@ -638,5 +639,51 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 Intent troca = new Intent(this, MenuActivity.class);
                 startActivity(troca);
         }
+    }
+
+
+    /**
+     * Método utilizado para salvar no firebase os dados relativos a performance desse jogador
+     * em relação a determinada lâmina
+     * @param system - código que representa o sistema ao qual essa lâmina pertence
+     * @param situation - informa se a lâmina foi errada (0) ou acertada (1)
+     */
+    @SuppressWarnings("unchecked")
+    public void computePerformance(int system, int situation){
+        final String[] sisName = {""};
+        firestoreDatabase.collection("sistemas").whereEqualTo("code", system).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            DocumentReference ref = firestoreDatabase.collection("desempenho").document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+            sisName[0] = "sis" + queryDocumentSnapshots.getDocuments().get(0).getId();
+            ref.get().addOnSuccessListener(documentSnapshot -> {
+                ArrayList <Long> info = (ArrayList<Long>) documentSnapshot.get(sisName[0]);
+                if(info != null) {
+                    switch (situation) {
+                        case 0: // Caso o usuário tenha errado a lâmina
+                            ref.update("sis" + queryDocumentSnapshots.getDocuments().get(0).getId(), new ArrayList<>(Arrays.asList(info.get(0) + 1, info.get(1))));
+                            break;
+                        case 1: // Caso o usuário tenha acertado a lâmina
+                            ref.update("sis" + queryDocumentSnapshots.getDocuments().get(0).getId(), new ArrayList<>(Arrays.asList(info.get(0), info.get(1) + 1)));
+                            break;
+                    }
+                }
+
+            });
+        });
+    }
+
+
+    /**
+     * Método utilizado para salvar no firebase desse usuário que ele jogou mais uma partida e,
+     * se ele houver ganhado, salvar essa informação também
+     * @param winner - boolean que indica se o usuário ganhou a partida ou não
+     */
+    public void saveMatchInfo(boolean winner){
+        DocumentReference ref = firestoreDatabase.document("desempenho/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        ref.get().addOnSuccessListener(documentSnapshot -> {
+            ref.update("numPartidas", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("numPartidas")).toString()) + 1);
+            if(winner){
+                ref.update("vitorias", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("vitorias")).toString()) + 1);
+            }
+        });
     }
 }

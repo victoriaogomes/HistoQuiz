@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:text="@string/feedbackPergunta"/>
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:layout_marginStart="5dp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textColor="@color/white"
                 android:text="@string/respAdversario"
                 android:layout_alignParentStart="true"/>
@@ -85,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pinkchicken"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/_15sdp"
                     android:textColor="@color/white"
                     android:text="@string/nao"/>
             </androidx.cardview.widget.CardView>
@@ -108,7 +108,7 @@
                 android:layout_marginEnd="5dp"
                 android:fontFamily="@font/pinkchicken"
                 android:layout_gravity="end"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:background="@drawable/button_light_style"
@@ -123,7 +123,7 @@
                 android:layout_marginEnd="5dp"
                 android:fontFamily="@font/pinkchicken"
                 android:layout_gravity="end"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:background="@drawable/button_light_style"

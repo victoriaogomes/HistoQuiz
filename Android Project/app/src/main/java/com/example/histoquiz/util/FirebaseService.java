@@ -48,7 +48,7 @@ public class FirebaseService extends FirebaseMessagingService {
      * @param title - título da notificação a ser gerada
      * @param msg - mensagem a ser exibida na notificação que será gerada
      */
-    private void sendNotification(String title, String msg){
+    public void sendNotification(String title, String msg){
         Intent intent;
         if(title.equals("Novo convite de jogo!")){
             String[] data = msg.split(":");

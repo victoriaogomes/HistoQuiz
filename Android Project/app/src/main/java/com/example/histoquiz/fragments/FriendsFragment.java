@@ -81,8 +81,7 @@ public class FriendsFragment extends Fragment {
      * @return - retorna a view criada para esse fragmento.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         friendView = inflater.inflate(R.layout.fragment_friends, container, false);
         initGui();
         return friendView;
@@ -168,7 +167,6 @@ public class FriendsFragment extends Fragment {
                 message.setText(Objects.requireNonNull(getActivity()).getResources().getString(R.string.semAmg));
                 message.setTextSize(20);
                 message.setTextColor(getActivity().getResources().getColor(R.color.white));
-
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(20,10,10,10);
                 message.setLayoutParams(params);
@@ -223,7 +221,6 @@ public class FriendsFragment extends Fragment {
                 message.setText(Objects.requireNonNull(getActivity()).getResources().getString(R.string.semSolic));
                 message.setTextSize(20);
                 message.setTextColor(getActivity().getResources().getColor(R.color.white));
-
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(20,10,10,10);
                 message.setLayoutParams(params);

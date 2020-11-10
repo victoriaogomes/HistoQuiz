@@ -318,18 +318,22 @@ public class ComputerOpponent {
         Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
+        int systemCode = 0;
         int position = 0;
         switch (game_scene.slideToGuess){
             case "firstSlide":
                 trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getSystem();
                 position = 0;
                 break;
             case "secondSlide":
                 trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getSystem();
                 position = 1;
                 break;
             case "thirdSlide":
                 trueSlide = Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getSystem();
                 position = 2;
         }
         if(trueSlide.equals(answer.toLowerCase())){
@@ -337,6 +341,7 @@ public class ComputerOpponent {
             answerValidation = true;
             if(game_scene.slideToGuess.equals("thirdSlide")) matchEnded = true;
             game_scene.checkSlide(position, 1);
+            game_scene.computePerformance(systemCode, 1);
         }
         else{
             game_scene.changePlayerScore(2, 3);
@@ -364,6 +369,7 @@ public class ComputerOpponent {
             game_scene.showTextToPlayer("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         if(matchEnded){
+            game_scene.slideToGuess = "allDone";
             (new Handler()).postDelayed(this::_estado_M, 2000);
         }
         else{
@@ -374,9 +380,28 @@ public class ComputerOpponent {
 
     /**
      * Método utilizado para exibir o dialog que informa ao jogador que a partida foi finalizada,
-     * exibir as pontuações e informar quem ganhou o jogo
+     * exibir as pontuações, informar quem ganhou o jogo e computar as informações relativas a seu
+     * desempenho na partida que forem necessárias
      */
     public void _estado_M(){
+        if(!game_scene.slideToGuess.equals("allDone")){
+            Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
+            switch (game_scene.slideToGuess){
+                case "firstSlide":
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getSystem(), 0);
+                    break;
+                case "secondSlide":
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[1])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getSystem(), 0);
+                    break;
+                case "thirdSlide":
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[2])).getSystem(), 0);
+                    break;
+            }
+        }
+        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2));
         game_scene.showEndGameDialog();
     }
 

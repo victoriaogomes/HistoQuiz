@@ -181,18 +181,30 @@ public class SlideImageDialog extends DialogFragment implements View.OnClickList
      * @param position - posição da foto a ser exibida (1ª, 2ª, 3ª, ...)
      */
     public void imageToShow(int position){
-        Object [] keySet = parent.mySlides.keySet().toArray();
+        Object [] keySet;
         Integer aux = 0;
-        Toast.makeText(parent, Arrays.toString(keySet), Toast.LENGTH_LONG).show();
-        switch (parent.computerOpponent.slideToGuess){
+        //Toast.makeText(parent, Arrays.toString(keySet), Toast.LENGTH_LONG).show();
+        String slide;
+        if(parent.PCopponent){
+            slide = parent.computerOpponent.slideToGuess;
+            keySet = parent.mySlides.keySet().toArray();
+        }
+        else{
+            slide = parent.onlineOpponent.opponentSlideToGuess;
+            keySet = parent.onlineOpponent.opponentSlides.keySet().toArray();
+        }
+        switch (slide){
             case "firstSlide":
-                aux = (Integer) keySet[3];
+                if(parent.PCopponent) aux = (Integer) keySet[3];
+                else aux = (Integer) keySet[0];
                 break;
             case "secondSlide":
-                aux = (Integer) keySet[4];
+                if(parent.PCopponent) aux = (Integer) keySet[4];
+                else aux = (Integer) keySet[1];
                 break;
             case "thirdSlide":
-                aux = (Integer) keySet[5];
+                if(parent.PCopponent) aux = (Integer) keySet[5];
+                else aux = (Integer) keySet[2];
                 break;
         }
         storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(parent.mySlides.get(aux)).getImages().get(position));

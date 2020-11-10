@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:text="@string/endGame"/>
@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:layout_marginStart="5dp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pinkchicken"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textColor="@color/white"
                 android:text="@string/pontuacao"
                 android:layout_alignParentStart="true"/>
@@ -91,7 +91,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pinkchicken"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/_15sdp"
                             android:textColor="@color/white"
                             android:text="@string/pontFinalVc"/>
                         <TextView
@@ -100,7 +100,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pinkchicken"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/_15sdp"
                             android:textColor="@color/white"
                             android:text="@string/pontuacaoInicial"/>
                     </LinearLayout>
@@ -127,7 +127,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pinkchicken"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/_15sdp"
                             android:textColor="@color/white"
                             android:text="@string/pontFinalOponente"/>
                         <TextView
@@ -136,7 +136,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pinkchicken"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/_15sdp"
                             android:textColor="@color/white"
                             android:text="@string/pontuacaoInicial"/>
                     </LinearLayout>
@@ -152,7 +152,7 @@
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/pinkchicken"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:textSize="20sp"
+            android:textSize="@dimen/_15sdp"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:background="@drawable/button_light_style"

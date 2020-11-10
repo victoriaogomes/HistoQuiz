@@ -52,7 +52,7 @@ public class MyAccountAdapter extends FragmentStateAdapter {
             case 1:
                 return new FriendsFragment(context);
             case 2:
-                return new PerformanceFragment();
+                return new PerformanceFragment(context);
             default:
                 return null;
         }

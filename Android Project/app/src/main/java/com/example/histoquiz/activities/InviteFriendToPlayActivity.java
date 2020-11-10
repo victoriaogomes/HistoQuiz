@@ -57,7 +57,7 @@ public class InviteFriendToPlayActivity extends AppCompatActivity {
         fieldValitator.monitorarCampo(friendEmail);
         database = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        friendEmail.getEditText().setText("victoria.fo.f@hotmail.com");
+        //friendEmail.getEditText().setText("victoria.fo.f@hotmail.com");
         sendInviteToPlay();
         mContentView = findViewById(R.id.fullContent);
     }
@@ -147,6 +147,7 @@ public class InviteFriendToPlayActivity extends AppCompatActivity {
                             database.document("partida/convites").collection(Objects.requireNonNull(documentSnapshot.get("UID")).toString()).
                                     document(user.getUid()).set(map).
                                     addOnSuccessListener(aVoid -> addInviteResponseEventListener(Objects.requireNonNull(documentSnapshot.get("UID")).toString()));
+                            Toast.makeText(InviteFriendToPlayActivity.this, "Convite enviado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                         else{
                             Toast.makeText(InviteFriendToPlayActivity.this, "Você não é amigo desse usuário.", Toast.LENGTH_LONG).show();

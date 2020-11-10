@@ -35,10 +35,10 @@
     <string name="faleConosco">Fale conosco</string>
 
     <!--    Sistemas que podem ser revisados   -->
-    <string name="sistemaReprodutor">Sistema Reprodutor</string>
-    <string name="sistemaDigestorio">Sistema Digestório</string>
-    <string name="sistemaCardiopulmonar">Sistema Cardiopulmonar</string>
-    <string name="sistemaOsteomuscular">Sistema Osteomuscular</string>
+    <string name="sistemaReprodutor">Sist. Reprodutor</string>
+    <string name="sistemaDigestorio">Sist. Digestório</string>
+    <string name="sistemaCardiopulmonar">Sist. Cardiopul.</string>
+    <string name="sistemaOsteomuscular">Sist. Osteomusc.</string>
 
     <!--    Erros durante o login   -->
     <string name="informeEmail">Informe seu email para realizar o login.</string>
@@ -110,4 +110,19 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
+    <!--    Tela de desempenho   -->
+    <string name="numPartidas">Partidas jogadas</string>
+    <string name="vitorias">Vitórias</string>
+    <string name="derrotas">Derrotas</string>
+    <string name="desempMod">Desempenho por módulo</string>
+    <string name="sistema">Sistema</string>
+    <string name="erros">Erros</string>
+    <string name="acertos">Acertos</string>
+    <string name="sisReprodutor">Reprodutor</string>
+    <string name="sisDigestorio">Digestório</string>
+    <string name="sisCardiopulmonar">Cardiopulmonar</string>
+    <string name="sisOsteomuscular">Osteomuscular</string>
+    <string name="placeholder">0</string>
+    <string name="conquistas">Conquistas</string>
+    <string name="placeholderConquistas">Você ainda não possui conquistas :(</string>
 </resources>

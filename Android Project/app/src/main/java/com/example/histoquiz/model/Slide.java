@@ -10,6 +10,7 @@ public class Slide {
     protected String  name;
     protected int code;
     protected ArrayList<String> images;
+    protected int system;
 
     /**
      * Método utilizado para obter o código relativo a essa lâmina
@@ -62,5 +63,25 @@ public class Slide {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    /**
+     * Método utilizado para obter o inteiro que representa o código do sistema ao qual essa
+     * lâmina esta relacionada
+     * @return - código do sistema relacionado a essa lâmina
+     */
+    public int getSystem() {
+        return system;
+    }
+
+
+    /**
+     * Método utilizado para obter o inteiro que representa o código do sistema ao qual essa
+     * lâmina esta relacionada
+     * @param system - novo código do sistema relacionado a essa lâmina
+     */
+    public void setSystem(int system) {
+        this.system = system;
     }
 }

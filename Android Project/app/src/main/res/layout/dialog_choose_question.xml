@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pinkchicken"
-            android:textSize="20sp"
+            android:textSize="@dimen/_16sdp"
             android:textStyle="bold"
             android:textColor="@color/white"
             android:text="@string/escolherCat"/>
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pinkchicken"
-            android:textSize="20sp"
+            android:textSize="@dimen/_16sdp"
             android:textStyle="bold"
             android:textColor="@color/white"
             android:text="@string/escolherPerg"/>
@@ -86,7 +86,7 @@
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/pinkchicken"
                 android:layout_gravity="end"
-                android:textSize="20sp"
+                android:textSize="@dimen/_15sdp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:background="@drawable/button_light_style"

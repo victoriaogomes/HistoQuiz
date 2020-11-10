@@ -34,7 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pinkchicken"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/_15sdp"
                     android:text="@string/adicionar"/>
                 <View
                     android:layout_marginStart="10dp"
@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:autofillHints=""
                         android:fontFamily="@font/pinkchicken"
-                        android:textSize="22sp"
+                        android:textSize="@dimen/_15sdp"
                         android:textColor="@color/black"
                         android:background="@drawable/text_edit_style"
                         android:hint="@string/textBoxHint"
@@ -76,7 +76,7 @@
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/pinkchicken"
                     android:layout_gravity="end"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/_15sdp"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:background="@drawable/button_light_style"
@@ -87,7 +87,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="@color/darkPurple">
             <LinearLayout
@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pinkchicken"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/_15sdp"
                     android:text="@string/amigos"/>
                 <View
                     android:layout_marginStart="10dp"
@@ -126,7 +126,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="@color/darkPurple">
             <LinearLayout
@@ -142,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pinkchicken"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/_15sdp"
                     android:text="@string/pedidosAmizade"/>
                 <View
                     android:layout_marginStart="10dp"

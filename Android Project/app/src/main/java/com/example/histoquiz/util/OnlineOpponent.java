@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.model.Slide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,7 +15,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,6 +47,7 @@ public class OnlineOpponent {
     protected boolean trueAnswer;
     protected Boolean myOpponentAnswer;
     public String mySlideToGuess, opponentSlideToGuess;
+    protected FirebaseFirestore firestore;
 
     protected String matchState = "onHold";
     protected String myPersonalMatchState = "onHold";
@@ -64,6 +70,7 @@ public class OnlineOpponent {
         this.opponentSlideToGuess = "firstSlide";
         this.game_scene = game_scene;
         realtimeDatabase = FirebaseDatabase.getInstance();
+        firestore = FirebaseFirestore.getInstance();
         Object [] keySet = game_scene.mySlides.keySet().toArray();
         if (matchCreator) {
             //Cria uma sala para o jogo e se adiciona como jogador número 1
@@ -537,18 +544,22 @@ public class OnlineOpponent {
         Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
+        int systemCode = 0;
         int position = 0;
         switch (mySlideToGuess){
             case "firstSlide":
                 trueSlide = Objects.requireNonNull(mySlides.get(keySet[0])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(mySlides.get(keySet[0])).getSystem();
                 position = 0;
                 break;
             case "secondSlide":
                 trueSlide = Objects.requireNonNull(mySlides.get(keySet[1])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(mySlides.get(keySet[0])).getSystem();
                 position = 1;
                 break;
             case "thirdSlide":
                 trueSlide = Objects.requireNonNull(mySlides.get(keySet[2])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(mySlides.get(keySet[0])).getSystem();
                 position = 2;
         }
         if(trueSlide.equals(answer.toLowerCase())){
@@ -557,6 +568,7 @@ public class OnlineOpponent {
             answerValidation = true;
             if(mySlideToGuess.equals("thirdSlide")) matchEnded = true;
             game_scene.checkSlide(position, 1);
+            game_scene.computePerformance(systemCode, 1);
         }
         else{
             game_scene.changePlayerScore(2, 3);
@@ -585,6 +597,7 @@ public class OnlineOpponent {
             game_scene.showTextToPlayer("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         if(matchEnded){
+            mySlideToGuess = "allDone";
             realtimeDatabase.getReference("partida/jogo/" + roomName).child("matchState").setValue("ended");
         }
         else{
@@ -597,7 +610,9 @@ public class OnlineOpponent {
     /**
      * Método utilizado para exibir o dialog que informa ao jogador que a partida foi finalizada,
      * exibir as pontuações, informar quem ganhou o jogo, apagar as informações desse convite de
-     * jogo armazenadas no firebase e apagar os dados dessa partida no realtime database
+     * jogo armazenadas no firebase, apagar os dados dessa partida no realtime database e finalizar
+     * a atividade de salvar informações relativas a performance desse jogador, caso ele não tenha
+     * finalizado essa partida
      */
     public void _estado_L(){
         if(!matchCreator){
@@ -605,6 +620,24 @@ public class OnlineOpponent {
             firestore.document("partida/convites/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid() + "/" + opponentUID).delete();
             realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
         }
+        if(!mySlideToGuess.equals("allDone")){
+            Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
+            switch (mySlideToGuess){
+                case "firstSlide":
+                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[0])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[1])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[2])).getSystem(), 0);
+                    break;
+                case "secondSlide":
+                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[1])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[2])).getSystem(), 0);
+                    break;
+                case "thirdSlide":
+                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[2])).getSystem(), 0);
+                    break;
+            }
+        }
+        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2));
         game_scene.showEndGameDialog();
     }
 
