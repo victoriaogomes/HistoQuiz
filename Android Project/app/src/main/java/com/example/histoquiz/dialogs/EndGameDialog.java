@@ -1,20 +1,24 @@
 package com.example.histoquiz.dialogs;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
 import java.util.Locale;
@@ -32,10 +36,8 @@ public class EndGameDialog extends AppCompatDialogFragment {
     protected TextView playerScore, opponentScore, winner;
     protected CardView playerCard, opponentCard;
     protected Button backToMenu;
+    protected Dialog dialog;
 
-    // Variáveis para o controle da tela como fullscreen
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
 
     /**
      * Método construtor da classe, recebe como parâmetro a activity que instanciou esse dialog
@@ -55,59 +57,32 @@ public class EndGameDialog extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        dialog = new Dialog(getActivity());
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         initGUI();
         setGameResultInfo();
-        builder.setView(view).setTitle("");
-        Dialog dialog = builder.create();
+        dialog.setContentView(view);
+        dialog.setTitle("");
+        dialog.getWindow().setLayout((int) Math.round(parent.content.getWidth() - (parent.content.getWidth()*0.018)), RelativeLayout.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
         dialog.setCanceledOnTouchOutside(false);
-        hideNow();
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        dialog.setOnShowListener(dialog2 -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WindowCompat.setDecorFitsSystemWindows(dialog.getWindow(), false);
+                WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(dialog.getWindow(), dialog.getWindow().getDecorView());
+                if(controller != null) {
+                    controller.hide(WindowInsetsCompat.Type.statusBars());
+                    controller.hide(WindowInsetsCompat.Type.navigationBars());
+                    controller.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                }
+            }
+            else dialog.getWindow().getDecorView().setSystemUiVisibility(Objects.requireNonNull(getActivity()).getWindow().getDecorView().getSystemUiVisibility());
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            WindowManager wm = parent.getWindowManager();
+            wm.updateViewLayout(dialog.getWindow().getDecorView(), Objects.requireNonNull(getDialog()).getWindow().getAttributes());
+        });
         return dialog;
-    }
-
-
-    /**
-     * Runnable utilizado para remover automaticamente a barra de botões e a de status dessa
-     * activity
-     */
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-
-
-    /**
-     * Runnable utilizado para exibir a barra de botões e a de status dessa activity quando o
-     * usuário solicitar
-     */
-    private final Runnable mShowPart2Runnable = () -> {
-        ActionBar actionBar = ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.show();
-        }
-    };
-
-
-    /**
-     * Programa uma chamada ao método hide() após uma quantidade delayMillis de millisegundos,
-     * cancelando qualquer chamada programada previamente
-     */
-    private void hideNow() {
-        ActionBar actionBar = ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, 0);
     }
 
 
@@ -118,7 +93,6 @@ public class EndGameDialog extends AppCompatDialogFragment {
     protected void initGUI(){
         inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_end_game, null);
-        mContentView = view.findViewById(R.id.fullContent);
         playerScore = view.findViewById(R.id.minhaPontuacao);
         opponentScore = view.findViewById(R.id.pontOponente);
         winner = view.findViewById(R.id.ganhadorPartida);

@@ -1,13 +1,16 @@
 package com.example.histoquiz.util;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.GameActivity;
+import com.example.histoquiz.activities.MenuActivity;
 import com.example.histoquiz.model.Slide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,10 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,8 @@ import java.util.Objects;
 public class OnlineOpponent {
 
     protected GameActivity game_scene;
-    protected FirebaseDatabase realtimeDatabase;
-    protected String roomName;
+    public FirebaseDatabase realtimeDatabase;
+    public String roomName;
 
     public DatabaseReference myRoomRef, opponentRoomRef;
     public int question, category;
@@ -48,6 +48,7 @@ public class OnlineOpponent {
     protected Boolean myOpponentAnswer;
     public String mySlideToGuess, opponentSlideToGuess;
     protected FirebaseFirestore firestore;
+    public boolean bothEnded = false;
 
     protected String matchState = "onHold";
     protected String myPersonalMatchState = "onHold";
@@ -71,7 +72,8 @@ public class OnlineOpponent {
         this.game_scene = game_scene;
         realtimeDatabase = FirebaseDatabase.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        Object [] keySet = game_scene.mySlides.keySet().toArray();
+        Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
+        Arrays.sort(keySet);
         if (matchCreator) {
             //Cria uma sala para o jogo e se adiciona como jogador número 1
             roomName = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
@@ -79,15 +81,15 @@ public class OnlineOpponent {
             opponentRoomRef = realtimeDatabase.getReference("partida/jogo/" + roomName + "/player2");
             myRoomRef.child("UID").setValue(roomName);
             realtimeDatabase.getReference("partida/jogo/" + roomName).child("slides")
-                    .setValue(new ArrayList<>(Arrays.asList((Integer) keySet[0], (Integer) keySet[1], (Integer) keySet[2],
-                            (Integer) keySet[3], (Integer) keySet[4], (Integer) keySet[5])));
-            mySlides.put((Integer) keySet[0], game_scene.slides.get(keySet[0]));
-            mySlides.put((Integer) keySet[1], game_scene.slides.get(keySet[1]));
-            mySlides.put((Integer) keySet[2], game_scene.slides.get(keySet[2]));
+                    .setValue(new ArrayList<>(Arrays.asList(keySet[0], keySet[1], keySet[2],
+                            keySet[3], keySet[4], keySet[5])));
+            mySlides.put(keySet[0], game_scene.slides.get(keySet[0]));
+            mySlides.put(keySet[1], game_scene.slides.get(keySet[1]));
+            mySlides.put(keySet[2], game_scene.slides.get(keySet[2]));
 
-            opponentSlides.put((Integer) keySet[3], game_scene.slides.get(keySet[3]));
-            opponentSlides.put((Integer) keySet[4], game_scene.slides.get(keySet[4]));
-            opponentSlides.put((Integer) keySet[5], game_scene.slides.get(keySet[5]));
+            opponentSlides.put(keySet[3], game_scene.slides.get(keySet[3]));
+            opponentSlides.put(keySet[4], game_scene.slides.get(keySet[4]));
+            opponentSlides.put(keySet[5], game_scene.slides.get(keySet[5]));
         } else {
             //Entra numa sala para o jogo que foi convidado e se adiciona como jogador número 2
             roomName = opponentUID;
@@ -113,7 +115,7 @@ public class OnlineOpponent {
                 else minutos = Integer.toString(minutes);
                 if(seconds < 10) segundos = "0" + seconds;
                 else segundos = Integer.toString(seconds);
-                game_scene.timer.setText("Tempo: " + minutos + ":" + segundos);
+                game_scene.timer.setText(String.format(Locale.getDefault(), "Tempo: %s:%s", minutos, segundos));
             }
             @Override
             public void onFinish() {
@@ -127,6 +129,7 @@ public class OnlineOpponent {
         addListenerToNextRound();
         addListenerToQuestion();
         addListenerToScore();
+        game_scene.saveMatchInfo(false, 0);
         if(matchCreator){
             realtimeDatabase.getReference("partida/jogo/" + roomName).child("matchState").setValue("running");
             _estado_E();
@@ -152,8 +155,9 @@ public class OnlineOpponent {
                 if(snapshot.getValue() != null) {
                     matchState = snapshot.getValue().toString();
                     if (matchState.equals("ended")) {
-                        (new Handler()).postDelayed(OnlineOpponent.this::_estado_L, 2000);
+                        (new Handler(Looper.getMainLooper())).postDelayed(OnlineOpponent.this::_estado_L, 2000);
                     }
+                    else if(matchState.equals("killed")) forceMatchEnd();
                 }
             }
 
@@ -399,7 +403,7 @@ public class OnlineOpponent {
     public void _estado_C(boolean answer){
         stopTimer();
         game_scene.showTextToPlayer("Validando resposta...");
-        (new Handler()).postDelayed(() -> _estado_D(answer), 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(answer), 2000);
     }
 
 
@@ -412,16 +416,17 @@ public class OnlineOpponent {
     public void _estado_D(Boolean answer){
         myPersonalMatchState = "waiting";
         String text;
-        Object[] keySet = opponentSlides.keySet().toArray();
+        Integer[] keySet = opponentSlides.keySet().toArray(new Integer[0]);
+        Arrays.sort(keySet);
         switch (opponentSlideToGuess) {
             case "firstSlide":
-                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, Integer.parseInt(keySet[0].toString()));
+                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[0]);
                 break;
             case "secondSlide":
-                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, Integer.parseInt(keySet[1].toString()));
+                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[1]);
                 break;
             case "thirdSlide":
-                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, Integer.parseInt(keySet[2].toString()));
+                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[2]);
                 break;
         }
         if(answer != null) {
@@ -464,7 +469,7 @@ public class OnlineOpponent {
         stopTimer();
         game_scene.closeQuestionSelection();
         game_scene.showTextToPlayer("Enviando...");
-        (new Handler()).postDelayed(this::_estado_G, 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_G, 2000);
     }
 
 
@@ -490,16 +495,17 @@ public class OnlineOpponent {
     public void _estado_H(){
         myPersonalMatchState = "playing";
         int slide = 0;
-        Object [] keySet = mySlides.keySet().toArray();
+        Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
+        Arrays.sort(keySet);
         switch (mySlideToGuess){
             case "firstSlide":
-                slide =  Integer.parseInt(keySet[0].toString());
+                slide =  keySet[0];
                 break;
             case "secondSlide":
-                slide =  Integer.parseInt(keySet[1].toString());
+                slide =  keySet[1];
                 break;
             case "thirdSlide":
-                slide =  Integer.parseInt(keySet[2].toString());
+                slide =  keySet[2];
                 break;
         }
         game_scene.showQuestionFeedback(myOpponentAnswer, game_scene.getQuestionRealAnswer(category, question, slide));
@@ -531,6 +537,7 @@ public class OnlineOpponent {
         myPersonalMatchState = "playing";
         stopTimer();
         Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
+        Arrays.sort(keySet);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
         int systemCode = 0;
@@ -591,7 +598,7 @@ public class OnlineOpponent {
         }
         else{
             myRoomRef.child("nextRound").setValue("sim");
-            (new Handler()).postDelayed(this::_estado_A, 2000);
+            (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
         }
     }
 
@@ -605,12 +612,11 @@ public class OnlineOpponent {
      */
     public void _estado_L(){
         if(!matchCreator){
-            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-            firestore.document("partida/convites/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid() + "/" + opponentUID).delete();
             realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
         }
         if(!mySlideToGuess.equals("allDone")){
             Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
+            Arrays.sort(keySet);
             switch (mySlideToGuess){
                 case "firstSlide":
                     game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[0])).getSystem(), 0);
@@ -626,8 +632,18 @@ public class OnlineOpponent {
                     break;
             }
         }
-        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2));
+        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2), 1);
+        bothEnded = true;
         game_scene.showEndGameDialog();
+    }
+
+    protected void forceMatchEnd(){
+        realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(game_scene).setTitle(R.string.fimJogo).setMessage(R.string.endMessage);
+        builder.setPositiveButton(R.string.menuInicial, (dialog, id) -> {
+            Intent troca = new Intent(game_scene, MenuActivity.class);
+            game_scene.startActivity(troca);
+        }).create().show();
     }
 
 
@@ -663,22 +679,22 @@ public class OnlineOpponent {
         mTimerRunning = false;
         switch (state){
             case "B":
-                (new Handler()).postDelayed(() -> _estado_D(null), 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(null), 2000);
                 break;
             case "E":
                 game_scene.closeQuestionSelection();
                 myRoomRef.child("nextRound").setValue("sim");
-                (new Handler()).postDelayed(this::_estado_A, 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
                 break;
             case "H":
                 game_scene.closeQuestionFeedback();
                 myRoomRef.child("nextRound").setValue("sim");
-                (new Handler()).postDelayed(this::_estado_A, 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
                 break;
             case "I":
                 game_scene.closeGuessSlide();
                 myRoomRef.child("nextRound").setValue("sim");
-                (new Handler()).postDelayed(this::_estado_A, 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
                 break;
         }
     }

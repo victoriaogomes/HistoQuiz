@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:background="@color/panelPurple"
-    android:textSize="@dimen/_15sdp"
-    android:fontFamily="@font/pinkchicken"
-    android:textColor="@color/white"
-    style="?android:attr/spinnerItemStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:layout_marginTop="10dp"
-    android:textAlignment="inherit"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    <TextView
+        android:id="@+id/textoSpin"
+        android:background="@color/spinnerPurple"
+        android:textSize="@dimen/_15sdp"
+        android:fontFamily="@font/pinkchicken"
+        android:textColor="@color/white"
+        style="?android:attr/spinnerItemStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:textAlignment="inherit"/>
+</LinearLayout>

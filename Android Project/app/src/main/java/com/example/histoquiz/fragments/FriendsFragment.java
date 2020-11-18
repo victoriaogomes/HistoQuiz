@@ -59,6 +59,7 @@ public class FriendsFragment extends Fragment {
     protected FirebaseUser user;
     protected FirebaseFirestore firestore;
     protected LinearLayout friendsRequestsPlace, friendsPlace;
+    protected LinearLayout.LayoutParams params;
 
 
     /**
@@ -108,6 +109,8 @@ public class FriendsFragment extends Fragment {
         HorizontalLayout2 = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         user = FirebaseAuth.getInstance().getCurrentUser();
         configureSendFriendRequest();
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10,0,10,0);
         getFriends();
         getFriendRequests();
     }
@@ -139,6 +142,7 @@ public class FriendsFragment extends Fragment {
         friends.addOnSuccessListener(queryDocumentSnapshots -> {
             if(!queryDocumentSnapshots.isEmpty()) {
                 friendsList = new RecyclerView(context);
+                friendsList.setLayoutParams(params);
                 friendsList.setLayoutManager(RecyclerViewLayoutManager);
                 friendsList.setLayoutManager(HorizontalLayout1);
                 friendsPlace.removeViewAt(2);
@@ -193,6 +197,7 @@ public class FriendsFragment extends Fragment {
         friends.addOnSuccessListener(queryDocumentSnapshots -> {
             if(!queryDocumentSnapshots.isEmpty()) {
                 friendshipRequestList = new RecyclerView(context);
+                friendshipRequestList.setLayoutParams(params);
                 friendshipRequestList.setLayoutManager(RecyclerViewLayoutManager);
                 friendshipRequestList.setLayoutManager(HorizontalLayout2);
                 friendsRequestsPlace.removeViewAt(2);
@@ -221,9 +226,9 @@ public class FriendsFragment extends Fragment {
                 message.setText(Objects.requireNonNull(getActivity()).getResources().getString(R.string.semSolic));
                 message.setTextSize(20);
                 message.setTextColor(getActivity().getResources().getColor(R.color.white));
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(20,10,10,10);
-                message.setLayoutParams(params);
+                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params2.setMargins(20,10,10,10);
+                message.setLayoutParams(params2);
                 message.setGravity(Gravity.CENTER);
                 message.setPadding(10,20,10,20);
                 Typeface tp = ResourcesCompat.getFont(context, R.font.pinkchicken);

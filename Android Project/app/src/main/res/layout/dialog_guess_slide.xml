@@ -9,7 +9,7 @@
     app:cardBackgroundColor="@color/darkPurple"
     app:cardCornerRadius="8dp"
     android:layout_height="wrap_content">
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/fullContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +17,8 @@
         android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/title"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,23 +28,35 @@
             android:textColor="@color/white"
             android:text="@string/adivinharLamina"/>
         <View
+            android:id="@+id/line"
+            android:layout_below="@+id/title"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:layout_gravity="center"
             android:background="@color/white"/>
-        <Spinner
-            android:id="@+id/spinner_laminas"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/spinner_slides"
+            android:layout_below="@+id/line"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_width="fill_parent"
-            android:spinnerMode="dropdown"
-            android:layout_height="wrap_content"
-            android:theme="@style/SpinnerStyle"
-            />
-        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:fontFamily="@font/pinkchicken"
+                android:textSize="@dimen/_16sdp"
+                android:id="@+id/slides_dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_edit_style"
+                android:hint=""/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <RelativeLayout
+            android:layout_below="@+id/spinner_slides"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -67,6 +81,7 @@
             <Button
                 style="?android:attr/buttonBarStyle"
                 android:id="@+id/enviar"
+                android:layout_toEndOf="@+id/voltar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -81,7 +96,7 @@
                 android:background="@drawable/button_light_style"
                 android:text="@string/enviar">
             </Button>
-        </LinearLayout>
-    </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

@@ -7,40 +7,30 @@
     android:layout_marginEnd="5dp"
     android:layout_width="match_parent"
     app:cardBackgroundColor="@color/darkPurple"
+    style="@style/FullscreenTheme"
     app:cardCornerRadius="8dp"
     android:layout_height="wrap_content">
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/fullContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/feedbackPergunta"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_horizontal|center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/pinkchicken"
-                android:textSize="@dimen/_15sdp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="@string/feedbackPergunta"/>
-            <TextView
-                android:id="@+id/feedbackPergunta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/pinkchicken"
-                android:textSize="@dimen/_15sdp"
-                android:layout_marginStart="5dp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="@string/resp"/>
-        </LinearLayout>
+            android:fontFamily="@font/pinkchicken"
+            android:textSize="@dimen/_15sdp"
+            android:layout_marginStart="5dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="@string/resp"/>
         <View
+            android:id="@+id/line"
+            android:layout_below="@+id/feedbackPergunta"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
@@ -48,6 +38,8 @@
             android:layout_gravity="center"
             android:background="@color/white"/>
         <RelativeLayout
+            android:id="@+id/relative1"
+            android:layout_below="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -90,7 +82,8 @@
                     android:text="@string/nao"/>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
-        <LinearLayout
+        <RelativeLayout
+            android:layout_below="@+id/relative1"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,6 +109,7 @@
             <Button
                 style="?android:attr/buttonBarStyle"
                 android:id="@+id/proximaRodada"
+                android:layout_toEndOf="@+id/adivinharLamina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -128,7 +122,8 @@
                 android:textColor="@color/white"
                 android:background="@drawable/button_light_style"
                 android:text="@string/proxima"/>
-        </LinearLayout>
-    </LinearLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

@@ -22,8 +22,8 @@
     <string name="voltar">Voltar</string>
 
     <!--    Modos de jogo   -->
-    <string name="jogarOnline">Jogar online</string>
-    <string name="jogarPC">Jogar com o computador</string>
+    <string name="jogarOnline">Online</string>
+    <string name="jogarPC">Com o computador</string>
 
     <!--    Modos de jogo online   -->
     <string name="convidarAmigo">Convidar amigo</string>
@@ -101,6 +101,8 @@
     <string name="configJogo">Configurando jogo. Por favor, aguarde...</string>
     <string name="semSolic">Não há nenhuma solicitação de amizade para você no momento!</string>
     <string name="semAmg">Poxa, você ainda não adicionou nenhum amigo!</string>
+    <string name="fimJogo">Partida finalizada!</string>
+    <string name="endMessage">Seu oponente se desconectou da partida.</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>

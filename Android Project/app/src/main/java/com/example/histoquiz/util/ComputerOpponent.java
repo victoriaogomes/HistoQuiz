@@ -2,11 +2,14 @@ package com.example.histoquiz.util;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.widget.Toast;
+import android.os.Looper;
 import com.example.histoquiz.activities.GameActivity;
 import com.example.histoquiz.model.Slide;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -39,13 +42,16 @@ public class ComputerOpponent {
      *                    poníveis no firebase
      * @param slides - lâminas cadastradas no firebase
      */
+    @SuppressWarnings("unchecked")
     public ComputerOpponent(GameActivity game_scene, HashMap<String, Map<String, Object>> perguntas, HashMap<Integer, Slide> slides){
         this.game_scene = game_scene;
         this.perguntas = perguntas;
         this.slides = (HashMap<Integer, Slide>) slides.clone();
         askedQuestions = new LinkedList<>();
-        for(int i=0; i<perguntas.keySet().size(); i++){
-            if(perguntas.keySet().toArray()[i].equals("Gerais")){
+        String [] keyset = perguntas.keySet().toArray(new String[0]);
+        Arrays.sort(keyset);
+        for(int i=0; i<keyset.length; i++){
+            if(keyset[i].equals("Gerais")){
                 raffledCategory = i;
             }
         }
@@ -60,7 +66,7 @@ public class ComputerOpponent {
                 else minutos = Integer.toString(minutes);
                 if(seconds < 10) segundos = "0" + seconds;
                 else segundos = Integer.toString(seconds);
-                game_scene.timer.setText("Tempo: " + minutos + ":" + segundos);
+                game_scene.timer.setText(String.format(Locale.getDefault(), "Tempo: %s:%s", minutos, segundos));
             }
             @Override
             public void onFinish() {
@@ -69,6 +75,7 @@ public class ComputerOpponent {
         };
         rndGenerator = new Random();
         raffledValue = generateRaffledValue(100, 1);
+        game_scene.saveMatchInfo(false, 0);
         _estado_A();
     }
 
@@ -79,7 +86,7 @@ public class ComputerOpponent {
      */
     public void _estado_A(){
         game_scene.showTextToPlayer("Aguardando oponente selecionar uma pergunta...");
-        (new Handler()).postDelayed(this::_estado_B, 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_B, 2000);
     }
 
 
@@ -120,7 +127,7 @@ public class ComputerOpponent {
     public void _estado_C(boolean answer){
         stopTimer();
         game_scene.showTextToPlayer("Validando resposta...");
-        (new Handler()).postDelayed(() -> _estado_D(answer), 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(answer), 2000);
     }
 
 
@@ -132,6 +139,7 @@ public class ComputerOpponent {
      */
     public void _estado_D(Boolean answer){
         Object[] keySet = game_scene.mySlides.keySet().toArray();
+        Arrays.sort(keySet);
         String text;
         switch (slideToGuess) {
             case "firstSlide":
@@ -155,7 +163,7 @@ public class ComputerOpponent {
             }
             game_scene.showTextToPlayer("Você " + text + " Aguardando oponente analisar sua resposta...");
         }
-        (new Handler()).postDelayed(() -> _estado_E(trueAnswer), 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_E(trueAnswer), 2000);
     }
 
 
@@ -167,6 +175,7 @@ public class ComputerOpponent {
      * @param trueAnswer - resposta verdadeira da pergunta selecionada pelo PC para o jogador
      *                     responder
      */
+    @SuppressWarnings("unchecked")
     public void _estado_E(boolean trueAnswer){
         int delay = 1000;
         HashMap<Integer, Slide> copy = (HashMap<Integer, Slide>) slides.clone();
@@ -175,11 +184,12 @@ public class ComputerOpponent {
                 slides.remove(pair.getKey());
             }
         }
-        Toast.makeText(game_scene, "Possibilidades: " + slides.size(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(game_scene, "Possibilidades: " + slides.size(), Toast.LENGTH_LONG).show();
         if(slides.size() <= 3 && slides.size()>0){
             int position = 0;
             delay = 3000;
             Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
+            Arrays.sort(keySet);
             String slideName = "";
             switch (slideToGuess){
                 case "firstSlide":
@@ -201,8 +211,10 @@ public class ComputerOpponent {
                 game_scene.changePlayerScore(2, 3);
                 slides = (HashMap<Integer, Slide>) game_scene.slides.clone();
                 general = true;
-                for(int i=0; i<perguntas.keySet().size(); i++){
-                    if(perguntas.keySet().toArray()[i].equals("Gerais")){
+                String [] keySet2 = perguntas.keySet().toArray(new String[0]);
+                Arrays.sort(keySet2);
+                for(int i=0; i<keySet2.length; i++){
+                    if(keySet2[i].equals("Gerais")){
                         raffledCategory = i;
                     }
                 }
@@ -217,7 +229,7 @@ public class ComputerOpponent {
                 slides.remove(Integer.parseInt(slides.keySet().toArray()[0].toString()));
             }
         }
-        (new Handler()).postDelayed(this::_estado_F, delay);
+        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_F, delay);
     }
 
 
@@ -241,7 +253,7 @@ public class ComputerOpponent {
         stopTimer();
         game_scene.closeQuestionSelection();
         game_scene.showTextToPlayer("Enviando...");
-        (new Handler()).postDelayed(this::_estado_H, 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_H, 2000);
     }
 
 
@@ -251,7 +263,7 @@ public class ComputerOpponent {
      */
     public void _estado_H(){
         game_scene.showTextToPlayer("Aguardando resposta do oponente...");
-        (new Handler()).postDelayed(this::_estado_I, 2000);
+        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_I, 2000);
     }
 
 
@@ -271,6 +283,7 @@ public class ComputerOpponent {
         myAnswer = raffledValue % 2 == 0;
         int slide = 0;
         Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
+        Arrays.sort(keySet);
         game_scene.closeQuestionSelection();
         switch (game_scene.slideToGuess){
             case "firstSlide":
@@ -316,6 +329,7 @@ public class ComputerOpponent {
     public void _estado_K(String answer){
         stopTimer();
         Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
+        Arrays.sort(keySet);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
         int systemCode = 0;
@@ -370,10 +384,10 @@ public class ComputerOpponent {
         }
         if(matchEnded){
             game_scene.slideToGuess = "allDone";
-            (new Handler()).postDelayed(this::_estado_M, 2000);
+            (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_M, 2000);
         }
         else{
-            (new Handler()).postDelayed(this::_estado_A, 2000);
+            (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
         }
     }
 
@@ -386,6 +400,7 @@ public class ComputerOpponent {
     public void _estado_M(){
         if(!game_scene.slideToGuess.equals("allDone")){
             Integer [] keySet = game_scene.mySlides.keySet().toArray(new Integer[0]);
+            Arrays.sort(keySet);
             switch (game_scene.slideToGuess){
                 case "firstSlide":
                     game_scene.computePerformance(Objects.requireNonNull(game_scene.mySlides.get(keySet[0])).getSystem(), 0);
@@ -401,7 +416,7 @@ public class ComputerOpponent {
                     break;
             }
         }
-        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2));
+        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2), 1);
         game_scene.showEndGameDialog();
     }
 
@@ -448,19 +463,19 @@ public class ComputerOpponent {
         mTimerRunning = false;
         switch (state){
             case "B":
-                (new Handler()).postDelayed(() -> _estado_D(null), 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(null), 2000);
                 break;
             case "F":
                 game_scene.closeQuestionSelection();
-                (new Handler()).postDelayed(this::_estado_A, 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
                 break;
             case "I":
                 game_scene.closeQuestionFeedback();
-                (new Handler()).postDelayed(this::_estado_A, 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
                 break;
             case "J":
                 game_scene.closeGuessSlide();
-                (new Handler()).postDelayed(this::_estado_A, 2000);
+                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
                 break;
         }
     }

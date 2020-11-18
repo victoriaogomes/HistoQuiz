@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Customize your theme here. -->
+
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -12,7 +13,9 @@
     </style>
 
     <style name="Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="shapeAppearanceOverlay">@style/Rounded_ShapeAppearanceOverlay.MaterialComponents.TextInputLayout</item>
+        <item name="shapeAppearanceOverlay">
+            @style/Rounded_ShapeAppearanceOverlay.MaterialComponents.TextInputLayout
+        </item>
         <item name="boxStrokeColor">@android:color/transparent</item>
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxStrokeWidthFocused">0dp</item>
@@ -64,6 +67,7 @@
 
     <style name="SpinnerStyle" parent="Widget.AppCompat.ListView.DropDown">
         <item name="android:divider">@color/white</item>
+        <item name="android:dropDownHeight">70dp</item>
         <item name="android:dividerHeight">1dp</item>
         <item name="android:dividerPadding">10dp</item>
     </style>
@@ -84,4 +88,5 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+
 </resources>

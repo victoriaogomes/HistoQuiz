@@ -10,10 +10,11 @@
         android:id="@+id/fullContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
         android:orientation="vertical"
         android:weightSum="100">
         <ImageView
-            android:layout_marginTop="100dp"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="12"
@@ -39,9 +40,9 @@
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/app_name" />
         <LinearLayout
+            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="66"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
             android:gravity="center_horizontal|center_vertical">
             <androidx.cardview.widget.CardView

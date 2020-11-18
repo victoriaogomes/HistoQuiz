@@ -19,6 +19,7 @@
         <activity android:name=".activities.GameActivity">
             <intent-filter>
                 <action android:name=".activities.GameActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

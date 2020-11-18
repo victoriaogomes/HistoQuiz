@@ -5,12 +5,14 @@ import com.example.histoquiz.adapters.MyAccountAdapter;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewpager2.widget.ViewPager2;
-import android.annotation.SuppressLint;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -28,11 +30,6 @@ public class MyAccountActivity extends AppCompatActivity {
     protected ViewPager2 viewPager;
     protected MyAccountAdapter myAccountAdapter;
 
-    // Variáveis para o controle da tela como fullscreen
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHideRunnable = this::hide;
-
 
     /**
      * Método executado no instante em que essa activity é criada, seta qual view será associada a
@@ -46,73 +43,47 @@ public class MyAccountActivity extends AppCompatActivity {
         initGui();
         tabLayout.selectTab(tabLayout.getTabAt(0));
         tabSelectorManager();
-        mContentView = findViewById(R.id.fullContent);
+        hideSystemUI();
     }
 
 
     /**
-     * Runnable utilizado para remover automaticamente a barra de botões e a de status dessa
-     * activity
-     */
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-
-
-    /**
-     * Runnable utilizado para exibir a barra de botões e a de status dessa activity quando o
-     * usuário solicitar
-     */
-    private final Runnable mShowPart2Runnable = () -> {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.show();
-        }
-    };
-
-
-    /**
-     * Método utilizado para fazer a primeira chamada ao método delayedHide, logo após a activitie
-     * ser criada, unicamente para exibir brevemente ao usuário que os controles de tela estão
-     * disponíveis
-     * @param savedInstanceState - contém o estado anteriormente salvo da atividade (pode ser nulo)
+     * Método chamado quando a janela atual da activity ganha ou perde o foco, é utilizado para es-
+     * conder novamente a barra de status e a navigation bar.
+     * @param hasFocus - booleano que indica se a janela desta atividade tem foco.
      */
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        delayedHide();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        hideSystemUI();
     }
 
 
     /**
-     * Programa uma chamada ao método hide() após uma quantidade delayMillis de millisegundos,
-     * cancelando qualquer chamada programada previamente
+     * Método utilizado para fazer com que a barra de status e a navigation bar não sejam exibidas
+     * na activity. Caso o usuário queira visualizá-las, ele deve realizar um movimento de arrastar
+     * para cima (na navigation bar), ou para baixo (na status bar), o que fará com que elas apare-
+     * çam por um momento e depois sumam novamente.
      */
-    private void delayedHide() {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, 100);
-    }
-
-
-    /**
-     * Método utilizado para esconder a barra de botões
-     */
-    private void hide() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
+    private void hideSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+            WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+            if(controller != null) {
+                controller.hide(WindowInsetsCompat.Type.statusBars());
+                controller.hide(WindowInsetsCompat.Type.navigationBars());
+                controller.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
         }
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, 300);
+        else {
+            //noinspection deprecation
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
 

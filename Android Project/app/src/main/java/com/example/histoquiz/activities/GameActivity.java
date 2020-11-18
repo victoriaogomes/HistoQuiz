@@ -1,14 +1,16 @@
 package com.example.histoquiz.activities;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -47,7 +49,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public Map<Integer, Slide> mySlides = new HashMap<>();
     public FirebaseFirestore firestoreDatabase;
-    public LinearLayout dialogs;
+    public LinearLayout dialogs, content;
     protected String opponentUID;
     protected FirebaseUser user;
     public boolean matchCreator, PCopponent;
@@ -76,12 +78,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected SlideImageDialog slideImageDialog;
     protected EndGameDialog endGameDialog;
 
-    // Variáveis para o controle da tela como fullscreen
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHideRunnable = this::hide;
-
 
     /**
      * Método executado no instante em que essa activity é criada, seta qual view será associada a
@@ -90,7 +86,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
+        super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         matchCreator = intent.getBooleanExtra("matchCreator", false);
         opponentUID = intent.getStringExtra("opponentUID");
@@ -119,73 +115,47 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }.start();
-        mContentView = findViewById(R.id.fullContent);
+        hideSystemUI();
     }
 
 
     /**
-     * Runnable utilizado para remover automaticamente a barra de botões e a de status dessa
-     * activity
-     */
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-
-
-    /**
-     * Runnable utilizado para exibir a barra de botões e a de status dessa activity quando o
-     * usuário solicitar
-     */
-    private final Runnable mShowPart2Runnable = () -> {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.show();
-        }
-    };
-
-
-    /**
-     * Método utilizado para fazer a primeira chamada ao método delayedHide, logo após a activitie
-     * ser criada, unicamente para exibir brevemente ao usuário que os controles de tela estão
-     * disponíveis
-     * @param savedInstanceState - contém o estado anteriormente salvo da atividade (pode ser nulo)
+     * Método chamado quando a janela atual da activity ganha ou perde o foco, é utilizado para es-
+     * conder novamente a barra de status e a navigation bar.
+     * @param hasFocus - booleano que indica se a janela desta atividade tem foco.
      */
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(null);
-        delayedHide();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        hideSystemUI();
     }
 
 
     /**
-     * Programa uma chamada ao método hide() após uma quantidade delayMillis de millisegundos,
-     * cancelando qualquer chamada programada previamente
+     * Método utilizado para fazer com que a barra de status e a navigation bar não sejam exibidas
+     * na activity. Caso o usuário queira visualizá-las, ele deve realizar um movimento de arrastar
+     * para cima (na navigation bar), ou para baixo (na status bar), o que fará com que elas apare-
+     * çam por um momento e depois sumam novamente.
      */
-    private void delayedHide() {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, 100);
-    }
-
-
-    /**
-     * Método utilizado para esconder a barra de botões
-     */
-    private void hide() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
+    private void hideSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+            WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+            if(controller != null) {
+                controller.hide(WindowInsetsCompat.Type.statusBars());
+                controller.hide(WindowInsetsCompat.Type.navigationBars());
+                controller.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
         }
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+        else {
+            //noinspection deprecation
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
 
@@ -227,6 +197,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void initGUI(){
         questionText = findViewById(R.id.pergunta);
         dialogs = findViewById(R.id.dialogs);
+        content = findViewById(R.id.fullContent);
         yesAnswer = findViewById(R.id.respSim);
         noAnswer = findViewById(R.id.respNao);
         scorePlayer1 = findViewById(R.id.pontuacaoJogador1);
@@ -263,7 +234,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void showQuestionSelection(){
         selectQuestionDialog.show(getSupportFragmentManager(), "choose question dialog");
-        hide();
     }
 
 
@@ -282,7 +252,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void showGuessSlide(){
         guessSlideDialog.show(getSupportFragmentManager(), "guess dialog");
-        hide();
     }
 
 
@@ -302,7 +271,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void showQuestionFeedback(Boolean opponentAnswer, boolean correctAnswer){
         questionFeedBackDialog = new QuestionFeedBackDialog(this, opponentAnswer, correctAnswer);
         questionFeedBackDialog.show(getSupportFragmentManager(), "questionFeedBack");
-        hide();
     }
 
 
@@ -322,7 +290,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void showSlideImages(){
         slideImageDialog = new SlideImageDialog(this);
         slideImageDialog.show(getSupportFragmentManager(), "slide");
-        hide();
     }
 
 
@@ -355,7 +322,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(endGameDialog, "endGame").commitAllowingStateLoss();
-        hide();
     }
 
 
@@ -676,14 +642,41 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * Método utilizado para salvar no firebase desse usuário que ele jogou mais uma partida e,
      * se ele houver ganhado, salvar essa informação também
      * @param winner - boolean que indica se o usuário ganhou a partida ou não
+     * @param part - variável que indica se é para adicionar mais uma partida ao contador de partidas
+     *             desse usuário, ou se é para adicionar mais uma partida como ganha
      */
-    public void saveMatchInfo(boolean winner){
+    public void saveMatchInfo(boolean winner, int part){
         DocumentReference ref = firestoreDatabase.document("desempenho/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-        ref.get().addOnSuccessListener(documentSnapshot -> {
-            ref.update("numPartidas", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("numPartidas")).toString()) + 1);
-            if(winner){
-                ref.update("vitorias", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("vitorias")).toString()) + 1);
+        if((part == 0) || (winner && part == 1)) {
+            ref.get().addOnSuccessListener(documentSnapshot -> {
+                if (part == 0)
+                    ref.update("numPartidas", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("numPartidas")).toString()) + 1);
+                else {
+                    if (winner) {
+                        ref.update("vitorias", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("vitorias")).toString()) + 1);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!PCopponent){
+            if(!onlineOpponent.bothEnded) {
+                onlineOpponent.realtimeDatabase.getReference("partida/jogo/" + onlineOpponent.roomName).child("matchState").setValue("killed");
             }
-        });
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(!PCopponent){
+            if(!onlineOpponent.bothEnded) {
+                onlineOpponent.realtimeDatabase.getReference("partida/jogo/" + onlineOpponent.roomName).child("matchState").setValue("killed");
+            }
+        }
     }
 }
