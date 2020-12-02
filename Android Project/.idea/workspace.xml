@@ -49,9 +49,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="valueResourceFile" />
-        <option value="Class" />
         <option value="layoutResourceFile" />
         <option value="resourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -81,8 +81,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ApkExportedModule" value="HistoQuiz.app" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="xxhdpi_test" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-11-18T21:47:28.320Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="xhdpi_test" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-11-25T12:25:03.883Z" />
     <property name="ExportApk.ApkPath" value="D:\Users\Documents\GitHub\HistoQuiz\Android Project\app" />
     <property name="ExportApk.BuildVariants" value="release" />
     <property name="ExportApk.SignV1" value="true" />
