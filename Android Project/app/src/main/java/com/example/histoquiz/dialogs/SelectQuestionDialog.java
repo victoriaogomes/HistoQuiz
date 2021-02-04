@@ -109,7 +109,6 @@ public class SelectQuestionDialog extends AppCompatDialogFragment{
         send = view.findViewById(R.id.enviar);
         categoriesDropdown = view.findViewById(R.id.categorias_dropdown);
         questionsDropdown = view.findViewById(R.id.perguntas_dropdown);
-        int value = (int) Math.round(parentActivity.content.getWidth() - (parentActivity.content.getWidth()*0.1));
         categoriesDropdown.setDropDownWidth((int) Math.round(parentActivity.content.getWidth() - (parentActivity.content.getWidth()*0.1)));
         categoriesDropdown.setDropDownHeight((int) Math.round(parentActivity.content.getHeight()*0.4));
         categoriesDropdown.setInputType(InputType.TYPE_NULL);

@@ -23,11 +23,21 @@
 
     <!--    Modos de jogo   -->
     <string name="jogarOnline">Online</string>
-    <string name="jogarPC">Com o computador</string>
+    <string name="jogarPC">Contra o PC</string>
 
     <!--    Modos de jogo online   -->
     <string name="convidarAmigo">Convidar amigo</string>
     <string name="modoAleatorio">Modo aleatório</string>
+    <string name="local">Modo local</string>
+    <string name="entrarSala">Entrar em sala</string>
+
+    <!-- Modo de jogo logal -->
+    <string name="selecSist">Selecione um sistema:</string>
+    <string name="qntdlaminas">Selecione a quantidade de lâminas a ser adivinhada na partida:</string>
+    <string name="criarSala">Criar sala</string>
+    <string name="tempo">Informe o tempo para a realização de cada jogada (em segundos):</string>
+    <string name="informeCod">Informe o código da sala de jogo:</string>
+    <string name="codigo">Código da sala</string>
 
     <!--    Tela sobre o jogo   -->
     <string name="oQue">O que é</string>
@@ -56,6 +66,7 @@
 
     <!--    Tela perfil   -->
     <string name="salvar">Salvar</string>
+    <string name="sair">Sair</string>
 
     <!--    Tela de amigos   -->
     <string name="adicionar">Adicionar amigos</string>
@@ -66,7 +77,9 @@
     <!--    Tela de jogo   -->
     <string name="rodada">#1 Rodada</string>
     <string name="player1">Sua pontuação:</string>
+    <string name="team1">Pontuação do seu time:</string>
     <string name="player2">Pontuação do seu adversário:</string>
+    <string name="team2">Pontuação do time adversário:</string>
     <string name="lamina">lâminas</string>
     <string name="pontuacaoInicial">0</string>
     <string name="lentes">Lentes</string>
@@ -103,6 +116,13 @@
     <string name="semAmg">Poxa, você ainda não adicionou nenhum amigo!</string>
     <string name="fimJogo">Partida finalizada!</string>
     <string name="endMessage">Seu oponente se desconectou da partida.</string>
+    <string name="dica">Dica</string>
+    <string name="finalizar">Finalizar jogo</string>
+    <string name="hideLamina">Ocultar lâmina</string>
+    <string name="showLamina">Exibir lâmina</string>
+    <string name="team1Comp">Componentes do time 1: </string>
+    <string name="team2Comp">Componentes do time 2: </string>
+    <string name="continuar">Continuar</string>
 
     <!--    Tela de convidar amigo para jogar   -->
     <string name="convidar">Convidar</string>
@@ -127,4 +147,24 @@
     <string name="placeholder">0</string>
     <string name="conquistas">Conquistas</string>
     <string name="placeholderConquistas">Você ainda não possui conquistas :(</string>
+
+    <!--    Regras do jogo    -->
+    <string name="regrasTitle">Regras</string>
+    <string name="localGame">Modo local</string>
+    <string name="topic1Local">1. Neste modo, os jogadores deverão formar duplas</string>
+    <string name="topic2Local">2. No início do jogo, será revelada uma imagem de lâmina histológica a um membro de cada dupla por meio da tela do HistoQuiz</string>
+    <string name="topic3Local">3. O HistoQuiz sorteará uma dupla para começar</string>
+    <string name="topic4Local">4. O membro da dupla sorteada que possui a imagem deverá dar uma dica ao seu parceiro para que este tente adivinhar o conteúdo da sua imagem. Para tal, o parceiro deve selecionar uma opção no banco de respostas do HistoQuiz. Caso acerte, a dupla ganhará pontos e a imagem será revelada a todos os jogadores.</string>
+    <string name="topic5Local">5. Se o jogador errar, o membro da outra dupla que possui a imagem também poderá dar uma dica ao seu parceiro. Este, deve agora considerar as duas dicas já mencionadas no jogo para tentar adivinhar. Isto se seguirá até que alguma dupla acerte a lâmina</string>
+    <string name="topic6Local">6. O jogo terminará quando todas as lâminas disponíveis forem utilizadas ou quando todos os jogadores selecionarem “Finalizar jogo”. Neste momento, os pontos obtidos durante a partida serão computados e aquele que obtiver a maior pontuação será o ganhador.</string>
+    <string name="onlineGame">Modo online</string>
+    <string name="topic1Online">1. Ao iniciar a partida, cada jogador receberá uma imagem de lâmina histológica, que não estará visível para o seu adversário.</string>
+    <string name="topic2Online">2. Assim, caso você seja o primeiro a jogar, poderá selecionar uma pergunta disponível no banco de perguntas do HistoQuiz para seu adversário, na tentativa de adivinhar a estrutura representada pela lâmina que ele possui</string>
+    <string name="topic3Online">3. O adversário deverá responder “sim” ou “não” à pergunta feita e, em seguida, o HistoQuiz informará o gabarito correto da pergunta.</string>
+    <string name="topic4Online">4. Caso o adversário responda corretamente, receberá 2 ponto. Caso contrário, perderá 1 ponto</string>
+    <string name="topic5Online">5. Após obter a resposta para sua pergunta, você terá a oportunidade de tentar adivinhar a lâmina representada, selecionando uma das opções presente no banco de lâminas do HistoQuiz.</string>
+    <string name="topic6Online">6. Se você acertar, ganhará 3 pontos e o seu adversário receberá outra lâmina. Caso o contrário, a pontuação (3 pontos) irá para o outro jogador.</string>
+    <string name="topic7Online">7. Cada jogador poderá dispor de 3 lâminas para serem adivinhadas pelo seu adversário, sendo apresentadas a ele apenas uma por vez. Caso seu oponente adivinhe todas as suas lâminas, o jogo é finalizado.</string>
+    <string name="topic8Online">8. Neste momento, os pontos acumulados na partida são somados e o jogador que obteve o maior número de pontos é o ganhador da partida</string>
+    <string name="topic9Online">9. No caso de empate, ganha o jogador que conseguiu adivinhar todas as lâminas do seu oponente.</string>
 </resources>

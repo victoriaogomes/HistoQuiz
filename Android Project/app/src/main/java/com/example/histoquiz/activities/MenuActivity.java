@@ -10,7 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.example.histoquiz.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
@@ -20,6 +23,7 @@ import com.example.histoquiz.R;
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected Button button1, button2, button3, button4, voltar;
+    protected TextView signOut;
 
     /**
      * Método chamado assim que essa activity é invocada.
@@ -80,6 +84,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
      */
     protected void initGui(){
         button1 = findViewById(R.id.button1);
+        signOut = findViewById(R.id.sair);
+        signOut.setTag("SIGN_OUT");
+        signOut.setOnClickListener(this);
         button1.setOnClickListener(this);
         button2 = findViewById(R.id.button2);
         button2.setOnClickListener(this);
@@ -102,11 +109,12 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         String tag = (String) v.getTag();
         switch (tag){
             case "MINHA_CONTA":            myAccount();            break;
-            case "JOGAR":                  setPlayOptions();       break;
+            case "JOGAR":
+            case "LOCAL_GAME":             setPlayOptions();       break;
             case "REVISAR":                setReviewOptions();     break;
             case "SOBRE_O_JOGO":           setAboutOptions();      break;
-            case "JOGAR_ONLINE":           setPlayOnlineOptions(); break;
             case "JOGAR_PC":               playAgainstPC();        break;
+            case "JOGAR_LOCAL":            playLocalGame();        break;
             case "CONVIDAR_AMIGO":         inviteFriend();         break;
             case "MODO_ALEATORIO":         randomMode();           break;
             case "O_QUE_E":                whatItIs();             break;
@@ -117,6 +125,13 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             case "SISTEMA_RESPIRATORIO":   showReview(3);     break;
             case "SISTEMA_CARDIOVASCULAR": showReview(4);     break;
             case "MENU_INICIAL":           setInicialMenuOptions();break;
+            case "CRIAR_SALA":             createGameRoom();       break;
+            case "ENTRAR_SALA":            joinGameRoom();         break;
+            case "SIGN_OUT":
+                FirebaseAuth.getInstance().signOut();
+                Intent troca = new Intent(MenuActivity.this, SignInActivity.class);
+                startActivity(troca);
+                break;
         }
     }
 
@@ -138,14 +153,20 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
      * putador". Os demais botões são desabilitados e ficam invisíveis
      */
     protected void setPlayOptions(){
-        button1.setVisibility(View.GONE);
-        button1.setEnabled(false);
-        button4.setVisibility(View.INVISIBLE);
-        button4.setEnabled(false);
-        button2.setText(R.string.jogarOnline);
-        button2.setTag("JOGAR_ONLINE");
+        button1.setVisibility(View.VISIBLE);
+        button1.setText(R.string.local);
+        button1.setTag("JOGAR_LOCAL");
+        button1.setEnabled(true);
+        button2.setVisibility(View.VISIBLE);
+        button2.setText(R.string.convidarAmigo);
+        button2.setTag("CONVIDAR_AMIGO");
+        button2.setEnabled(true);
+        button3.setVisibility(View.VISIBLE);
         button3.setText(R.string.jogarPC);
         button3.setTag("JOGAR_PC");
+        button3.setEnabled(true);
+        button4.setVisibility(View.INVISIBLE);
+        button4.setEnabled(false);
         voltar.setVisibility(View.VISIBLE);
         voltar.setEnabled(true);
         voltar.setTag("MENU_INICIAL");
@@ -191,24 +212,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
 
     /**
-     * Método que exibe ao jogador as opções de jogo online disponíveis: jogar contra
-     * um amigo ou jogar no modo aleatório (o jogo escolhe um oponente qualquer). Para
-     * isso, ele se aproveita dos botões do menu: "jogar"(que já tinha se tornado "jo-
-     * gar online"), transformando-o em "Convidar amigo", e "revisar" (que já tinha se
-     * tornado "jogar contra o computador"), transformando-o em "modo aleatório"
-     */
-    private void setPlayOnlineOptions(){
-        button2.setText(R.string.convidarAmigo);
-        button2.setTag("CONVIDAR_AMIGO");
-        button3.setText(R.string.modoAleatorio);
-        button3.setTag("MODO_ALEATORIO");
-        voltar.setVisibility(View.VISIBLE);
-        voltar.setEnabled(true);
-        voltar.setTag("JOGAR");
-    }
-
-
-    /**
      * Método utilizado para redirecionar o jogador diretamente para a tela de jogo,
      * já que ele irá jogar contra o próprio celular
      */
@@ -219,6 +222,45 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         troca.putExtra("opponentUID", "0");
         startActivityForResult(troca, 999);
     }
+
+
+    /**
+     * Método utilizado para exibir ao jogador as opções existentes relativas a um jogo local: criar
+     * uma sala ou entrar em uma já existente
+     */
+    protected void playLocalGame(){
+        button1.setVisibility(View.INVISIBLE);
+        button1.setEnabled(false);
+        button2.setText(R.string.criarSala);
+        button2.setTag("CRIAR_SALA");
+        button3.setText(R.string.entrarSala);
+        button3.setTag("ENTRAR_SALA");
+        button4.setVisibility(View.INVISIBLE);
+        button4.setEnabled(false);
+        voltar.setVisibility(View.VISIBLE);
+        voltar.setEnabled(true);
+        voltar.setTag("LOCAL_GAME");
+    }
+
+
+    /**
+     * Método utilizado para redirecionar o jogador para a tela de configurar as métricas
+     * necessárias para a criação de uma partida online
+     */
+    protected void createGameRoom(){
+        Intent troca = new Intent(MenuActivity.this, ConfigLocalGameActivity.class);
+        startActivity(troca);
+    }
+
+
+    /**
+     * Método utilizado para redirecionar o usuário a tela onde ele deve informar o código relati-
+     * vo a sala do jogo no qual ele deseja entrar
+     */
+    protected void joinGameRoom(){
+        //falta implementar
+    }
+
 
     /**
      * Método utilizado para redirecionar dessa activity para a que exibe a tela
@@ -252,7 +294,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
      * como jogar o HistoQuiz
      */
     private void howToPlay(){
-
+        Intent troca = new Intent(MenuActivity.this, RulesActivity.class);
+        startActivity(troca);
     }
 
 

@@ -3,26 +3,46 @@ package com.example.histoquiz.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.example.histoquiz.BuildConfig;
 import com.example.histoquiz.R;
 import com.example.histoquiz.util.FormFieldValidator;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.common.io.Files;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +63,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     protected FirebaseAuth firebase;
     protected TextInputLayout nome, email, senha, universidade, anoIngresso;
     protected FormFieldValidator validarCampo;
+    protected ImageView selectImage;
+    private StorageReference mStorageRef;
+    protected Uri selectedImage;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
+    private static final int REQUEST_PERMISSION = 200;
+    protected Uri photoUri;
 
 
     /**
@@ -112,8 +138,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
      * deles, como tags e quem responderá a interações com eles.
      */
     protected void initGui(){
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         cadastrar = findViewById(R.id.cadastrarButton);
         cadastrar.setTag("CADASTRAR");
+        selectImage = findViewById(R.id.selectImage);
+        selectImage.setTag("SELECIONAR_IMAGEM");
+        selectImage.setOnClickListener(this);
         cadastrar.setOnClickListener(this);
         voltar = findViewById(R.id.voltar);
         voltar.setTag("VOLTAR");
@@ -124,6 +154,182 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         universidade = findViewById(R.id.universidade);
         anoIngresso = findViewById(R.id.anoIngresso);
         validarCampo = new FormFieldValidator(this);
+    }
+
+
+    /**
+     * Método utilizado para solicitar ao usuário que selecione uma imagem para seu perfil já
+     * presente no celular ou que tire uma foto
+     */
+    private void selectImage() {
+        final CharSequence[] options = {"Tirar foto", "Selecionar da galeria", "Cancelar"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Selecione sua foto de perfil.");
+
+        builder.setItems(options, (dialog, item) -> {
+
+            if (options[item].equals("Tirar foto")) {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                MY_CAMERA_REQUEST_CODE);
+                    }
+                    else{
+                        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        if(getPackageManager() != null){
+                            //Create a file to store the image
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
+                                // Error occurred while creating the File
+                            }
+                            if (photoFile != null) {
+                                photoUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        photoUri);
+                                startActivityForResult(intent, 0);
+                            }
+                        }
+                    }
+                }
+                else{
+                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    if(getPackageManager() != null){
+                        //Create a file to store the image
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile();
+                        } catch (IOException ex) {
+                            // Error occurred while creating the File
+                        }
+                        if (photoFile != null) {
+                            photoUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    photoUri);
+                            startActivityForResult(intent, 0);
+                        }
+                    }
+                }
+
+            } else if (options[item].equals("Selecionar da galeria")) {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                REQUEST_PERMISSION);
+                    }
+                    else{
+                        Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(pickPhoto , 1);
+                    }
+                }
+                else{
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto , 1);
+                }
+
+            } else if (options[item].equals("Cancelar")) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+
+    /**
+     * Método utilizado para abrir a câmera, após o usuário permitir
+     * @param requestCode - código da requisição
+     * @param permissions - resultado da permissão
+     * @param grantResults -
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                if(getPackageManager() != null){
+                    //Create a file to store the image
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        // Error occurred while creating the File
+                    }
+                    if (photoFile != null) {
+                        photoUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                photoUri);
+                        startActivityForResult(intent, 0);
+                    }
+                }
+            } else {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+        else if(requestCode == REQUEST_PERMISSION){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 1);
+            }else {
+                Toast.makeText(this, "storage permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+    /**
+     * Método utilizado para lidar com o arquivo de imagem fornecido pelo usuário para a sua foto
+     * de perfil
+     * @param requestCode - código da operação
+     * @param resultCode - código indicando o resultado da operação
+     * @param data - dados resultantes da operação realizada (nesse caso, fornecimento de uma imagem)
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode != RESULT_CANCELED) {
+            switch (requestCode) {
+                case 0:
+                    if (resultCode == RESULT_OK) {
+                        selectedImage = photoUri;
+                        Glide.with(this).load(photoUri).into(selectImage);
+                    }
+                    break;
+                case 1:
+                    if (resultCode == RESULT_OK && data != null) {
+                        selectedImage =  data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                        if (selectedImage != null) {
+                            Cursor cursor = getContentResolver().query(selectedImage,
+                                    filePathColumn, null, null, null);
+                            if (cursor != null) {
+                                cursor.moveToFirst();
+                                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                                String picturePath = cursor.getString(columnIndex);
+                                selectImage.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                                cursor.close();
+                            }
+                        }
+
+                    }
+                    break;
+            }
+        }
+    }
+
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(imageFileName,".jpg", storageDir);
     }
 
 
@@ -143,6 +349,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 break;
             case "VOLTAR": voltar(); break;
+            case "SELECIONAR_IMAGEM": selectImage();
         }
     }
 
@@ -163,16 +370,31 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
              */
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                FirebaseUser user = firebase.getCurrentUser();
-                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                assert user != null;
                 if (task.isSuccessful()) {
+                    FirebaseUser user = firebase.getCurrentUser();
+                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                    assert user != null;
                     String dataConta = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
                     Map<String, Object> dadosUsuario = new HashMap<>();
                     dadosUsuario.put("nome", Objects.requireNonNull(nome.getEditText()).getText().toString());
                     dadosUsuario.put("univers", Objects.requireNonNull(universidade.getEditText()).getText().toString());
                     dadosUsuario.put("anoIng",  Objects.requireNonNull(anoIngresso.getEditText()).getText().toString());
                     dadosUsuario.put("dataConta", dataConta);
+                    if(selectedImage != null){
+                        StorageReference riversRef = mStorageRef.child("profilePics/" + user.getUid());
+                        riversRef.putFile(selectedImage)
+                                .addOnSuccessListener(taskSnapshot -> riversRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    final Uri downloadUrl = uri;
+                                }))
+                                .addOnFailureListener(exception -> {
+                                    // Handle unsuccessful uploads
+                                    // ...
+                                });
+                        dadosUsuario.put("photoName", user.getUid());
+                    }
+                    else{
+                        dadosUsuario.put("photoName", "semFoto");
+                    }
                     FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
                         DocumentReference ref = FirebaseFirestore.getInstance().collection("usuarios").document(user.getUid());
                         dadosUsuario.put("registrationToken", s);
@@ -188,6 +410,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         dadosUsuario.put("sisReprodutor", new ArrayList<>(Arrays.asList(0, 0)));
                         dadosUsuario.put("vitorias", 0);
                         firestore.collection("desempenho").document(user.getUid()).set(dadosUsuario);
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(Objects.requireNonNull(nome.getEditText()).getText().toString()).build();
+                        user.updateProfile(profileUpdates);
                         Intent troca = new Intent(SignUpActivity.this, MenuActivity.class);
                         startActivity(troca);
                     });

@@ -1,5 +1,6 @@
 package com.example.histoquiz.activities;
 
+import com.bumptech.glide.Glide;
 import com.example.histoquiz.R;
 import com.example.histoquiz.adapters.MyAccountAdapter;
 import com.google.android.material.tabs.TabItem;
@@ -11,10 +12,14 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewpager2.widget.ViewPager2;
+
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import java.util.Objects;
 
@@ -101,7 +106,7 @@ public class MyAccountActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         tabSelectedIconColor = ContextCompat.getColor(MyAccountActivity.this, R.color.darkerPurple);
         tabUnselectedIconColor = ContextCompat.getColor(MyAccountActivity.this, R.color.white);
-        myAccountAdapter = new MyAccountAdapter(getSupportFragmentManager(), getLifecycle(), tabLayout.getTabCount(), this);
+        myAccountAdapter = new MyAccountAdapter(getSupportFragmentManager(), getLifecycle(), tabLayout.getTabCount(), this, this);
         viewPager.setAdapter(myAccountAdapter);
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position){
@@ -151,4 +156,6 @@ public class MyAccountActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

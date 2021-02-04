@@ -6,7 +6,7 @@ package com.example.histoquiz.model;
  */
 public class User {
 
-    protected String nome, univers, anoIng, dataConta, registrationToken;
+    protected String nome, univers, anoIng, dataConta, registrationToken, photoName;
 
     /**
      * Construtor da classe que não recebe parâmetros
@@ -121,5 +121,23 @@ public class User {
      */
     public void setRegistrationToken(String registrationToken) {
         this.registrationToken = registrationToken;
+    }
+
+
+    /**
+     * Método utilizado para obter o nome da foto desse usuário no firebase
+     * @return - photoName desse usuário
+     */
+    public String getPhotoName() {
+        return photoName;
+    }
+
+
+    /**
+     * Método utilizado para modificar o nome da foto desse usuário no firebase
+     * @param  photoName - novo nome da foto desse usuário
+     */
+    public void setPhotoName(String photoName) {
+        this.photoName = photoName;
     }
 }

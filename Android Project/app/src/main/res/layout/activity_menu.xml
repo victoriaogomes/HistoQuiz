@@ -12,8 +12,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="100">
+        <TextView
+            android:id="@+id/sair"
+            android:layout_width="wrap_content"
+            android:text="@string/sair"
+            android:layout_margin="10dp"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"/>
         <ImageView
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="90dp"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="12"
