@@ -5,6 +5,7 @@ import com.example.histoquiz.R;
 import com.example.histoquiz.dialogs.SetTeamsDialog;
 import com.example.histoquiz.model.Slide;
 import com.example.histoquiz.util.GlideApp;
+import com.example.histoquiz.util.LocalOpponent;
 import com.example.histoquiz.util.RoomCreator;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,13 +59,17 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     public Map<Integer, Slide> matchSlides = new HashMap<>();
     protected int actualSlide;
     protected Button showSlide;
-    protected RoomCreator creator;
+    public RoomCreator creator;
     protected DocumentReference docIdRef;
     protected TextView codSala;
     public boolean matchCreator;
     public LinearLayout content;
     public ArrayList<String> nomeJogadores;
     public ArrayList<String> uidJogadores;
+    public Integer [] playersId;
+    public String roomName;
+    LocalOpponent localOpponent;
+    public TextView timer, myTeamPontuation, myOpponentTeamPontuation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,7 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
         slideAmount = intent.getIntExtra("slidesAmount", 3);
         roundTime = intent.getIntExtra("roundTime", 120);
         matchCreator = intent.getBooleanExtra("matchCreator", false);
+        roomName = intent.getStringExtra("roomCode");
         setContentView(R.layout.activity_local_game);
         initGUI();
         getSlides();
@@ -95,14 +101,16 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                         countDownTimer.start();
                     }
                     else{
-                        Map<String, Object> dados = new HashMap<>();
-                        dados.put("creatorUID", FirebaseAuth.getInstance().getUid());
-                        dados.put("qntd", "1");
-                        dados.put("nomeJogadores", new ArrayList<>(Arrays.asList(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName(), "", "", "")));
-                        dados.put("uidJogadores", new ArrayList<>(Arrays.asList(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), "", "", "")));
-                        firestoreDatabase.collection("partidaLocal").document(creator.getActualRoomName()).set(dados);
+                        if(matchCreator){
+                            Map<String, Object> dados = new HashMap<>();
+                            dados.put("creatorUID", FirebaseAuth.getInstance().getUid());
+                            dados.put("qntd", "1");
+                            dados.put("nomeJogadores", new ArrayList<>(Arrays.asList(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName(), "", "", "")));
+                            dados.put("uidJogadores", new ArrayList<>(Arrays.asList(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), "", "", "")));
+                            dados.put("playersId", new ArrayList<>(Arrays.asList(1, 1, 1, 1)));
+                            firestoreDatabase.collection("partidaLocal").document(creator.getActualRoomName()).set(dados);
+                        }
                         codSala.setText(String.format("Cód. da sala: %s", creator.getActualRoomName()));
-                        imageToShow(0);
                         addRoomFilled();
                     }
                 }
@@ -119,6 +127,10 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     protected void initGUI(){
         position = 0;
         actualSlide = 0;
+        myTeamPontuation = findViewById(R.id.pontuacaoSeuTime);
+        myOpponentTeamPontuation = findViewById(R.id.pontuacaoTimeOponente);
+        timer = findViewById(R.id.timer);
+        playersId = new Integer[4];
         creator = new RoomCreator();
         showSlide = findViewById(R.id.toggleLamina);
         content = findViewById(R.id.fullContent);
@@ -169,7 +181,7 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                 slide.setName(documentSnapshot.getId());
                 slides.put(slide.getCode(), slide);
             }
-            raffleSlides(queryDocumentSnapshots.size(), slides, slideAmount);
+            if(matchCreator) raffleSlides(queryDocumentSnapshots.size(), slides, slideAmount);
             slidesDone = true;
         };
         if(systemCode == -1){
@@ -285,8 +297,14 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
             if(Objects.equals(documentSnapshot.get("qntd"), "4")){
                 nomeJogadores = (ArrayList<String>) documentSnapshot.get("nomeJogadores");
                 uidJogadores = (ArrayList<String>) documentSnapshot.get("uidJogadores");
-                SetTeamsDialog setTeamsDialog = new SetTeamsDialog(this);
-                setTeamsDialog.show(getSupportFragmentManager(), "choose teams dialog");
+                if(matchCreator){
+                    SetTeamsDialog setTeamsDialog = new SetTeamsDialog(this);
+                    setTeamsDialog.show(getSupportFragmentManager(), "choose teams dialog");
+                }
+                else{
+                    Toast.makeText(LocalGameActivity.this, "Aguarde enquanto o criador da partida separa os times!", Toast.LENGTH_LONG).show();
+                    startGame();
+                }
             }
             else{
                 Toast.makeText(LocalGameActivity.this, String.format("Faltam %s jogadores para iniciarmos a partida.", 4 - Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("qntd")).toString())), Toast.LENGTH_SHORT).show();
@@ -295,19 +313,29 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     }
 
     protected void createRoomName(){
-        docIdRef = firestoreDatabase.collection("partidaLocal").document(creator.newRoomCode(6));
-        docIdRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                assert document != null;
-                if (document.exists()) {
-                   roomCreationStatus = "create another";
+        if(matchCreator){
+            docIdRef = firestoreDatabase.collection("partidaLocal").document(creator.newRoomCode(6));
+            docIdRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    assert document != null;
+                    if (document.exists()) {
+                        roomCreationStatus = "create another";
+                    } else {
+                        roomCreationStatus = "room created";
+                    }
                 } else {
-                    roomCreationStatus = "room created";
+                    Log.d("Erro criando a sala", "Failed with: ", task.getException());
                 }
-            } else {
-                Log.d("Erro criando a sala", "Failed with: ", task.getException());
-            }
-        });
+            });
+        }
+        else{
+            creator.setActualRoomName(roomName);
+            roomCreationStatus = "room created";
+        }
+    }
+
+    public void startGame(){
+        localOpponent = new LocalOpponent(this, matchCreator, creator.getActualRoomName());
     }
 }

@@ -84,7 +84,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/_15sdp" />
                         <TextView
-                            android:id="@+id/pontuacaoJogador1"
+                            android:id="@+id/pontuacaoSeuTime"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
@@ -127,7 +127,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/_15sdp" />
                         <TextView
-                            android:id="@+id/pontuacaoJogador2"
+                            android:id="@+id/pontuacaoTimeOponente"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"

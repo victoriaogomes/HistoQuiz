@@ -24,6 +24,8 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.LocalGameActivity;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 public class SetTeamsDialog extends AppCompatDialogFragment {
@@ -33,7 +35,7 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
     protected LocalGameActivity parentActivity;
     protected TextInputLayout player1, player2, player3, player4;
     protected String[] playersNames;
-    protected int player1ID, player2ID, player3ID, player4ID, aux;
+    protected int aux;
     protected Dialog dialog;
     protected AutoCompleteTextView player1Dropdown, player2Dropdown, player3Dropdown, player4Dropdown;
 
@@ -127,6 +129,7 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
         player4Dropdown.setDropDownBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.dropdown_background, parentActivity.getTheme()));
 
         continuar = view.findViewById(R.id.continuar);
+        handleTeamSelectionButton();
     }
 
 
@@ -138,7 +141,7 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(parentActivity, R.layout.spinner_layout, R.id.textoSpin, playersNames);
         player1Dropdown.setAdapter(adapter);
         player1Dropdown.setText(player1Dropdown.getAdapter().getItem(0).toString(), false);
-        player1ID = 0;
+        parentActivity.playersId[0] = 0;
     }
 
 
@@ -150,7 +153,7 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(parentActivity, R.layout.spinner_layout, R.id.textoSpin, playersNames);
         player2Dropdown.setAdapter(adapter);
         player2Dropdown.setText(player2Dropdown.getAdapter().getItem(1).toString(), false);
-        player2ID = 1;
+        parentActivity.playersId[1] = 1;
     }
 
 
@@ -162,7 +165,7 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(parentActivity, R.layout.spinner_layout, R.id.textoSpin, playersNames);
         player3Dropdown.setAdapter(adapter);
         player3Dropdown.setText(player3Dropdown.getAdapter().getItem(2).toString(), false);
-        player3ID = 2;
+        parentActivity.playersId[2] = 2;
     }
 
 
@@ -174,7 +177,7 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(parentActivity, R.layout.spinner_layout, R.id.textoSpin, playersNames);
         player4Dropdown.setAdapter(adapter);
         player4Dropdown.setText(player4Dropdown.getAdapter().getItem(3).toString(), false);
-        player4ID = 3;
+        parentActivity.playersId[3] = 3;
     }
 
 
@@ -186,71 +189,71 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
      */
     protected void handleSpinnersClicks(){
         player1Dropdown.setOnItemClickListener((parent, view, position, id) -> {
-            aux = player1ID;
-            player1ID = position;
+            aux = parentActivity.playersId[0];
+            parentActivity.playersId[0] = position;
             player1Dropdown.setText(player1Dropdown.getAdapter().getItem(position).toString(), false);
             if(player2Dropdown.getText().toString().equals(player2Dropdown.getAdapter().getItem(position).toString())){
                 player2Dropdown.setText(player2Dropdown.getAdapter().getItem(aux).toString(), false);
-                player2ID = aux;
+                parentActivity.playersId[1] = aux;
             }
             else if(player3Dropdown.getText().toString().equals(player3Dropdown.getAdapter().getItem(position).toString())) {
                 player3Dropdown.setText(player3Dropdown.getAdapter().getItem(aux).toString(), false);
-                player3ID = aux;
+                parentActivity.playersId[2] = aux;
             }
             else if(player4Dropdown.getText().toString().equals(player4Dropdown.getAdapter().getItem(position).toString())) {
                 player4Dropdown.setText(player4Dropdown.getAdapter().getItem(aux).toString(), false);
-                player4ID = aux;
+                parentActivity.playersId[3] = aux;
             }
         });
         player2Dropdown.setOnItemClickListener((parent, view, position, id) -> {
-            aux = player2ID;
-            player2ID = position;
+            aux = parentActivity.playersId[1];
+            parentActivity.playersId[1] = position;
             player2Dropdown.setText(player2Dropdown.getAdapter().getItem(position).toString(), false);
             if(player1Dropdown.getText().toString().equals(player1Dropdown.getAdapter().getItem(position).toString())){
                 player1Dropdown.setText(player1Dropdown.getAdapter().getItem(aux).toString(), false);
-                player1ID = aux;
+                parentActivity.playersId[0] = aux;
             }
             else if(player3Dropdown.getText().toString().equals(player3Dropdown.getAdapter().getItem(position).toString())) {
                 player3Dropdown.setText(player3Dropdown.getAdapter().getItem(aux).toString(), false);
-                player3ID = aux;
+                parentActivity.playersId[2] = aux;
             }
             else if(player4Dropdown.getText().toString().equals(player4Dropdown.getAdapter().getItem(position).toString())) {
                 player4Dropdown.setText(player4Dropdown.getAdapter().getItem(aux).toString(), false);
-                player4ID = aux;
+                parentActivity.playersId[3] = aux;
             }
         });
         player3Dropdown.setOnItemClickListener((parent, view, position, id) -> {
-            aux = player3ID;
-            player3ID = position;
+            aux = parentActivity.playersId[2];
+            parentActivity.playersId[2] = position;
             player3Dropdown.setText(player3Dropdown.getAdapter().getItem(position).toString(), false);
             if(player1Dropdown.getText().toString().equals(player1Dropdown.getAdapter().getItem(position).toString())){
                 player1Dropdown.setText(player1Dropdown.getAdapter().getItem(aux).toString(), false);
-                player1ID = aux;
+                parentActivity.playersId[0] = aux;
             }
             else if(player2Dropdown.getText().toString().equals(player2Dropdown.getAdapter().getItem(position).toString())) {
                 player2Dropdown.setText(player2Dropdown.getAdapter().getItem(aux).toString(), false);
-                player2ID = aux;
+                parentActivity.playersId[1] = aux;
             }
             else if(player4Dropdown.getText().toString().equals(player4Dropdown.getAdapter().getItem(position).toString())) {
                 player4Dropdown.setText(player4Dropdown.getAdapter().getItem(aux).toString(), false);
-                player4ID = aux;
+                parentActivity.playersId[3] = aux;
             }
         });
         player4Dropdown.setOnItemClickListener((parent, view, position, id) -> {
-            aux = player4ID;
-            player4ID = position;
+            aux = parentActivity.playersId[3];
+            parentActivity.playersId[3] = position;
             player4Dropdown.setText(player4Dropdown.getAdapter().getItem(position).toString(), false);
             if(player1Dropdown.getText().toString().equals(player1Dropdown.getAdapter().getItem(position).toString())){
                 player1Dropdown.setText(player1Dropdown.getAdapter().getItem(aux).toString(), false);
-                player1ID = aux;
+                parentActivity.playersId[0] = aux;
             }
             else if(player2Dropdown.getText().toString().equals(player2Dropdown.getAdapter().getItem(position).toString())) {
                 player2Dropdown.setText(player2Dropdown.getAdapter().getItem(aux).toString(), false);
-                player2ID = aux;
+                parentActivity.playersId[1] = aux;
             }
             else if(player3Dropdown.getText().toString().equals(player3Dropdown.getAdapter().getItem(position).toString())) {
                 player3Dropdown.setText(player3Dropdown.getAdapter().getItem(aux).toString(), false);
-                player3ID = aux;
+                parentActivity.playersId[2] = aux;
             }
         });
     }
@@ -261,16 +264,10 @@ public class SetTeamsDialog extends AppCompatDialogFragment {
      * categoria e pergunta selecionada pelo jogador para que seu oponente responda
      */
     protected void handleTeamSelectionButton(){
-//        continuar.setOnClickListener(v -> {
-//            if(parentActivity.PCopponent){
-//                parentActivity.setCategory(category);
-//                parentActivity.setQuestion(question);
-//            }
-//            else{
-//                parentActivity.onlineOpponent.category = category;
-//                parentActivity.onlineOpponent.question = question;
-//            }
-//            parentActivity.handleQuestionSelectionButton();
-//        });
+        continuar.setOnClickListener(v -> {
+            parentActivity.firestoreDatabase.collection("partidaLocal").document(parentActivity.creator.getActualRoomName())
+                    .update("playersId", Arrays.asList(parentActivity.playersId[0], parentActivity.playersId[1], parentActivity.playersId[2], parentActivity.playersId[3]));
+            parentActivity.startGame();
+        });
     }
 }

@@ -25,6 +25,7 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ConfigLocalGameActivity extends AppCompatActivity {
 
@@ -171,9 +172,10 @@ public class ConfigLocalGameActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent troca = new Intent(ConfigLocalGameActivity.this, LocalGameActivity.class);
                 troca.putExtra("systemCode", systemCode);
-                troca.putExtra("slidesAmount", Integer.parseInt(qntd_slides.getEditText().getText().toString()));
-                troca.putExtra("roundTime", Integer.parseInt(roundTime.getEditText().getText().toString()));
+                troca.putExtra("slidesAmount", Integer.parseInt(Objects.requireNonNull(qntd_slides.getEditText()).getText().toString()));
+                troca.putExtra("roundTime", Integer.parseInt(Objects.requireNonNull(roundTime.getEditText()).getText().toString()));
                 troca.putExtra("matchCreator", true);
+                troca.putExtra("roomCode", "");
                 startActivityForResult(troca, 999);
             }
         });

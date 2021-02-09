@@ -258,7 +258,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
      * vo a sala do jogo no qual ele deseja entrar
      */
     protected void joinGameRoom(){
-        //falta implementar
+        Intent troca = new Intent(MenuActivity.this, EnterLocalGameActivity.class);
+        startActivity(troca);
     }
 
 

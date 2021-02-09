@@ -32,7 +32,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[16a8e8eb]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[emulator-5554]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -86,8 +86,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ApkExportedModule" value="HistoQuiz.app" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_4_API_30" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-01-29T18:27:28.037Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="RQ8NB07RRCP" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-02-08T23:56:40.065Z" />
     <property name="ExportApk.ApkPath" value="D:\Users\Documents\GitHub\HistoQuiz\Android Project\app" />
     <property name="ExportApk.BuildVariants" value="release" />
     <property name="ExportApk.SignV1" value="true" />
@@ -265,22 +265,22 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="253" y="157" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1611945182059" />
-    <state width="1491" height="260" key="GridCell.Tab.0.bottom" timestamp="1612476424349">
+    <state width="1491" height="210" key="GridCell.Tab.0.bottom" timestamp="1612829540671">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="260" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1612476424349" />
-    <state width="1491" height="260" key="GridCell.Tab.0.center" timestamp="1612476424348">
+    <state width="1491" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1612829540671" />
+    <state width="1491" height="210" key="GridCell.Tab.0.center" timestamp="1612829540670">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="260" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1612476424348" />
-    <state width="1491" height="260" key="GridCell.Tab.0.left" timestamp="1612476424348">
+    <state width="1491" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1612829540670" />
+    <state width="1491" height="210" key="GridCell.Tab.0.left" timestamp="1612829540670">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="260" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1612476424348" />
-    <state width="1491" height="260" key="GridCell.Tab.0.right" timestamp="1612476424348">
+    <state width="1491" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1612829540670" />
+    <state width="1491" height="210" key="GridCell.Tab.0.right" timestamp="1612829540671">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="260" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1612476424348" />
+    <state width="1491" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1612829540671" />
     <state width="1491" height="260" key="GridCell.Tab.1.bottom" timestamp="1612476424349">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -309,16 +309,5 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1604514591264" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/histoquiz/dialogs/SetTeamsDialog.java</url>
-          <line>188</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

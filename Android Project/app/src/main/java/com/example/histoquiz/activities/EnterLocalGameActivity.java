@@ -34,8 +34,9 @@ public class EnterLocalGameActivity extends AppCompatActivity {
     protected void initGUI(){
         firestoreDatabase = FirebaseFirestore.getInstance();
         joinRoom = findViewById(R.id.entrarNaSala);
+        roomCode = findViewById(R.id.codSala);
         joinRoom.setOnClickListener(v -> {
-            if(roomCode.getEditText().getText().toString().isEmpty()){
+            if(Objects.requireNonNull(roomCode.getEditText()).getText().toString().isEmpty()){
                 Toast.makeText(EnterLocalGameActivity.this, "Informe um código de sala.", Toast.LENGTH_LONG).show();
             }
             else{
@@ -48,29 +49,33 @@ public class EnterLocalGameActivity extends AppCompatActivity {
     protected void joinGameRoom(String roomCode){
         firestoreDatabase.collection("partidaLocal").whereEqualTo(FieldPath.documentId(), roomCode).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                DocumentSnapshot document = Objects.requireNonNull(task.getResult()).getDocuments().get(0);
-                if (document.exists()) {
-                    int qntdPlayers = Integer.parseInt(Objects.requireNonNull(document.get("qntd")).toString());
-                    if(qntdPlayers >= 4){
-                        Toast.makeText(EnterLocalGameActivity.this, "Essa sala já está cheia!", Toast.LENGTH_LONG).show();
+                if(!Objects.requireNonNull(task.getResult()).getDocuments().isEmpty()) {
+                    DocumentSnapshot document = Objects.requireNonNull(task.getResult()).getDocuments().get(0);
+                    if (document.exists()) {
+                        int qntdPlayers = Integer.parseInt(Objects.requireNonNull(document.get("qntd")).toString());
+                        if (qntdPlayers >= 4) {
+                            Toast.makeText(EnterLocalGameActivity.this, "Essa sala já está cheia!", Toast.LENGTH_LONG).show();
+                        } else {
+                            firestoreDatabase.collection("partidaLocal").document(document.getId()).update("qntd", Integer.toString(Integer.parseInt(Objects.requireNonNull(document.get("qntd")).toString()) + 1));
+
+                            ArrayList<String> nomeJogadores = (ArrayList<String>) document.get("nomeJogadores");
+                            assert nomeJogadores != null;
+                            nomeJogadores.set(qntdPlayers, Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName());
+                            firestoreDatabase.collection("partidaLocal").document(document.getId()).update("nomeJogadores", nomeJogadores);
+
+                            ArrayList<String> uidJogadores = (ArrayList<String>) document.get("uidJogadores");
+                            assert uidJogadores != null;
+                            uidJogadores.set(qntdPlayers, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            firestoreDatabase.collection("partidaLocal").document(document.getId()).update("uidJogadores", uidJogadores);
+
+                            Intent troca = new Intent(EnterLocalGameActivity.this, LocalGameActivity.class);
+                            troca.putExtra("matchCreator", false);
+                            troca.putExtra("roomCode", roomCode);
+                            startActivityForResult(troca, 999);
+                        }
                     }
-                    else{
-                        firestoreDatabase.collection("partidaLocal").document(document.getId()).update("qntd", Integer.toString(Integer.parseInt(document.get("qntd").toString()) + 1));
-
-                        ArrayList<String> nomeJogadores = (ArrayList<String>) document.get("nomeJogadores");
-                        assert nomeJogadores != null;
-                        nomeJogadores.set(qntdPlayers, Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName());
-
-                        ArrayList<String> uidJogadores = (ArrayList<String>) document.get("uidJogadores");
-                        assert uidJogadores != null;
-                        uidJogadores.set(qntdPlayers, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        firestoreDatabase.collection("partidaLocal").document(document.getId()).update("uidJogadores", uidJogadores);
-
-                        Intent troca = new Intent(EnterLocalGameActivity.this, LocalGameActivity.class);
-                        troca.putExtra("matchCreator", false);
-                        startActivityForResult(troca, 999);
-                    }
-                } else {
+                }
+                else {
                     Toast.makeText(EnterLocalGameActivity.this, "Essa sala não existe!", Toast.LENGTH_LONG).show();
                 }
             } else {

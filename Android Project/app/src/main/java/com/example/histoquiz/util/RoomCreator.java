@@ -24,4 +24,8 @@ public class RoomCreator {
     public String getActualRoomName(){
         return actualRoomName;
     }
+
+    public void setActualRoomName(String roomName){
+        this.actualRoomName = roomName;
+    }
 }
