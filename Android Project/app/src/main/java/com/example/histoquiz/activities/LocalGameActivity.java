@@ -1,7 +1,12 @@
 package com.example.histoquiz.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.histoquiz.R;
+import com.example.histoquiz.dialogs.EndGameDialogv2;
+import com.example.histoquiz.dialogs.GuessSlideDialogv2;
 import com.example.histoquiz.dialogs.SetTeamsDialog;
 import com.example.histoquiz.model.Slide;
 import com.example.histoquiz.util.GlideApp;
@@ -37,20 +42,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
 public class LocalGameActivity extends AppCompatActivity implements View.OnClickListener {
 
-    protected int systemCode, slideAmount, roundTime;
+    protected int systemCode, slideAmount;
+    public int roundTime;
     public FirebaseFirestore firestoreDatabase;
     protected CountDownTimer countDownTimer;
-    protected ImageSwitcher imageSwitcher;
+    public ImageSwitcher imageSwitcher;
     protected StorageReference storageReference;
     protected int imagesAmount;
     protected ImageView myImageView;
-    protected ImageButton next, previous;
+    public ImageButton next, previous;
+    protected boolean started = false;
     protected int position;
     protected volatile boolean questionsDone = false, slidesDone = false;
     protected String roomCreationStatus = "not created";
@@ -58,7 +66,7 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     public HashMap<Integer, Slide> slides = new HashMap<>();
     public Map<Integer, Slide> matchSlides = new HashMap<>();
     protected int actualSlide;
-    protected Button showSlide;
+    public Button showSlide, tipButton;
     public RoomCreator creator;
     protected DocumentReference docIdRef;
     protected TextView codSala;
@@ -68,8 +76,13 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     public ArrayList<String> uidJogadores;
     public Integer [] playersId;
     public String roomName;
-    LocalOpponent localOpponent;
-    public TextView timer, myTeamPontuation, myOpponentTeamPontuation;
+    public LocalOpponent localOpponent;
+    public TextView timer, myTeamPontuation, myOpponentTeamPontuation, roundFeedback;
+    protected SetTeamsDialog setTeamsDialog;
+
+    // Dialogs utilizados para exibir as "subtelas" necessárias no jogo
+    protected GuessSlideDialogv2 guessSlideDialog;
+    protected EndGameDialogv2 endGameDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +140,15 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     protected void initGUI(){
         position = 0;
         actualSlide = 0;
+        setTeamsDialog = new SetTeamsDialog(this);
         myTeamPontuation = findViewById(R.id.pontuacaoSeuTime);
         myOpponentTeamPontuation = findViewById(R.id.pontuacaoTimeOponente);
         timer = findViewById(R.id.timer);
+        tipButton = findViewById(R.id.dica);
         playersId = new Integer[4];
         creator = new RoomCreator();
         showSlide = findViewById(R.id.toggleLamina);
+        roundFeedback = findViewById(R.id.roundFeedback);
         content = findViewById(R.id.fullContent);
         showSlide.setOnClickListener(this);
         showSlide.setTag("OCULTAR_LAMINA");
@@ -153,6 +169,8 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
         });
         imageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
         imageSwitcher.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left));
+        guessSlideDialog = new GuessSlideDialogv2(this);
+        endGameDialog = new EndGameDialogv2(this);
     }
 
 
@@ -298,8 +316,12 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                 nomeJogadores = (ArrayList<String>) documentSnapshot.get("nomeJogadores");
                 uidJogadores = (ArrayList<String>) documentSnapshot.get("uidJogadores");
                 if(matchCreator){
-                    SetTeamsDialog setTeamsDialog = new SetTeamsDialog(this);
-                    setTeamsDialog.show(getSupportFragmentManager(), "choose teams dialog");
+                    if(!started){
+                        if(!nomeJogadores.get(3).isEmpty()){
+                            setTeamsDialog.show(getSupportFragmentManager(), "choose teams dialog");
+                            started = true;
+                        }
+                    }
                 }
                 else{
                     Toast.makeText(LocalGameActivity.this, "Aguarde enquanto o criador da partida separa os times!", Toast.LENGTH_LONG).show();
@@ -336,6 +358,133 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void startGame(){
+        if(matchCreator){
+            setTeamsDialog.dismiss();
+        }
         localOpponent = new LocalOpponent(this, matchCreator, creator.getActualRoomName());
+    }
+
+    /**
+     * Método utilizado para exibir ao usuário a tela para que ele adivinhe a sua lâmina
+     * atual
+     */
+    public void showGuessSlide(){
+        guessSlideDialog.show(getSupportFragmentManager(), "guess dialog");
+    }
+
+    /**
+     * Método utilizado para obter o score de um determinado player na partida atual
+     * @param player - número correspondente ao jogador (1 ou 2)
+     * @return - pontuação do jogador selecionado
+     */
+    public int getPlayerScore(int player){
+        switch (player){
+            case 1: return Integer.parseInt(myTeamPontuation.getText().toString());
+            case 2: return Integer.parseInt(myOpponentTeamPontuation.getText().toString());
+            default: return 0;
+        }
+    }
+
+    /**
+     * Método utilizado para modificar a pontuação de determinado player. Ele soma a pontuação atual
+     * o valor recebido em "pontuation", que pode corresponder a um acréscimo (caso pontuation > 0)
+     * ou um decréscimo (caso pontuation < 0)
+     * @param player - jogador cuja pontuação deve ser modificada (1 ou 2)
+     * @param pontuation - valor que deve ser adicionado (ou decrementado) a pontuação atual do player
+     */
+    public void changePlayerScore(int player, int pontuation){
+        switch (player){
+            case 1:
+                if(getPlayerScore(1) + pontuation > 0) {
+                    myTeamPontuation.setText(String.format(Locale.getDefault(), "%d", getPlayerScore(1) + pontuation));
+                }
+                else{
+                    myTeamPontuation.setText("0");
+                }
+                //myRoomRef.child("score").setValue(getPlayerScore(1));
+                break;
+            case 2:
+                if(getPlayerScore(2) + pontuation > 0) {
+                    myOpponentTeamPontuation.setText(String.format(Locale.getDefault(), "%d", getPlayerScore(2) + pontuation));
+                }
+                else{
+                    myOpponentTeamPontuation.setText("0");
+                }
+                //onlineOpponent.opponentRoomRef.child("score").setValue(getPlayerScore(2));
+                break;
+        }
+    }
+
+
+    /**
+     * Método utilizado para deixar de exibir ao usuário a tela para que ele adivinhe sua lâmina
+     * atual
+     */
+    public void closeGuessSlide(){
+        guessSlideDialog.dismiss();
+    }
+
+
+    /**
+     * Método utilizado para salvar no firebase os dados relativos a performance desse jogador
+     * em relação a determinada lâmina
+     * @param system - código que representa o sistema ao qual essa lâmina pertence
+     * @param situation - informa se a lâmina foi errada (0) ou acertada (1)
+     */
+    @SuppressWarnings("unchecked")
+    public void computePerformance(int system, int situation){
+        final String[] sisName = {""};
+        firestoreDatabase.collection("sistemas").whereEqualTo("code", system).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            DocumentReference ref = firestoreDatabase.collection("desempenho").document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+            sisName[0] = "sis" + queryDocumentSnapshots.getDocuments().get(0).getId();
+            ref.get().addOnSuccessListener(documentSnapshot -> {
+                ArrayList <Long> info = (ArrayList<Long>) documentSnapshot.get(sisName[0]);
+                if(info != null) {
+                    switch (situation) {
+                        case 0: // Caso o usuário tenha errado a lâmina
+                            ref.update("sis" + queryDocumentSnapshots.getDocuments().get(0).getId(), new ArrayList<>(Arrays.asList(info.get(0) + 1, info.get(1))));
+                            break;
+                        case 1: // Caso o usuário tenha acertado a lâmina
+                            ref.update("sis" + queryDocumentSnapshots.getDocuments().get(0).getId(), new ArrayList<>(Arrays.asList(info.get(0), info.get(1) + 1)));
+                            break;
+                    }
+                }
+
+            });
+        });
+    }
+
+
+    /**
+     * Método utilizado para salvar no firebase desse usuário que ele jogou mais uma partida e,
+     * se ele houver ganhado, salvar essa informação também
+     * @param winner - boolean que indica se o usuário ganhou a partida ou não
+     * @param part - variável que indica se é para adicionar mais uma partida ao contador de partidas
+     *             desse usuário, ou se é para adicionar mais uma partida como ganha
+     */
+    public void saveMatchInfo(boolean winner, int part){
+        DocumentReference ref = firestoreDatabase.document("desempenho/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        if((part == 0) || (winner && part == 1)) {
+            ref.get().addOnSuccessListener(documentSnapshot -> {
+                if (part == 0)
+                    ref.update("numPartidas", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("numPartidas")).toString()) + 1);
+                else {
+                    if (winner) {
+                        ref.update("vitorias", Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("vitorias")).toString()) + 1);
+                    }
+                }
+            });
+        }
+    }
+
+
+    /**
+     * Método utilizado para exibir ao jogador um fragmento contendo a pontuação de cada um dos
+     * jogadores da partida que acabou de ser finalizada, informando quem é o ganhador
+     */
+    public void showEndGameDialog(){
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(endGameDialog, "endGame").commitAllowingStateLoss();
     }
 }

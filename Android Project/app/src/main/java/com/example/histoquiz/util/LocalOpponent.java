@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -33,13 +35,15 @@ public class LocalOpponent {
 
     public DatabaseReference [] playersRoomRef;
 
-    protected static final long START_TIME_IN_MILLIS = 120000;
+    protected final long START_TIME_IN_MILLIS;
     protected CountDownTimer countDownTimer;
     protected boolean mTimerRunning;
-    protected long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+    protected long mTimeLeftInMillis;
+    protected String state;
     public String actualSlideToGuess;
     protected int myPlayerCode, myDuoPlayerCode, opponentCode, opponentDuoCode;
     protected FirebaseFirestore firestore;
+    public boolean bothEnded = false;
     protected boolean matchCreator;
     protected String matchState = "onHold";
     protected String myPersonalMatchState = "onHold";
@@ -52,6 +56,8 @@ public class LocalOpponent {
      * @param matchCreator - variável booleana que informa se esse jogador é o criador da partida
      */
     public LocalOpponent(LocalGameActivity game_scene, boolean matchCreator, String roomName){
+        START_TIME_IN_MILLIS = game_scene.roundTime * 1000;
+        this.mTimeLeftInMillis = START_TIME_IN_MILLIS;
         this.playersRoomRef = new DatabaseReference[4];
         this.actualSlideToGuess = "firstSlide"; // Lâmina que estamos tentando adivinhar nesse momento
         this.matchCreator = matchCreator; // Informa se sou o criador da partida ou não
@@ -91,22 +97,15 @@ public class LocalOpponent {
             }
             @Override
             public void onFinish() {
-                //endTimer();
+                endTimer();
             }
         };
         addListenerToMatch();
         addListenerToSlideToGuess();
-        addListenerToNextRound();
-        addListenerToScore();
-        //game_scene.saveMatchInfo(false, 0);
-        if(matchCreator){
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("running");
-            _estado_E();
-        }
-        else{
-//            FirebaseFirestore.getInstance().document("partida/convites/" + Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()
-//                    + "/" + opponentUID).update("inviteAccepted", "aceito");
-            _estado_A();
+        game_scene.saveMatchInfo(false, 0);
+        game_scene.tipButton.setOnClickListener(v -> _estado_A());
+        if(myPlayerCode == 0){
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("player1Setup");
         }
     }
 
@@ -119,10 +118,11 @@ public class LocalOpponent {
         for(int i=0;i<4;i++){
             if(game_scene.uidJogadores.get(game_scene.playersId[i]).equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())){
                 myPlayerCode = i;
+                Log.d(String.format("code %s",FirebaseAuth.getInstance().getCurrentUser().getDisplayName().subSequence(0, 4)), Integer.toString(myPlayerCode));
                 switch (i){
                     case 0: myDuoPlayerCode = 1; opponentCode = 2; opponentDuoCode = 3; break;
-                    case 1: myDuoPlayerCode = 0; opponentCode = 2; opponentDuoCode = 3; break;
-                    case 2: myDuoPlayerCode = 3; opponentCode = 1; opponentDuoCode = 0; break;
+                    case 1: myDuoPlayerCode = 0; opponentCode = 3; opponentDuoCode = 2; break;
+                    case 2: myDuoPlayerCode = 3; opponentCode = 0; opponentDuoCode = 1; break;
                     case 3: myDuoPlayerCode = 2; opponentCode = 1; opponentDuoCode = 0; break;
                 }
             }
@@ -141,6 +141,7 @@ public class LocalOpponent {
             playersRoomRef[3].child("uid").setValue(game_scene.uidJogadores.get(game_scene.playersId[3]));
             playersRoomRef[3].child("duoUid").setValue(game_scene.uidJogadores.get(game_scene.playersId[2]));
         }
+        addListenerToScore();
     }
 
     /**
@@ -196,7 +197,14 @@ public class LocalOpponent {
     /**
      * Método chamado sempre que o estado atual da partida é alterado. Os estados podem ser:
      *      - onHold: aguardando para começar
-     *      - running: partida rolando
+     *      - player1Dica: Player 1 dando dica para o Player 2
+     *      - player2Dica: Player 2 dando dica para o Player 1
+     *      - player3Dica: Player 3 dando dica para o Player 4
+     *      - player4Dica: Player 4 dando dica para o Player 3
+     *      - player1Setup: liberar botão de dica para o Player 1
+     *      - player2Setup: liberar botão de dica para o Player 2
+     *      - player3Setup: liberar botão de dica para o Player 3
+     *      - player4Setup: liberar botão de dica para o Player 4
      *      - ended: partida finalizada
      */
     protected void addListenerToMatch(){
@@ -205,10 +213,39 @@ public class LocalOpponent {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {
                     matchState = snapshot.getValue().toString();
-                    if (matchState.equals("ended")) {
-                        (new Handler(Looper.getMainLooper())).postDelayed(LocalOpponent.this::_estado_L, 2000);
+                    //Caso meu duo esteja dando dica, aparece para mim a tela de adivinhar lâmina
+                    if (matchState.equals(String.format("player%sDica", (myDuoPlayerCode + 1)))) {
+                        game_scene.tipButton.setVisibility(View.GONE);
+                        game_scene.showSlide.setVisibility(View.GONE);
+                        game_scene.imageSwitcher.setVisibility(View.GONE);
+                        game_scene.previous.setVisibility(View.GONE);
+                        game_scene.next.setVisibility(View.GONE);
+                        (new Handler(Looper.getMainLooper())).postDelayed(LocalOpponent.this::_estado_B, 2000);
                     }
-                    else if(matchState.equals("killed")) forceMatchEnd();
+                    // Caso eu seja o próximo a jogar, liberar o botão de dica para mim
+                    else if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1)))){
+                        game_scene.tipButton.setVisibility(View.VISIBLE);
+                        game_scene.showSlide.setVisibility(View.VISIBLE);
+                        game_scene.imageSwitcher.setVisibility(View.VISIBLE);
+                        game_scene.previous.setVisibility(View.VISIBLE);
+                        game_scene.next.setVisibility(View.VISIBLE);
+                    }
+                    //Caso eu que esteja dando dica
+                    else if(matchState.equals(String.format("player%sDica", (myPlayerCode + 1)))){
+                        // Não faz nada
+                    }
+                    else if(matchState.equals("ended")){
+                        (new Handler(Looper.getMainLooper())).postDelayed(LocalOpponent.this::_estado_F, 2000);
+                    }
+                    //Caso seja a vez da outra dupla jogar, some com o botão de dica pra mim
+                    else{
+                        game_scene.tipButton.setVisibility(View.GONE);
+                        game_scene.showSlide.setVisibility(View.GONE);
+                        game_scene.imageSwitcher.setVisibility(View.GONE);
+                        game_scene.previous.setVisibility(View.GONE);
+                        game_scene.next.setVisibility(View.GONE);
+                    }
+                    //else if(matchState.equals("killed")) forceMatchEnd();
                 }
             }
 
@@ -238,31 +275,6 @@ public class LocalOpponent {
             }
         });
     }
-
-
-    /**
-     * Método chamado sempre que o oponente informar que a partida deve seguir para a próxima roda-
-     * da, que pode ocorrer porque ele não realizou uma ação no tempo estipulado, ou porque ele não
-     * deseja tentar adivinhar sua lâmina no momento
-     */
-    protected void addListenerToNextRound(){
-        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("nextRound").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(myPersonalMatchState.equals("waiting") && matchState.equals("running") && snapshot.getValue()!=null) {
-                    if(!snapshot.getValue().equals("-")){
-                        _estado_E();
-                        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("nextRound").setValue("-");
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
 
 
     /**
@@ -324,208 +336,79 @@ public class LocalOpponent {
     //////////////////////////////////   MÁQUINA DE ESTADOS   /////////////////////////////////////
 
     /**
-     * Método utilizado para solicitar ao jogador que aguarde o seu oponente selecionar uma pergunta
-     * para que ele responda
+     * Método utilizado para iniciar o timer após o jogador clicar no botão "Dica", para que ele dê
+     * dica para a sua dupla sobre a lâmina que está visualizando
      */
     public void _estado_A(){
-        if(mTimerRunning) stopTimer();
-        myPersonalMatchState = "waiting";
-        //game_scene.showTextToPlayer("Aguardando oponente selecionar uma pergunta...");
+        //if(mTimerRunning) stopTimer();
+        //myPersonalMatchState = "waiting";
+        state = "A";
+        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sDica", myPlayerCode));
+        startTimer();
     }
 
 
     /**
-     * Método utilizado para exibir para o jogador a pergunta selecionada por seu oponente para que
-     * ele responda. Um timer de 2 minutos deve ser iniciado, que é o tempo que o jogador tem para
-     * responder a pergunta
+     * Método utilizado para exibir para o jogador a lista de lâminas cadastradas no sistema relati-
+     * vas ao sistema que ele selecionou para jogar, para que ele escolha aquela que acredita que
+     * sua dupla está visualizando
      */
     public void _estado_B(){
-        myPersonalMatchState = "playing";
-        //game_scene.setQuestionForPlayerAnswer(game_scene.getQuestionText(opponentCategoryId, opponentQuestionId));
-        opponentRoomRef.child("questionId").setValue(-1);
-        opponentRoomRef.child("categoryId").setValue(-1);
         state = "B";
         startTimer();
-    }
-
-
-    /**
-     * Método utilizado para informar ao jogador que sua resposta fornecida a pergunta do seu opo-
-     * nente está sendo validada. Esse método também deve pausar o timer iniciado no
-     * método anterior (_estado_B())
-     * @param answer - resposta fornecida pelo jogador a pergunta que ele recebeu do oponente
-     */
-    public void _estado_C(boolean answer){
-        stopTimer();
-        game_scene.showTextToPlayer("Validando resposta...");
-        (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(answer), 2000);
-    }
-
-
-    /**
-     * Método que efetivamente verifica se a resposta fornecida pelo jogador está correta, realiza a
-     * distribuição da pontuação de acordo com isso e fornece o feedback ao jogador. Caso tenha acer-
-     * tado a pergunta, o jogador ganha um ponto, e caso tenha errado, ele perde um ponto.
-     * @param answer - resposta fornecida pelo jogador
-     */
-    public void _estado_D(Boolean answer){
-        myPersonalMatchState = "waiting";
-        String text;
-        Integer[] keySet = opponentSlides.keySet().toArray(new Integer[0]);
-        Arrays.sort(keySet);
-        switch (opponentSlideToGuess) {
-            case "firstSlide":
-                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[0]);
-                break;
-            case "secondSlide":
-                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[1]);
-                break;
-            case "thirdSlide":
-                trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[2]);
-                break;
-        }
-        if(answer != null) {
-            if (trueAnswer == answer) {
-                game_scene.changePlayerScore(1, 1);
-                text = "ganhou 1 ponto!";
-            } else {
-                game_scene.changePlayerScore(1, -1);
-                text = "perdeu 1 ponto!";
-            }
-            game_scene.showTextToPlayer("Você " + text + " Aguardando oponente analisar sua resposta...");
-            if(answer) myRoomRef.child("answer").setValue("sim");
-            else myRoomRef.child("answer").setValue("não");
-        }
-        else{
-            game_scene.showTextToPlayer("Aguardando seu oponente analisar a resposta correta da sua pergunta...");
-            myRoomRef.child("answer").setValue("null");
-        }
-    }
-
-
-    /**
-     * Método utilizado para solicitar ao jogador que ele escolha uma categoria e uma pergunta para
-     * enviar para seu oponente responder. Além disso, um timer é iniciado, pois o jogador tem 2
-     * minutos para realizar essa ação
-     */
-    public void _estado_E(){
-        myPersonalMatchState = "playing";
-        game_scene.showQuestionSelection();
-        state = "E";
-        startTimer();
-    }
-
-
-    /**
-     * Método utilizado para enviar ao jogador uma mensagem informando que sua pergunta está
-     * sendo repassada ao seu oponente
-     */
-    public void _estado_F(){
-        stopTimer();
-        game_scene.closeQuestionSelection();
-        game_scene.showTextToPlayer("Enviando...");
-        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_G, 2000);
-    }
-
-
-    /**
-     * Método utilizado para informar ao jogador que a resposta do seu oponente a sua pergunta está
-     * sendo aguardada
-     */
-    public void _estado_G(){
-        myPersonalMatchState = "waiting";
-        myRoomRef.child("categoryId").setValue(category);
-        myRoomRef.child("questionId").setValue(question);
-        game_scene.showTextToPlayer("Aguardando resposta do oponente...");
-    }
-
-
-    /**
-     * Método utilizado para exibir para o jogador um feedback, exibindo a resposta que seu oponente
-     * forneceu a sua pergunta, a resposta correta e a modificação de pontuação que foi feita no
-     * score do seu adversário
-     * Em seguida, é perguntado para o jogador se ele deseja seguir para a próxima rodada, ou se
-     * quer tentar advinhar sua lâmina; ele terá também 2 minutos para tomar essa decisão.
-     */
-    public void _estado_H(){
-        myPersonalMatchState = "playing";
-        int slide = 0;
-        Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
-        Arrays.sort(keySet);
-        switch (mySlideToGuess){
-            case "firstSlide":
-                slide =  keySet[0];
-                break;
-            case "secondSlide":
-                slide =  keySet[1];
-                break;
-            case "thirdSlide":
-                slide =  keySet[2];
-                break;
-        }
-        game_scene.showQuestionFeedback(myOpponentAnswer, game_scene.getQuestionRealAnswer(category, question, slide));
-        state = "H";
-        startTimer();
-    }
-
-
-    /**
-     * Método utilizado para exibir ao jogador uma lista contendo todas as lâminas disponíveis no
-     * jogo, para que ele selecione a que ele acha que está tentando adivinhar
-     */
-    public void _estado_I(){
-        myPersonalMatchState = "playing";
-        state = "I";
         game_scene.showGuessSlide();
     }
 
 
     /**
-     * Método utilizado para verificar se a lâmina informada pelo jogador é realmente a que ele
-     * está tentando adivinhar, atribuindo pontuação da seguinte forma:
-     *      - Caso tenha acertado, o jogador ganha 3 pontos
-     *      - Caso tenha errado, seu oponente ganha 3 pontos
-     * Em seguida, o timer iniciado para o jogador selecionar a lâmina será pausado
-     * @param answer - lâmina informada pelo jogador
+     * Método utilizado para informar ao jogador que sua resposta fornecida a pergunta do seu opo-
+     * nente está sendo validada
+     * @param answer - resposta fornecida pelo jogador a lâmina que ele acredita estar tentando
+     *                 adivinhar
      */
-    public void _estado_J(String answer){
+    public void _estado_C(String answer){
+        stopTimer();
+        game_scene.roundFeedback.setText("Validando resposta...");
+        (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(answer), 2000);
+    }
+
+
+    /**
+     * Método que efetivamente verifica se a lâmina informada pelo jogador é realmente a que ele
+     * estava tentando adivinhar
+     * @param answer - resposta fornecida pelo jogador
+     */
+    public void _estado_D(String answer){
         myPersonalMatchState = "playing";
         stopTimer();
-        Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
+        Integer [] keySet = game_scene.slides.keySet().toArray(new Integer[0]);
         Arrays.sort(keySet);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
         int systemCode = 0;
-        int position = 0;
-        switch (mySlideToGuess){
+        switch (actualSlideToGuess){
             case "firstSlide":
-                trueSlide = Objects.requireNonNull(mySlides.get(keySet[0])).getName().toLowerCase();
-                systemCode = Objects.requireNonNull(mySlides.get(keySet[0])).getSystem();
-                position = 0;
+                trueSlide = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem();
                 break;
             case "secondSlide":
-                trueSlide = Objects.requireNonNull(mySlides.get(keySet[1])).getName().toLowerCase();
-                systemCode = Objects.requireNonNull(mySlides.get(keySet[0])).getSystem();
-                position = 1;
+                trueSlide = Objects.requireNonNull(game_scene.slides.get(keySet[1])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem();
                 break;
             case "thirdSlide":
-                trueSlide = Objects.requireNonNull(mySlides.get(keySet[2])).getName().toLowerCase();
-                systemCode = Objects.requireNonNull(mySlides.get(keySet[0])).getSystem();
-                position = 2;
+                trueSlide = Objects.requireNonNull(game_scene.slides.get(keySet[2])).getName().toLowerCase();
+                systemCode = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem();
         }
         if(trueSlide.equals(answer.toLowerCase())){
             game_scene.changePlayerScore(1, 3);
-            myRoomRef.child("score").setValue(game_scene.getPlayerScore(1));
+            playersRoomRef[myPlayerCode].child("score").setValue(game_scene.getPlayerScore(1));
+            playersRoomRef[myDuoPlayerCode].child("score").setValue(game_scene.getPlayerScore(1));
             answerValidation = true;
-            if(mySlideToGuess.equals("thirdSlide")) matchEnded = true;
-            game_scene.checkSlide(position, 1);
-            game_scene.computePerformance(systemCode, 1);
+            if(actualSlideToGuess.equals("thirdSlide")) matchEnded = true;
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentDuoCode));
+            //game_scene.computePerformance(systemCode, 1);
         }
-        else{
-            game_scene.changePlayerScore(2, 3);
-            opponentRoomRef.child("score").setValue(game_scene.getPlayerScore(2));
-        }
-        _estado_K(answerValidation, matchEnded);
+        _estado_E(answerValidation, matchEnded);
     }
 
 
@@ -538,21 +421,20 @@ public class LocalOpponent {
      *                          e false caso tenha errado
      * @param matchEnded - variável que indica se a partida deve ser finalizada ou não
      */
-    public void _estado_K(boolean answerValidation, boolean matchEnded){
+    public void _estado_E(boolean answerValidation, boolean matchEnded){
         game_scene.closeGuessSlide();
         if(answerValidation){
-            if(matchEnded) game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
-            else game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
+            if(matchEnded) game_scene.roundFeedback.setText("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
+            else game_scene.roundFeedback.setText("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         else{
-            game_scene.showTextToPlayer("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
+            game_scene.roundFeedback.setText("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
         }
         if(matchEnded){
-            mySlideToGuess = "allDone";
-            realtimeDatabase.getReference("partida/jogo/" + roomName).child("matchState").setValue("ended");
+            actualSlideToGuess = "allDone";
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("ended");
         }
         else{
-            myRoomRef.child("nextRound").setValue("sim");
             (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
         }
     }
@@ -565,31 +447,35 @@ public class LocalOpponent {
      * a atividade de salvar informações relativas a performance desse jogador, caso ele não tenha
      * finalizado essa partida
      */
-    public void _estado_L(){
+    public void _estado_F(){
         if(!matchCreator){
             realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
         }
-        if(!mySlideToGuess.equals("allDone")){
-            Integer [] keySet = mySlides.keySet().toArray(new Integer[0]);
+        if(!actualSlideToGuess.equals("allDone")){
+            Integer [] keySet = game_scene.slides.keySet().toArray(new Integer[0]);
             Arrays.sort(keySet);
-            switch (mySlideToGuess){
+            switch (actualSlideToGuess){
                 case "firstSlide":
-                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[0])).getSystem(), 0);
-                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[1])).getSystem(), 0);
-                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[2])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[1])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[2])).getSystem(), 0);
                     break;
                 case "secondSlide":
-                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[1])).getSystem(), 0);
-                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[2])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[1])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[2])).getSystem(), 0);
                     break;
                 case "thirdSlide":
-                    game_scene.computePerformance(Objects.requireNonNull(mySlides.get(keySet[2])).getSystem(), 0);
+                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[2])).getSystem(), 0);
                     break;
             }
         }
         game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2), 1);
         bothEnded = true;
         game_scene.showEndGameDialog();
+    }
+
+    protected void _estado_G(){
+        game_scene.roundFeedback.setText("Jogada da dupla adversária...");
     }
 
     protected void forceMatchEnd(){
@@ -629,28 +515,13 @@ public class LocalOpponent {
      * para a próxima ação do jogo
      */
     protected void endTimer(){
-        game_scene.showTextToPlayer("Acabou o tempo para você realizar uma ação. Vamos para a próxima rodada!");
+        game_scene.roundFeedback.setText("Acabou o tempo para você realizar uma ação. Vamos para a próxima rodada!");
         mTimeLeftInMillis = START_TIME_IN_MILLIS;
         mTimerRunning = false;
-        switch (state){
-            case "B":
-                (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(null), 2000);
-                break;
-            case "E":
-                game_scene.closeQuestionSelection();
-                myRoomRef.child("nextRound").setValue("sim");
-                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
-                break;
-            case "H":
-                game_scene.closeQuestionFeedback();
-                myRoomRef.child("nextRound").setValue("sim");
-                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
-                break;
-            case "I":
-                game_scene.closeGuessSlide();
-                myRoomRef.child("nextRound").setValue("sim");
-                (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
-                break;
+        if(state.equals("B")){
+            game_scene.closeGuessSlide();
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentCode));
         }
+        (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_G, 2000);
     }
 }
