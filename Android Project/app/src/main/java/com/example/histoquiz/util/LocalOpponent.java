@@ -35,7 +35,7 @@ public class LocalOpponent {
 
     public DatabaseReference [] playersRoomRef;
 
-    protected final long START_TIME_IN_MILLIS;
+    protected long START_TIME_IN_MILLIS;
     protected CountDownTimer countDownTimer;
     protected boolean mTimerRunning;
     protected long mTimeLeftInMillis;
@@ -101,11 +101,13 @@ public class LocalOpponent {
             }
         };
         addListenerToMatch();
+        addListenerToRoundTime();
         addListenerToSlideToGuess();
         game_scene.saveMatchInfo(false, 0);
         game_scene.tipButton.setOnClickListener(v -> _estado_A());
         if(myPlayerCode == 0){
             realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("player1Setup");
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("roundTime").setValue(START_TIME_IN_MILLIS);
         }
     }
 
@@ -118,7 +120,7 @@ public class LocalOpponent {
         for(int i=0;i<4;i++){
             if(game_scene.uidJogadores.get(game_scene.playersId[i]).equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())){
                 myPlayerCode = i;
-                Log.d(String.format("code %s",FirebaseAuth.getInstance().getCurrentUser().getDisplayName().subSequence(0, 4)), Integer.toString(myPlayerCode));
+                Log.d(String.format("code %s", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).subSequence(0, 4)), Integer.toString(myPlayerCode));
                 switch (i){
                     case 0: myDuoPlayerCode = 1; opponentCode = 2; opponentDuoCode = 3; break;
                     case 1: myDuoPlayerCode = 0; opponentCode = 3; opponentDuoCode = 2; break;
@@ -127,6 +129,10 @@ public class LocalOpponent {
                 }
             }
         }
+        Log.d("myPlayerCode", Integer.toString(myPlayerCode));
+        Log.d("myDuoPlayerCode", Integer.toString(myDuoPlayerCode));
+        Log.d("opponentCode", Integer.toString(opponentCode));
+        Log.d("opponentDuoCode", Integer.toString(opponentDuoCode));
         playersRoomRef[0] = realtimeDatabase.getReference("partidaLocal/jogo/" + roomName + "/player1");
         playersRoomRef[1] = realtimeDatabase.getReference("partidaLocal/jogo/" + roomName + "/player2");
         playersRoomRef[2] = realtimeDatabase.getReference("partidaLocal/jogo/" + roomName + "/player3");
@@ -142,6 +148,22 @@ public class LocalOpponent {
             playersRoomRef[3].child("duoUid").setValue(game_scene.uidJogadores.get(game_scene.playersId[2]));
         }
         addListenerToScore();
+    }
+
+    /**
+     * Método utilizado para obter a configuração relativa a duração do cronômetro em cada rodada
+     */
+    protected void addListenerToRoundTime(){
+        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("roundTime").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                START_TIME_IN_MILLIS = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString());
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     /**
@@ -213,6 +235,7 @@ public class LocalOpponent {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {
                     matchState = snapshot.getValue().toString();
+                    Log.d("Estado:", matchState);
                     //Caso meu duo esteja dando dica, aparece para mim a tela de adivinhar lâmina
                     if (matchState.equals(String.format("player%sDica", (myDuoPlayerCode + 1)))) {
                         game_scene.tipButton.setVisibility(View.GONE);
@@ -220,11 +243,14 @@ public class LocalOpponent {
                         game_scene.imageSwitcher.setVisibility(View.GONE);
                         game_scene.previous.setVisibility(View.GONE);
                         game_scene.next.setVisibility(View.GONE);
-                        (new Handler(Looper.getMainLooper())).postDelayed(LocalOpponent.this::_estado_B, 2000);
+                        if(myPersonalMatchState.equals("onHold")){
+                            myPersonalMatchState = "recievingTip";
+                            _estado_B();
+                        }
                     }
                     // Caso eu seja o próximo a jogar, liberar o botão de dica para mim
-                    else if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1)))){
-                        game_scene.tipButton.setVisibility(View.VISIBLE);
+                    else if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1))) || matchState.equals(String.format("player%sSetup", (opponentCode + 1)))){
+                        if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1)))) game_scene.tipButton.setVisibility(View.VISIBLE);
                         game_scene.showSlide.setVisibility(View.VISIBLE);
                         game_scene.imageSwitcher.setVisibility(View.VISIBLE);
                         game_scene.previous.setVisibility(View.VISIBLE);
@@ -232,7 +258,7 @@ public class LocalOpponent {
                     }
                     //Caso eu que esteja dando dica
                     else if(matchState.equals(String.format("player%sDica", (myPlayerCode + 1)))){
-                        // Não faz nada
+                        game_scene.tipButton.setVisibility(View.VISIBLE);
                     }
                     else if(matchState.equals("ended")){
                         (new Handler(Looper.getMainLooper())).postDelayed(LocalOpponent.this::_estado_F, 2000);
@@ -343,7 +369,7 @@ public class LocalOpponent {
         //if(mTimerRunning) stopTimer();
         //myPersonalMatchState = "waiting";
         state = "A";
-        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sDica", myPlayerCode));
+        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sDica", myPlayerCode+1));
         startTimer();
     }
 
@@ -354,6 +380,7 @@ public class LocalOpponent {
      * sua dupla está visualizando
      */
     public void _estado_B(){
+        Log.d("Chamei estado", "B");
         state = "B";
         startTimer();
         game_scene.showGuessSlide();
@@ -405,7 +432,7 @@ public class LocalOpponent {
             playersRoomRef[myDuoPlayerCode].child("score").setValue(game_scene.getPlayerScore(1));
             answerValidation = true;
             if(actualSlideToGuess.equals("thirdSlide")) matchEnded = true;
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentDuoCode));
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentDuoCode+1));
             //game_scene.computePerformance(systemCode, 1);
         }
         _estado_E(answerValidation, matchEnded);
@@ -520,7 +547,7 @@ public class LocalOpponent {
         mTimerRunning = false;
         if(state.equals("B")){
             game_scene.closeGuessSlide();
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentCode));
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentCode+1));
         }
         (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_G, 2000);
     }

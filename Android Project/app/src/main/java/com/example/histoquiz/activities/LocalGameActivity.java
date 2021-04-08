@@ -369,7 +369,10 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
      * atual
      */
     public void showGuessSlide(){
-        guessSlideDialog.show(getSupportFragmentManager(), "guess dialog");
+        if(!guessSlideDialog.isAdded()){
+            getSupportFragmentManager().beginTransaction().add(guessSlideDialog, "guess dialog");
+        }
+//        Toast.makeText(this, "Exibir tela de escolher lamina", Toast.LENGTH_LONG).show();
     }
 
     /**
