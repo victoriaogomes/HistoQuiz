@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.histoquiz.R;
 import com.example.histoquiz.activities.LocalGameActivity;
@@ -25,7 +26,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class LocalOpponent {
@@ -47,6 +50,8 @@ public class LocalOpponent {
     protected boolean matchCreator;
     protected String matchState = "onHold";
     protected String myPersonalMatchState = "onHold";
+    protected boolean [] allset = new boolean[]{false, false, false, false};
+    protected CountDownTimer configTimer;
 
     /**
      * Método construtor da classe, utilizado para fazer as devidas ligações entre os listenners e
@@ -59,7 +64,7 @@ public class LocalOpponent {
         START_TIME_IN_MILLIS = game_scene.roundTime * 1000;
         this.mTimeLeftInMillis = START_TIME_IN_MILLIS;
         this.playersRoomRef = new DatabaseReference[4];
-        this.actualSlideToGuess = "firstSlide"; // Lâmina que estamos tentando adivinhar nesse momento
+        this.actualSlideToGuess = Integer.toString(game_scene.actualSlide); // Lâmina que estamos tentando adivinhar nesse momento
         this.matchCreator = matchCreator; // Informa se sou o criador da partida ou não
         this.game_scene = game_scene; // Activity responsável pela cena de jogo que está sendo exibida
         realtimeDatabase = FirebaseDatabase.getInstance();
@@ -68,20 +73,17 @@ public class LocalOpponent {
         Arrays.sort(keySet);
         this.roomName = roomName; // Nome da sala, foi definido quando o usuário criou a sala
         if(matchCreator){
-            identifyPlayersPosition();
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("slides").setValue(Arrays.asList(keySet));
             game_scene.imageToShow(0);
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("roundTime").setValue(START_TIME_IN_MILLIS);
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("slides").setValue(Arrays.asList(keySet));
+            identifyPlayersPosition();
+            addAllSetListener();
+            playersRoomRef[myPlayerCode].child("allSet").setValue("true");
         }
         else {
             addListenerToPlayerPos();
             addListenerToSlides();
         }
-//        myRoomRef.child("slideToGuess").setValue("firstSlide");
-//        myRoomRef.child("answer").setValue("-");
-//        myRoomRef.child("categoryId").setValue(-1);
-//        myRoomRef.child("questionId").setValue(-1);
-//        myRoomRef.child("score").setValue(0);
-//        myRoomRef.child("nextRound").setValue("-");
         countDownTimer = new CountDownTimer(START_TIME_IN_MILLIS, 1000) {
             @Override
             public void onTick(long l) {
@@ -105,9 +107,49 @@ public class LocalOpponent {
         addListenerToSlideToGuess();
         game_scene.saveMatchInfo(false, 0);
         game_scene.tipButton.setOnClickListener(v -> _estado_A());
-        if(myPlayerCode == 0){
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("player1Setup");
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("roundTime").setValue(START_TIME_IN_MILLIS);
+        if(matchCreator){
+            game_scene.firestoreDatabase.collection("partidaLocal").document(game_scene.creator.getActualRoomName())
+                    .update("playersId", Arrays.asList(game_scene.playersId[0],
+                            game_scene.playersId[1], game_scene.playersId[2],
+                            game_scene.playersId[3]));
+
+            runConfigTimer();
+        }
+    }
+
+    private void addAllSetListener(){
+        playersRoomRef[0].child("allSet").addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {checkAllSet(snapshot, 0);}
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+        playersRoomRef[1].child("allSet").addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {checkAllSet(snapshot, 1);}
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+        playersRoomRef[2].child("allSet").addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot){checkAllSet(snapshot, 2);}
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+        playersRoomRef[3].child("allSet").addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot){checkAllSet(snapshot, 3);}
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    /**
+     * Método utilizado para iniciar a partida, após todos os demais jogadores confirmarem que estão prontos e possuem todas
+     * as informações necessárias para o início da partida
+     */
+    protected void checkAllSet(DataSnapshot snapshot, int index){
+        if(snapshot.exists()){
+            if (Objects.requireNonNull(snapshot.getValue()).toString().equals("true")) {
+                allset[index] = true;
+                if(allset[0] && allset[1] && allset[2] && allset[3]){
+                    configTimer.cancel();
+                    game_scene.roundFeedback.setVisibility(View.GONE);
+                    realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("player1Setup");
+                }
+            }
         }
     }
 
@@ -117,11 +159,11 @@ public class LocalOpponent {
      * e também para obter o id relativo ao número do jogador que a minha dupla representa
      */
     public void identifyPlayersPosition(){
-        for(int i=0;i<4;i++){
+        for(int i = 0; i < 4; i++){
             if(game_scene.uidJogadores.get(game_scene.playersId[i]).equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())){
                 myPlayerCode = i;
                 Log.d(String.format("code %s", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).subSequence(0, 4)), Integer.toString(myPlayerCode));
-                switch (i){
+                switch (myPlayerCode){
                     case 0: myDuoPlayerCode = 1; opponentCode = 2; opponentDuoCode = 3; break;
                     case 1: myDuoPlayerCode = 0; opponentCode = 3; opponentDuoCode = 2; break;
                     case 2: myDuoPlayerCode = 3; opponentCode = 0; opponentDuoCode = 1; break;
@@ -157,7 +199,9 @@ public class LocalOpponent {
         realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("roundTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                START_TIME_IN_MILLIS = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString());
+                if(snapshot.exists()){
+                    START_TIME_IN_MILLIS = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString());
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -175,13 +219,22 @@ public class LocalOpponent {
         DocumentReference ref = firestore.collection("partidaLocal").document(game_scene.creator.getActualRoomName());
         ref.addSnapshotListener((documentSnapshot, e) -> {
             assert documentSnapshot != null;
-            if(!Objects.equals(documentSnapshot.get("playersId"), new ArrayList<>(Arrays.asList(1, 1, 1, 1)))){
-                Long [] auxiliar = new Long[4];
-                auxiliar = ((ArrayList<Long>) Objects.requireNonNull(documentSnapshot.get("playersId"))).toArray(auxiliar);
+            Long [] auxiliar = new Long[4];
+            auxiliar = ((ArrayList<Long>) Objects.requireNonNull(documentSnapshot.get("playersId"))).toArray(auxiliar);
+            Long [] array = new Long[4];
+            Arrays.fill(array, 1L);
+            if(!Arrays.equals(auxiliar, array)){
                 for(int i=0;i<auxiliar.length;i++){
                     game_scene.playersId[i] = auxiliar[i].intValue();
                 }
                 identifyPlayersPosition();
+                runConfigTimer();
+                playersRoomRef[myPlayerCode].child("allSet").setValue("true", new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                        System.err.println("Value was set. Error = "+error);
+                    }
+                });
             }
         });
     }
@@ -234,44 +287,49 @@ public class LocalOpponent {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {
+                    configTimer.cancel();
                     matchState = snapshot.getValue().toString();
                     Log.d("Estado:", matchState);
                     //Caso meu duo esteja dando dica, aparece para mim a tela de adivinhar lâmina
                     if (matchState.equals(String.format("player%sDica", (myDuoPlayerCode + 1)))) {
-                        game_scene.tipButton.setVisibility(View.GONE);
-                        game_scene.showSlide.setVisibility(View.GONE);
-                        game_scene.imageSwitcher.setVisibility(View.GONE);
-                        game_scene.previous.setVisibility(View.GONE);
-                        game_scene.next.setVisibility(View.GONE);
+                        game_scene.changeItensVisibility(new int[]{0, 0});
                         if(myPersonalMatchState.equals("onHold")){
                             myPersonalMatchState = "recievingTip";
                             _estado_B();
                         }
                     }
-                    // Caso eu seja o próximo a jogar, liberar o botão de dica para mim
-                    else if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1))) || matchState.equals(String.format("player%sSetup", (opponentCode + 1)))){
-                        if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1)))) game_scene.tipButton.setVisibility(View.VISIBLE);
-                        game_scene.showSlide.setVisibility(View.VISIBLE);
-                        game_scene.imageSwitcher.setVisibility(View.VISIBLE);
-                        game_scene.previous.setVisibility(View.VISIBLE);
-                        game_scene.next.setVisibility(View.VISIBLE);
+                    // Caso meu oponente ou eu esteja dando dica
+                    else if(matchState.equals(String.format("player%sDica", (opponentCode + 1))) || matchState.equals(String.format("player%sDica", (myPlayerCode + 1)))){
+                        game_scene.changeItensVisibility(new int[]{0, 1});
                     }
-                    //Caso eu que esteja dando dica
-                    else if(matchState.equals(String.format("player%sDica", (myPlayerCode + 1)))){
-                        game_scene.tipButton.setVisibility(View.VISIBLE);
+                    // Caso o duo do meu oponente esteja dando dica
+                    else if(matchState.equals(String.format("player%sDica", (opponentDuoCode + 1)))){
+                        game_scene.changeItensVisibility(new int[]{0, 0});
+                    }
+                    // Caso eu seja o próximo a dar dica, liberar o botão de dica para mim
+                    else if(matchState.equals(String.format("player%sSetup", (myPlayerCode + 1)))){
+                        game_scene.changeItensVisibility(new int[]{1, 1});
+                    }
+                    // Caso meu oponente seja o próximo a dar dica
+                    else if(matchState.equals(String.format("player%sSetup", (opponentCode + 1)))){
+                        game_scene.changeItensVisibility(new int[]{0, 1});
+                    }
+                    // Caso o duo do meu oponente seja o próximo a dar dica
+                    else if(matchState.equals(String.format("player%sSetup", (opponentDuoCode + 1)))){
+                        game_scene.changeItensVisibility(new int[]{0, 0});
+                    }
+                    // Caso o meu duo seja o próximo a dar dica
+                    else if(matchState.equals(String.format("player%sSetup", (myDuoPlayerCode + 1)))){
+                        game_scene.changeItensVisibility(new int[]{0, 0});
                     }
                     else if(matchState.equals("ended")){
                         (new Handler(Looper.getMainLooper())).postDelayed(LocalOpponent.this::_estado_F, 2000);
                     }
-                    //Caso seja a vez da outra dupla jogar, some com o botão de dica pra mim
-                    else{
-                        game_scene.tipButton.setVisibility(View.GONE);
-                        game_scene.showSlide.setVisibility(View.GONE);
-                        game_scene.imageSwitcher.setVisibility(View.GONE);
-                        game_scene.previous.setVisibility(View.GONE);
-                        game_scene.next.setVisibility(View.GONE);
+                    // Caso meu duo já tenha chutado a resposta, para de rodar o timer para mim
+                    else if(matchState.equals(String.format("answered%s", (myDuoPlayerCode + 1)))){
+                        stopTimer();
                     }
-                    //else if(matchState.equals("killed")) forceMatchEnd();
+                    else if(matchState.equals("killed")) forceMatchEnd("Seu oponente se desconectou da partida.");
                 }
             }
 
@@ -293,6 +351,9 @@ public class LocalOpponent {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue()!=null) {
                     actualSlideToGuess = snapshot.getValue().toString();
+                    if(!snapshot.getValue().toString().equals("allDone")){
+                        game_scene.actualSlide = Integer.parseInt(snapshot.getValue().toString());
+                    }
                 }
             }
             @Override
@@ -366,8 +427,7 @@ public class LocalOpponent {
      * dica para a sua dupla sobre a lâmina que está visualizando
      */
     public void _estado_A(){
-        //if(mTimerRunning) stopTimer();
-        //myPersonalMatchState = "waiting";
+        // Toast.makeText(game_scene, "Estou no estado A", Toast.LENGTH_LONG).show();
         state = "A";
         realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sDica", myPlayerCode+1));
         startTimer();
@@ -380,7 +440,7 @@ public class LocalOpponent {
      * sua dupla está visualizando
      */
     public void _estado_B(){
-        Log.d("Chamei estado", "B");
+        // Toast.makeText(game_scene, "Estou no estado B", Toast.LENGTH_LONG).show();
         state = "B";
         startTimer();
         game_scene.showGuessSlide();
@@ -394,8 +454,11 @@ public class LocalOpponent {
      *                 adivinhar
      */
     public void _estado_C(String answer){
+        // Toast.makeText(game_scene, "Estou no estado C", Toast.LENGTH_LONG).show();
+        realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("answered" + (myPlayerCode + 1));
+        game_scene.closeGuessSlide();
         stopTimer();
-        game_scene.roundFeedback.setText("Validando resposta...");
+        game_scene.setFeedbackText("Validando resposta...");
         (new Handler(Looper.getMainLooper())).postDelayed(() -> _estado_D(answer), 2000);
     }
 
@@ -406,34 +469,23 @@ public class LocalOpponent {
      * @param answer - resposta fornecida pelo jogador
      */
     public void _estado_D(String answer){
+        // Toast.makeText(game_scene, "Estou no estado D", Toast.LENGTH_LONG).show();
         myPersonalMatchState = "playing";
         stopTimer();
-        Integer [] keySet = game_scene.slides.keySet().toArray(new Integer[0]);
+        Integer [] keySet = game_scene.matchSlides.keySet().toArray(new Integer[0]);
         Arrays.sort(keySet);
         boolean answerValidation = false, matchEnded = false;
         String trueSlide = "";
         int systemCode = 0;
-        switch (actualSlideToGuess){
-            case "firstSlide":
-                trueSlide = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getName().toLowerCase();
-                systemCode = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem();
-                break;
-            case "secondSlide":
-                trueSlide = Objects.requireNonNull(game_scene.slides.get(keySet[1])).getName().toLowerCase();
-                systemCode = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem();
-                break;
-            case "thirdSlide":
-                trueSlide = Objects.requireNonNull(game_scene.slides.get(keySet[2])).getName().toLowerCase();
-                systemCode = Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem();
-        }
+        trueSlide = Objects.requireNonNull(game_scene.matchSlides.get(keySet[game_scene.actualSlide])).getName().toLowerCase();
+        systemCode = Objects.requireNonNull(game_scene.matchSlides.get(keySet[game_scene.actualSlide])).getSystem();
         if(trueSlide.equals(answer.toLowerCase())){
             game_scene.changePlayerScore(1, 3);
             playersRoomRef[myPlayerCode].child("score").setValue(game_scene.getPlayerScore(1));
             playersRoomRef[myDuoPlayerCode].child("score").setValue(game_scene.getPlayerScore(1));
             answerValidation = true;
-            if(actualSlideToGuess.equals("thirdSlide")) matchEnded = true;
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentDuoCode+1));
-            //game_scene.computePerformance(systemCode, 1);
+            if(Integer.parseInt(actualSlideToGuess) + 1 == game_scene.matchSlides.size()) matchEnded = true;
+            game_scene.computePerformance(systemCode, 1);
         }
         _estado_E(answerValidation, matchEnded);
     }
@@ -449,20 +501,26 @@ public class LocalOpponent {
      * @param matchEnded - variável que indica se a partida deve ser finalizada ou não
      */
     public void _estado_E(boolean answerValidation, boolean matchEnded){
-        game_scene.closeGuessSlide();
+        // Toast.makeText(game_scene, "Estou no estado D", Toast.LENGTH_LONG).show();
         if(answerValidation){
-            if(matchEnded) game_scene.roundFeedback.setText("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
-            else game_scene.roundFeedback.setText("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
+            if(matchEnded){
+                game_scene.setFeedbackText("Resposta correta! Você ganhou 3 pontos! Fim de jogo...");
+                actualSlideToGuess = "allDone";
+                realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("slideToGuess").setValue(actualSlideToGuess);
+                realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("ended");
+            }
+            else{
+                game_scene.actualSlide += 1;
+                realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("slideToGuess").setValue(Integer.toString(game_scene.actualSlide));
+                game_scene.setFeedbackText("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...");
+                realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentCode + 1));
+                myPersonalMatchState = "onHold";
+            }
         }
         else{
-            game_scene.roundFeedback.setText("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
-        }
-        if(matchEnded){
-            actualSlideToGuess = "allDone";
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue("ended");
-        }
-        else{
-            (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_A, 2000);
+            game_scene.setFeedbackText("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...");
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentDuoCode + 1));
+            myPersonalMatchState = "onHold";
         }
     }
 
@@ -475,39 +533,32 @@ public class LocalOpponent {
      * finalizado essa partida
      */
     public void _estado_F(){
+        // Toast.makeText(game_scene, "Estou no estado F", Toast.LENGTH_LONG).show();
         if(!matchCreator){
             realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
         }
         if(!actualSlideToGuess.equals("allDone")){
-            Integer [] keySet = game_scene.slides.keySet().toArray(new Integer[0]);
+            Integer [] keySet = game_scene.matchSlides.keySet().toArray(new Integer[0]);
             Arrays.sort(keySet);
-            switch (actualSlideToGuess){
-                case "firstSlide":
-                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[0])).getSystem(), 0);
-                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[1])).getSystem(), 0);
-                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[2])).getSystem(), 0);
-                    break;
-                case "secondSlide":
-                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[1])).getSystem(), 0);
-                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[2])).getSystem(), 0);
-                    break;
-                case "thirdSlide":
-                    game_scene.computePerformance(Objects.requireNonNull(game_scene.slides.get(keySet[2])).getSystem(), 0);
-                    break;
+            for(int i = Integer.parseInt(actualSlideToGuess); i < game_scene.matchSlides.size(); i++){
+                game_scene.computePerformance(Objects.requireNonNull(game_scene.matchSlides.get(keySet[i])).getSystem(), 0);
             }
         }
-        game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2), 1);
+        if(game_scene.getPlayerScore(1) != game_scene.getPlayerScore(2)){
+            game_scene.saveMatchInfo(game_scene.getPlayerScore(1) > game_scene.getPlayerScore(2), 1);
+        }
         bothEnded = true;
         game_scene.showEndGameDialog();
     }
 
     protected void _estado_G(){
-        game_scene.roundFeedback.setText("Jogada da dupla adversária...");
+        // Toast.makeText(game_scene, "Estou no estado G", Toast.LENGTH_LONG).show();
+        game_scene.setFeedbackText("Jogada da dupla adversária...");
     }
 
-    protected void forceMatchEnd(){
+    protected void forceMatchEnd(String message){
         realtimeDatabase.getReference("partida/jogo/" + roomName).setValue(null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(game_scene).setTitle(R.string.fimJogo).setMessage(R.string.endMessage);
+        AlertDialog.Builder builder = new AlertDialog.Builder(game_scene).setTitle(R.string.fimJogo).setMessage(message);
         builder.setPositiveButton(R.string.menuInicial, (dialog, id) -> {
             Intent troca = new Intent(game_scene, MenuActivity.class);
             game_scene.startActivity(troca);
@@ -542,13 +593,33 @@ public class LocalOpponent {
      * para a próxima ação do jogo
      */
     protected void endTimer(){
-        game_scene.roundFeedback.setText("Acabou o tempo para você realizar uma ação. Vamos para a próxima rodada!");
+        game_scene.setFeedbackText("Acabou o tempo para você realizar uma ação. Vamos para a próxima rodada!");
         mTimeLeftInMillis = START_TIME_IN_MILLIS;
         mTimerRunning = false;
         if(state.equals("B")){
             game_scene.closeGuessSlide();
-            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentCode+1));
+            realtimeDatabase.getReference("partidaLocal/jogo/" + roomName).child("matchState").setValue(String.format("player%sSetup", opponentDuoCode+1));
+            myPersonalMatchState = "onHold";
         }
+        (new Handler(Looper.getMainLooper())).postDelayed(this::hideFeedback, 2000);
         (new Handler(Looper.getMainLooper())).postDelayed(this::_estado_G, 2000);
+
+    }
+
+    protected void hideFeedback(){
+        game_scene.roundFeedback.setVisibility(View.INVISIBLE);
+    }
+
+    protected void runConfigTimer(){
+        configTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                forceMatchEnd("Algum dos participantes da partida se desconectou e, por isso, o jogo foi finalizado");
+            }
+        }.start();
     }
 }

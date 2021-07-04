@@ -5,7 +5,7 @@
     "kind": "Directory"
   },
   "applicationId": "com.example.histoquiz",
-  "variantName": "processReleaseResources",
+  "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",

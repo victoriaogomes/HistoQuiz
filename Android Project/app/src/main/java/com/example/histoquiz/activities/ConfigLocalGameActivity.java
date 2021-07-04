@@ -81,7 +81,7 @@ public class ConfigLocalGameActivity extends AppCompatActivity {
         firestoreDatabase.collection("sistemas").get().addOnSuccessListener(queryDocumentSnapshots -> {
             systems = new HashMap<>();
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                systems.put(document.getId(), Integer.parseInt(document.get("code").toString()));
+                systems.put(document.getId(), Integer.parseInt(Objects.requireNonNull(document.get("code")).toString()));
             }
             systems.put("Aleatório", -1);
             populateSystemSpinner();
@@ -118,7 +118,6 @@ public class ConfigLocalGameActivity extends AppCompatActivity {
             }
         }
         else {
-            //noinspection deprecation
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -167,17 +166,15 @@ public class ConfigLocalGameActivity extends AppCompatActivity {
      * dela as informações fornecidas por esse usuário
      */
     protected void handleRoomCreation(){
-        createRoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent troca = new Intent(ConfigLocalGameActivity.this, LocalGameActivity.class);
-                troca.putExtra("systemCode", systemCode);
-                troca.putExtra("slidesAmount", Integer.parseInt(Objects.requireNonNull(qntd_slides.getEditText()).getText().toString()));
-                troca.putExtra("roundTime", Integer.parseInt(Objects.requireNonNull(roundTime.getEditText()).getText().toString()));
-                troca.putExtra("matchCreator", true);
-                troca.putExtra("roomCode", "");
-                startActivityForResult(troca, 999);
-            }
+        createRoom.setOnClickListener(v -> {
+            Intent troca = new Intent(ConfigLocalGameActivity.this, LocalGameActivity.class);
+            troca.putExtra("systemCode", systemCode);
+            troca.putExtra("slidesAmount", Integer.parseInt(Objects.requireNonNull(qntd_slides.getEditText()).getText().toString()));
+            troca.putExtra("roundTime", Integer.parseInt(Objects.requireNonNull(roundTime.getEditText()).getText().toString()));
+            troca.putExtra("matchCreator", true);
+            troca.putExtra("roomCode", "");
+            startActivityForResult(troca, 999);
         });
     }
+
 }

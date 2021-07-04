@@ -65,7 +65,7 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
     public HashMap<String, Map<String, Object>> perguntas;
     public HashMap<Integer, Slide> slides = new HashMap<>();
     public Map<Integer, Slide> matchSlides = new HashMap<>();
-    protected int actualSlide;
+    public int actualSlide;
     public Button showSlide, tipButton;
     public RoomCreator creator;
     protected DocumentReference docIdRef;
@@ -149,6 +149,7 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
         creator = new RoomCreator();
         showSlide = findViewById(R.id.toggleLamina);
         roundFeedback = findViewById(R.id.roundFeedback);
+        setFeedbackText("Aguardando configuração dos demais participantes...");
         content = findViewById(R.id.fullContent);
         showSlide.setOnClickListener(this);
         showSlide.setTag("OCULTAR_LAMINA");
@@ -169,7 +170,6 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
         });
         imageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
         imageSwitcher.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left));
-        guessSlideDialog = new GuessSlideDialogv2(this);
         endGameDialog = new EndGameDialogv2(this);
     }
 
@@ -235,9 +235,9 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                 break;
             case "OCULTAR_LAMINA":
                 showSlide.setText(getText(R.string.showLamina));
-                imageSwitcher.setVisibility(View.GONE);
-                next.setVisibility(View.GONE);
-                previous.setVisibility(View.GONE);
+                imageSwitcher.setVisibility(View.INVISIBLE);
+                next.setVisibility(View.INVISIBLE);
+                previous.setVisibility(View.INVISIBLE);
                 showSlide.setTag("MOSTRAR_LAMINA");
                 break;
             case "MOSTRAR_LAMINA":
@@ -281,7 +281,7 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
      */
     public void imageToShow(int position){
         Object [] keySet;
-        Integer aux = 0;
+        Integer aux;
         keySet = matchSlides.keySet().toArray();
         aux = (Integer) keySet[actualSlide];
         storageReference = FirebaseStorage.getInstance().getReference(Objects.requireNonNull(matchSlides.get(aux)).getImages().get(position));
@@ -300,6 +300,8 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
             next.setVisibility(View.VISIBLE);
             previous.setVisibility(View.VISIBLE);
         }
+        imageSwitcher.setVisibility(View.VISIBLE);
+        showSlide.setVisibility(View.VISIBLE);
         GlideApp.with(this).load(storageReference).into((ImageView) imageSwitcher.getCurrentView());
     }
 
@@ -324,8 +326,10 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
                 else{
-                    Toast.makeText(LocalGameActivity.this, "Aguarde enquanto o criador da partida separa os times!", Toast.LENGTH_LONG).show();
-                    startGame();
+                    if(localOpponent == null) {
+                        Toast.makeText(LocalGameActivity.this, "Aguarde enquanto o criador da partida separa os times!", Toast.LENGTH_LONG).show();
+                        startGame();
+                    }
                 }
             }
             else{
@@ -361,7 +365,9 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
         if(matchCreator){
             setTeamsDialog.dismiss();
         }
-        localOpponent = new LocalOpponent(this, matchCreator, creator.getActualRoomName());
+        if(localOpponent == null){
+            localOpponent = new LocalOpponent(this, matchCreator, creator.getActualRoomName());
+        }
     }
 
     /**
@@ -369,9 +375,8 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
      * atual
      */
     public void showGuessSlide(){
-        if(!guessSlideDialog.isAdded()){
-            getSupportFragmentManager().beginTransaction().add(guessSlideDialog, "guess dialog");
-        }
+        guessSlideDialog = new GuessSlideDialogv2(this);
+        guessSlideDialog.show(getSupportFragmentManager(), "guess dialog");
 //        Toast.makeText(this, "Exibir tela de escolher lamina", Toast.LENGTH_LONG).show();
     }
 
@@ -404,7 +409,6 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                 else{
                     myTeamPontuation.setText("0");
                 }
-                //myRoomRef.child("score").setValue(getPlayerScore(1));
                 break;
             case 2:
                 if(getPlayerScore(2) + pontuation > 0) {
@@ -413,7 +417,6 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
                 else{
                     myOpponentTeamPontuation.setText("0");
                 }
-                //onlineOpponent.opponentRoomRef.child("score").setValue(getPlayerScore(2));
                 break;
         }
     }
@@ -489,5 +492,29 @@ public class LocalGameActivity extends AppCompatActivity implements View.OnClick
         final FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(endGameDialog, "endGame").commitAllowingStateLoss();
+    }
+
+    /**
+     * Método utilizado para exibir ou deixar invisível itens da interface com base em quem vai
+     * jogar a próxima rodada
+     * @param constants - um vetor de 2 posições: tendo o valor 0, é invisível, e 1 é visível
+     *                  A primeira posição fala sobre visibilidade do botão de dica, e a segunda
+     *                  sobre visibilidade da imagem da lâmina
+     */
+    public void changeItensVisibility(int[] constants){
+        if(constants[0] == 0) tipButton.setVisibility(View.INVISIBLE);
+        else if(constants[0] == 1) tipButton.setVisibility(View.VISIBLE);
+        if(constants[1] == 0){
+            imageSwitcher.setVisibility(View.INVISIBLE);
+            next.setVisibility(View.INVISIBLE);
+            previous.setVisibility(View.INVISIBLE);
+            showSlide.setVisibility(View.INVISIBLE);
+        }else if(constants[1] == 1) imageToShow(0);
+
+    }
+
+    public void setFeedbackText(String text){
+        //roundFeedback.setVisibility(View.VISIBLE);
+        roundFeedback.setText(text);
     }
 }

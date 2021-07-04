@@ -56,8 +56,6 @@ public class EnterLocalGameActivity extends AppCompatActivity {
                         if (qntdPlayers >= 4) {
                             Toast.makeText(EnterLocalGameActivity.this, "Essa sala já está cheia!", Toast.LENGTH_LONG).show();
                         } else {
-                            firestoreDatabase.collection("partidaLocal").document(document.getId()).update("qntd", Integer.toString(Integer.parseInt(Objects.requireNonNull(document.get("qntd")).toString()) + 1));
-
                             ArrayList<String> nomeJogadores = (ArrayList<String>) document.get("nomeJogadores");
                             assert nomeJogadores != null;
                             nomeJogadores.set(qntdPlayers, Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName());
@@ -67,6 +65,8 @@ public class EnterLocalGameActivity extends AppCompatActivity {
                             assert uidJogadores != null;
                             uidJogadores.set(qntdPlayers, FirebaseAuth.getInstance().getCurrentUser().getUid());
                             firestoreDatabase.collection("partidaLocal").document(document.getId()).update("uidJogadores", uidJogadores);
+
+                            firestoreDatabase.collection("partidaLocal").document(document.getId()).update("qntd", Integer.toString(Integer.parseInt(Objects.requireNonNull(document.get("qntd")).toString()) + 1));
 
                             Intent troca = new Intent(EnterLocalGameActivity.this, LocalGameActivity.class);
                             troca.putExtra("matchCreator", false);

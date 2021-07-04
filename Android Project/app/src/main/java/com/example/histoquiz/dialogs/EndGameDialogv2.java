@@ -116,6 +116,11 @@ public class EndGameDialogv2 extends AppCompatDialogFragment {
             playerCard.setCardBackgroundColor(getResources().getColor(R.color.green));
             opponentCard.setCardBackgroundColor(getResources().getColor(R.color.red));
         }
+        else if(parent.getPlayerScore(1) == parent.getPlayerScore(2)){
+            winner.setText(getString(R.string.empate));
+            playerCard.setCardBackgroundColor(getResources().getColor(R.color.green));
+            opponentCard.setCardBackgroundColor(getResources().getColor(R.color.green));
+        }
         else{
             winner.setText(getString(R.string.seuOponente));
             playerCard.setCardBackgroundColor(getResources().getColor(R.color.red));

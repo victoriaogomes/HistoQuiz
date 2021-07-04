@@ -104,11 +104,12 @@
     <string name="naoCaps">NÃO!</string>
     <string name="prox">Próxima</string>
     <string name="check">Check</string>
-    <string name="endGame">Fim do jogo! O vencedor é </string>
+    <string name="endGame">Fim do jogo!</string>
     <string name="pontuacao">Pontuação final:</string>
     <string name="menuInicial">Retornar ao menu inicial</string>
-    <string name="vc">você!</string>
-    <string name="seuOponente">seu oponente!</string>
+    <string name="vc">O vencedor é você!</string>
+    <string name="seuOponente">O vencedor é seu oponente!</string>
+    <string name="empate">Houve um empate!</string>
     <string name="pontFinalVc">Você:</string>
     <string name="pontFinalOponente">Oponente:</string>
     <string name="configJogo">Configurando jogo. Por favor, aguarde...</string>
@@ -152,19 +153,42 @@
     <string name="regrasTitle">Regras</string>
     <string name="localGame">Modo local</string>
     <string name="topic1Local">1. Neste modo, os jogadores deverão formar duplas</string>
-    <string name="topic2Local">2. No início do jogo, será revelada uma imagem de lâmina histológica a um membro de cada dupla por meio da tela do HistoQuiz</string>
+    <string name="topic2Local">2. No início do jogo, será revelada uma imagem de lâmina histológica a um membro de cada dupla por meio da tela do
+        HistoQuiz</string>
     <string name="topic3Local">3. O HistoQuiz sorteará uma dupla para começar</string>
-    <string name="topic4Local">4. O membro da dupla sorteada que possui a imagem deverá dar uma dica ao seu parceiro para que este tente adivinhar o conteúdo da sua imagem. Para tal, o parceiro deve selecionar uma opção no banco de respostas do HistoQuiz. Caso acerte, a dupla ganhará pontos e a imagem será revelada a todos os jogadores.</string>
-    <string name="topic5Local">5. Se o jogador errar, o membro da outra dupla que possui a imagem também poderá dar uma dica ao seu parceiro. Este, deve agora considerar as duas dicas já mencionadas no jogo para tentar adivinhar. Isto se seguirá até que alguma dupla acerte a lâmina</string>
-    <string name="topic6Local">6. O jogo terminará quando todas as lâminas disponíveis forem utilizadas ou quando todos os jogadores selecionarem “Finalizar jogo”. Neste momento, os pontos obtidos durante a partida serão computados e aquele que obtiver a maior pontuação será o ganhador.</string>
+    <string name="topic4Local">4. O membro da dupla sorteada que possui a imagem deverá dar uma dica ao seu parceiro para que este tente adivinhar
+        o conteúdo da sua imagem. Para tal, o parceiro deve selecionar uma opção no banco de respostas do HistoQuiz. Caso acerte, a dupla ganhará
+        pontos e a imagem será revelada a todos os jogadores.</string>
+    <string name="topic5Local">5. Se o jogador errar, o membro da outra dupla que possui a imagem também poderá dar uma dica ao seu parceiro. Este,
+        deve agora considerar as duas dicas já mencionadas no jogo para tentar adivinhar. Isto se seguirá até que alguma dupla acerte a
+        lâmina</string>
+    <string name="topic6Local">6. O jogo terminará quando todas as lâminas disponíveis forem utilizadas ou quando todos os jogadores selecionarem
+        “Finalizar jogo”. Neste momento, os pontos obtidos durante a partida serão computados e aquele que obtiver a maior pontuação será o
+        ganhador.</string>
     <string name="onlineGame">Modo online</string>
-    <string name="topic1Online">1. Ao iniciar a partida, cada jogador receberá uma imagem de lâmina histológica, que não estará visível para o seu adversário.</string>
-    <string name="topic2Online">2. Assim, caso você seja o primeiro a jogar, poderá selecionar uma pergunta disponível no banco de perguntas do HistoQuiz para seu adversário, na tentativa de adivinhar a estrutura representada pela lâmina que ele possui</string>
-    <string name="topic3Online">3. O adversário deverá responder “sim” ou “não” à pergunta feita e, em seguida, o HistoQuiz informará o gabarito correto da pergunta.</string>
+    <string name="topic1Online">1. Ao iniciar a partida, cada jogador receberá uma imagem de lâmina histológica, que não estará visível para o seu
+        adversário.</string>
+    <string name="topic2Online">2. Assim, caso você seja o primeiro a jogar, poderá selecionar uma pergunta disponível no banco de perguntas do
+        HistoQuiz para seu adversário, na tentativa de adivinhar a estrutura representada pela lâmina que ele possui</string>
+    <string name="topic3Online">3. O adversário deverá responder “sim” ou “não” à pergunta feita e, em seguida, o HistoQuiz informará o gabarito
+        correto da pergunta.</string>
     <string name="topic4Online">4. Caso o adversário responda corretamente, receberá 2 ponto. Caso contrário, perderá 1 ponto</string>
-    <string name="topic5Online">5. Após obter a resposta para sua pergunta, você terá a oportunidade de tentar adivinhar a lâmina representada, selecionando uma das opções presente no banco de lâminas do HistoQuiz.</string>
-    <string name="topic6Online">6. Se você acertar, ganhará 3 pontos e o seu adversário receberá outra lâmina. Caso o contrário, a pontuação (3 pontos) irá para o outro jogador.</string>
-    <string name="topic7Online">7. Cada jogador poderá dispor de 3 lâminas para serem adivinhadas pelo seu adversário, sendo apresentadas a ele apenas uma por vez. Caso seu oponente adivinhe todas as suas lâminas, o jogo é finalizado.</string>
-    <string name="topic8Online">8. Neste momento, os pontos acumulados na partida são somados e o jogador que obteve o maior número de pontos é o ganhador da partida</string>
+    <string name="topic5Online">5. Após obter a resposta para sua pergunta, você terá a oportunidade de tentar adivinhar a lâmina representada,
+        selecionando uma das opções presente no banco de lâminas do HistoQuiz.</string>
+    <string name="topic6Online">6. Se você acertar, ganhará 3 pontos e o seu adversário receberá outra lâmina. Caso o contrário, a pontuação (3
+        pontos) irá para o outro jogador.</string>
+    <string name="topic7Online">7. Cada jogador poderá dispor de 3 lâminas para serem adivinhadas pelo seu adversário, sendo apresentadas a ele
+        apenas uma por vez. Caso seu oponente adivinhe todas as suas lâminas, o jogo é finalizado.</string>
+    <string name="topic8Online">8. Neste momento, os pontos acumulados na partida são somados e o jogador que obteve o maior número de pontos é o
+        ganhador da partida</string>
     <string name="topic9Online">9. No caso de empate, ganha o jogador que conseguiu adivinhar todas as lâminas do seu oponente.</string>
+
+
+    <!--    Revisão do jogo    -->
+
+    <!--    Sistema reprodutor    -->
+    <string name="sistRepDescricao">Os sistemas reprodutores do corpo humano compõem estruturas que diferenciam os sexos - feminino e masculino - e
+        são responsáveis por gerar e abrigar novos indivíduos.</string>
+    <string name="sistRepMasc">Sistema reprodutor masculino: revisaremos os componentes histológicos encontrados nos testículos, no epidídimo, no
+        ducto deferente, nas vesículas seminíferas, na próstata e no pênis.</string>
 </resources>
