@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:weightSum="100">
         <TextView
-            android:id="@+id/sair"
+            android:id="@+id/signOutTXT"
             android:layout_width="wrap_content"
             android:text="@string/sair"
             android:layout_margin="10dp"
@@ -119,7 +119,7 @@
                 android:text="@string/sobreJogo">
             </com.google.android.material.button.MaterialButton>
             <Button
-                android:id="@+id/voltar"
+                android:id="@+id/goBackBTN"
                 android:visibility="invisible"
                 android:layout_marginStart="50dp"
                 android:layout_marginLeft="50dp"

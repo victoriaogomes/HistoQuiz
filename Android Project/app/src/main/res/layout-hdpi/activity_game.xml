@@ -61,7 +61,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/_15sdp" />
                         <TextView
-                            android:id="@+id/pontuacaoJogador1"
+                            android:id="@+id/scorePlayer1TXT"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
@@ -99,7 +99,7 @@
                             android:textSize="@dimen/_15sdp" />
 
                         <TextView
-                            android:id="@+id/pontuacaoJogador2"
+                            android:id="@+id/scorePlayer2TXT"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
@@ -114,7 +114,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <TextView
-            android:id="@+id/timer"
+            android:id="@+id/timerTXT"
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:orientation="vertical">
                     <TextView
-                        android:id="@+id/pergunta"
+                        android:id="@+id/questionTXT"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
@@ -177,7 +177,7 @@
                         android:orientation="horizontal"
                         android:layout_marginTop="10dp">
                         <Button
-                            android:id="@+id/respSim"
+                            android:id="@+id/yesBTN"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal|center_vertical"
@@ -190,7 +190,7 @@
                             android:layout_gravity="center_horizontal|center_vertical"
                             android:background="@drawable/button_yes_style" />
                         <Button
-                            android:id="@+id/respNao"
+                            android:id="@+id/noBTN"
                             android:layout_marginStart="10dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -299,7 +299,7 @@
                 android:layout_marginTop="10dp">
                 <ImageButton
                     android:visibility="gone"
-                    android:id="@+id/escolherPergunta"
+                    android:id="@+id/selectQuestionBTN"
                     android:layout_marginStart="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

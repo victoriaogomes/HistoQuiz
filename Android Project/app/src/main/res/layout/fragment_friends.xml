@@ -68,7 +68,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
                 <Button
                     style="?android:attr/buttonBarStyle"
-                    android:id="@+id/enviarConviteButton"
+                    android:id="@+id/sendFriendRequest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -113,7 +113,7 @@
                     android:layout_gravity="center"
                     android:background="@color/white"/>
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview"
+                    android:id="@+id/friendsList"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_width="match_parent"
@@ -130,7 +130,7 @@
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="@color/darkPurple">
             <LinearLayout
-                android:id="@+id/pedidosAmz"
+                android:id="@+id/friendsRequestsPlace"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -152,7 +152,7 @@
                     android:layout_gravity="center"
                     android:background="@color/white"/>
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview2"
+                    android:id="@+id/friendshipRequestList"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_width="match_parent"

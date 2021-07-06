@@ -4,9 +4,9 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f35c12a2d0936baca75baa6b27f3b983/jetified-sdp-android-1.0.6/res" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f35c12a2d0936baca75baa6b27f3b983/jetified-sdp-android-1.0.6/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f35c12a2d0936baca75baa6b27f3b983/jetified-sdp-android-1.0.6/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f9af5fcf3789f9988b3299b6f2d9e4d5/jetified-sdp-android-1.0.6/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f9af5fcf3789f9988b3299b6f2d9e4d5/jetified-sdp-android-1.0.6/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f9af5fcf3789f9988b3299b6f2d9e4d5/jetified-sdp-android-1.0.6/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/036babc8baff6d674979823ac57f86d6/jetified-sdp-android-1.0.6/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/036babc8baff6d674979823ac57f86d6/jetified-sdp-android-1.0.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/036babc8baff6d674979823ac57f86d6/jetified-sdp-android-1.0.6/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <ImageView
-                android:id="@+id/selectImage"
+                android:id="@+id/userPhotoIMGVW"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
                 android:contentDescription="TODO">
             </ImageView>
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/nome"
+                android:id="@+id/nameEDT"
                 app:errorEnabled="true"
                 app:startIconDrawable="@drawable/ic_pen"
                 android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                     android:inputType="textPersonName"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/email"
+                android:id="@+id/emailEDT"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
@@ -88,7 +88,7 @@
                     android:inputType="textEmailAddress"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/senha"
+                android:id="@+id/passwordEDT"
                 android:layout_marginTop="5dp"
                 app:passwordToggleEnabled="true"
                 android:layout_marginStart="5dp"
@@ -119,7 +119,7 @@
                 android:weightSum="100"
                 android:baselineAligned="false">
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/universidade"
+                    android:id="@+id/collegeEDT"
                     android:layout_width="0dp"
                     android:layout_weight="50"
                     android:layout_marginStart="5dp"
@@ -143,7 +143,7 @@
                         android:inputType="text"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/anoIngresso"
+                    android:id="@+id/entryYearEDT"
                     android:layout_width="0dp"
                     android:layout_weight="50"
                     app:startIconTint="@color/darkPurple"
@@ -177,7 +177,7 @@
                 android:gravity="center_horizontal">
                 <Button
                     style="?android:attr/buttonBarStyle"
-                    android:id="@+id/cadastrarButton"
+                    android:id="@+id/signUpBTN"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -191,7 +191,7 @@
                 <Button
                     android:layout_marginStart="30dp"
                     style="?android:attr/buttonBarStyle"
-                    android:id="@+id/voltar"
+                    android:id="@+id/goBackBTN"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"

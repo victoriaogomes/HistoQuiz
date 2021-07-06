@@ -7,7 +7,7 @@
     android:background="@drawable/background"
     tools:context=".activities.ConfigLocalGameActivity">
     <LinearLayout
-        android:id="@+id/fullContent"
+        android:id="@+id/fullContentLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical|center_horizontal"
@@ -87,7 +87,7 @@
                         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                             android:fontFamily="@font/pinkchicken"
                             android:textSize="@dimen/_16sdp"
-                            android:id="@+id/sistemas_dropdown"
+                            android:id="@+id/systemsDropdown"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/text_edit_style"
@@ -112,7 +112,7 @@
                         android:layout_gravity="center"
                         android:background="@color/white"/>
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/qntd_laminas"
+                        android:id="@+id/slidesQtyEDT"
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
                         android:layout_marginTop="5dp"
                         android:layout_marginStart="10dp"
@@ -149,7 +149,7 @@
                         android:layout_gravity="center"
                         android:background="@color/white"/>
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tempoRodada"
+                        android:id="@+id/roundTimeEDT"
                         android:layout_width="match_parent"
                         android:paddingTop="5dp"
                         app:hintEnabled="false"
@@ -173,7 +173,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
                     <Button
                         style="?android:attr/buttonBarStyle"
-                        android:id="@+id/criarSalaButton"
+                        android:id="@+id/createRoomBTN"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"

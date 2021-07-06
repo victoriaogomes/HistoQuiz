@@ -44,7 +44,7 @@
                     android:layout_gravity="center"
                     android:background="@color/white"/>
                 <TextView
-                    android:id="@+id/numPartidas"
+                    android:id="@+id/playedMatches"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/pinkchicken"
@@ -102,7 +102,7 @@
                             android:progressDrawable="@drawable/progress"
                             android:max="100"/>
                         <TextView
-                            android:id="@+id/percentVitorias"
+                            android:id="@+id/victoryText"
                             android:text="70%"
                             android:layout_margin="2dp"
                             android:textSize="@dimen/_15sdp"
@@ -157,7 +157,7 @@
                             android:progressDrawable="@drawable/progress"
                             android:max="100"/>
                         <TextView
-                            android:id="@+id/percentDerrotas"
+                            android:id="@+id/defeatText"
                             android:text="30%"
                             android:layout_margin="2dp"
                             android:textSize="@dimen/_15sdp"

@@ -22,12 +22,10 @@
     <string name="voltar">Voltar</string>
 
     <!--    Modos de jogo   -->
-    <string name="jogarOnline">Online</string>
     <string name="jogarPC">Contra o PC</string>
 
     <!--    Modos de jogo online   -->
     <string name="convidarAmigo">Convidar amigo</string>
-    <string name="modoAleatorio">Modo aleatório</string>
     <string name="local">Modo local</string>
     <string name="entrarSala">Entrar em sala</string>
 
@@ -51,12 +49,9 @@
     <string name="sistemaOsteomuscular">Sist. Osteomusc.</string>
 
     <!--    Erros durante o login   -->
-    <string name="informeEmail">Informe seu email para realizar o login.</string>
-    <string name="informeSenha">Informe sua senha para realizar o login.</string>
     <string name="ok">OK</string>
 
     <!--    Erros durante o cadastro   -->
-    <string name="cadastroFalhou">Houve uma falha ao realizar o seu cadastro. Tente novamente.</string>
     <string name="obrigatorio">Preenchimento obrigatório.</string>
 
     <!--    Tela de minha conta   -->
@@ -91,7 +86,6 @@
     <string name="naoResp">Não \n respondeu</string>
     <string name="vezOponente">Jogada do seu oponente…Aguarde!</string>
     <string name="adivinharLamina">Qual é a lâmina?</string>
-    <string name="informeLamina">Lâmina</string>
     <string name="enviar">Enviar</string>
     <string name="escolherCat">Selecione uma categoria</string>
     <string name="escolherPerg">Selecione uma pergunta</string>
@@ -129,9 +123,6 @@
     <string name="convidar">Convidar</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <!--    Tela de desempenho   -->
     <string name="numPartidas">Partidas jogadas</string>
@@ -177,18 +168,47 @@
         selecionando uma das opções presente no banco de lâminas do HistoQuiz.</string>
     <string name="topic6Online">6. Se você acertar, ganhará 3 pontos e o seu adversário receberá outra lâmina. Caso o contrário, a pontuação (3
         pontos) irá para o outro jogador.</string>
-    <string name="topic7Online">7. Cada jogador poderá dispor de 3 lâminas para serem adivinhadas pelo seu adversário, sendo apresentadas a ele
-        apenas uma por vez. Caso seu oponente adivinhe todas as suas lâminas, o jogo é finalizado.</string>
-    <string name="topic8Online">8. Neste momento, os pontos acumulados na partida são somados e o jogador que obteve o maior número de pontos é o
-        ganhador da partida</string>
-    <string name="topic9Online">9. No caso de empate, ganha o jogador que conseguiu adivinhar todas as lâminas do seu oponente.</string>
 
+    <!--  O que é o HistoQuiz?   -->
+    <string name="OqueTitle">O que é o HistoQuiz?</string>
+    <string name="oQueEh">O HistoQuiz é um jogo digital, disponível para Android, desenvolvido por discentes e docentes dos cursos de Medicina e
+        Engenharia da Computação da Universidade Estadual de Feira de Santana a partir do Laboratório de Entretenimento Digital Aplicado (LEnDA).
+        \n\nIdealizado desde 2018 por uma aluna do curso de Medicina a partir das suas próprias experiências com a disciplina, o projeto HistoQuiz
+        nasceu da necessidade crescente por ferramentas de ensino capazes de acessar o estudante no contexto tecnológico da sua geração, minimizar
+        os obstáculos e limitações estruturais do curso, bem como estimular o interesse no estudo de uma disciplina que é peça-chave na formação do
+        profissional de saúde. \n\nSeu formato permite que o aluno exercite um pensamento lógico acerca das estruturas histológicas, bem como fornece
+        um espaço de treinamento lúdico, sem as limitações de espaço físico e recursos do laboratório, servindo assim como uma ferramenta auxiliar
+        de reforço teórico e aprendizado continuado.</string>
 
     <!--    Revisão do jogo    -->
 
     <!--    Sistema reprodutor    -->
     <string name="sistRepDescricao">Os sistemas reprodutores do corpo humano compõem estruturas que diferenciam os sexos - feminino e masculino - e
         são responsáveis por gerar e abrigar novos indivíduos.</string>
-    <string name="sistRepMasc">Sistema reprodutor masculino: revisaremos os componentes histológicos encontrados nos testículos, no epidídimo, no
-        ducto deferente, nas vesículas seminíferas, na próstata e no pênis.</string>
+
+    <string name="sisRepMascTitle">Sistema Reprodutor Masculino</string>
+    <string name="sisRepMascDescr"> Revisaremos os componentes histológicos encontrados nos testículos, no epidídimo, no ducto deferente, nas
+        vesículas seminíferas, na próstata e no pênis.</string>
+
+    <string name="sisRepFeminTitle">Sistema Reprodutor Feminino</string>
+    <string name="sisRepFeminDescr"> Os componentes a serem revisados serão: vagina, útero, tubas uterinas e ovários.</string>
+
+    <!--    Lâmina: Testículos    -->
+    <string name="testiculosTile">Testículos</string>
+    <string name="testiculosDescr">É revestido por três camadas diferentes, de fora para dentro:</string>
+    <string name="testiculosTopic1">Túnica Vaginal: Evaginação peritoneal derivada da sua descida da cavidade abdominal (retroperitônio) ao
+        escroto. Forma uma cavidade serosa que envolve a região anterolateral de cada testículo e permite certo grau de mobilidade na bolsa
+        escrotal.</string>
+    <string name="testiculosTopic2">Túnica Albugínea: Cápsula de tecido conjuntivo denso modelado que envolve o testículo completamente e da qual
+        irradiam septos de tecido conjuntivo que dividem o testículo em 250 compartimentos piramidais intercomunicantes (lóbulos testiculares)
+        .</string>
+    <string name="testiculosTopic2Extra1">Cada lóbulo testicular possui 4 túbulos seminíferos revestidos por epitélio seminífero, tecido conjuntivo
+        frouxo altamente vascularizado derivado da túnica vasculosa e células de Leydig (grandes, poligonais, eosinofílicas, geralmente com
+        gotículas de lipídios e cristais de Reinke em seu citoplasma).</string>
+    <string name="testiculosTopic2Extra2">Cada túbulo seminífero possui um epitélio estratificado composto por células espermatogênicas e células
+        de Sertoli (células colunares com extensos prolongamentos apicais e laterais, geralmente só é visível seu núcleo em preparações
+        convencionais).</string>
+    <string name="testiculosTopic2Extra3">Os túbulos são revestidos por um tecido peritubular, denominado túnica ou lâmina própria, composto por um
+        tecido conjuntivo com diversas camadas de células mióides (células contráteis) e fibras colágenas</string>
+    <string name="testiculosTopic3">Túnica Vasculosa: Cápsula de tecido conjuntivo frouxo altamente vascularizado</string>
 </resources>

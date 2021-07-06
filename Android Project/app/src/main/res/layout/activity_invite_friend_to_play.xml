@@ -77,7 +77,7 @@
                         android:background="@color/white"/>
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_marginTop="10dp"
-                        android:id="@+id/email"
+                        android:id="@+id/friendEmailEDT"
                         app:errorEnabled="true"
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Rounded"
                         app:startIconDrawable="@drawable/ic_add_user"
@@ -100,7 +100,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
                     <Button
                         style="?android:attr/buttonBarStyle"
-                        android:id="@+id/enviarConviteButton"
+                        android:id="@+id/sendInviteBTN"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
