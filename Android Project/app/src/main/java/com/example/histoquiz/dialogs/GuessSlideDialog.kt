@@ -129,10 +129,17 @@ class GuessSlideDialog
      */
     private fun dealWithButtons() {
         send!!.setOnClickListener {
-            if (parent.pcOpponent) parent.computerOpponent!!.estadoK(slideChoosed) else parent.onlineOpponent!!.estadoJ(
-                slideChoosed
-            )
+            if (parent.pcOpponent) parent.computerOpponent!!.estadoK(slideChoosed)
+            else parent.onlineOpponent!!.estadoJ(slideChoosed)
         }
-        goBack!!.setOnClickListener { v: View? -> }
+        goBack!!.setOnClickListener {
+            parent.closeGuessSlide()
+            if (parent.pcOpponent){
+                parent.computerOpponent!!.estadoA()
+            }else{
+                parent.onlineOpponent!!.myRoomRef?.child("nextRound")?.setValue("sim")
+                parent.onlineOpponent!!.estadoA()
+            }
+        }
     }
 }

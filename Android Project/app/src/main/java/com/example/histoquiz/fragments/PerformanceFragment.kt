@@ -17,11 +17,7 @@ import kotlin.math.ceil
 /**
  * Classe responsável por exibir métricas relativas ao desempenho desse usuário no jogo
  */
-class PerformanceFragment
-/**
- * Construtor da classe desse fragmento.
- */
-    : Fragment() {
+class PerformanceFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
     private var reproductorSis: Array<TextView>? = null
     private var digestSis: Array<TextView>? = null
@@ -57,7 +53,9 @@ class PerformanceFragment
         digestSis = arrayOf(screen.erroSisDiges, screen.hitSisDiges)
         cardioSis = arrayOf(screen.erroSisCardio, screen.hitSisCardio)
         osteoSis = arrayOf(screen.erroSisOsteo, screen.hitSisOsteo)
-        performanceData
+        screen.mainContent.visibility = View.INVISIBLE
+        screen.progress.visibility  = View.VISIBLE
+        getPerfomanceData()
     }
 
     /**
@@ -65,12 +63,9 @@ class PerformanceFragment
      * partidas que ele jogou
      */
     @Suppress("UNCHECKED_CAST")
-    private val performanceData: Unit
-        get() {
-            firestore!!.document(
-                "desempenho/" + FirebaseAuth.getInstance().currentUser!!
-                    .uid
-            ).get().addOnSuccessListener { documentSnapshot: DocumentSnapshot ->
+    private fun getPerfomanceData() {
+            firestore!!.document("desempenho/" + FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
+                documentSnapshot: DocumentSnapshot ->
                 setPerformanceData(
                     documentSnapshot["numPartidas"].toString(),
                     documentSnapshot["vitorias"].toString(),
@@ -94,14 +89,9 @@ class PerformanceFragment
      * @param sisRep - dados relativos ao desempenho do jogador relativos ao sistema reprodutor
      */
     @SuppressLint("SetTextI18n")
-    fun setPerformanceData(
-        numMatches: String,
-        vitories: String,
-        sisCardio: ArrayList<Long>?,
-        sisDigest: ArrayList<Long>?,
-        sisOsteo: ArrayList<Long>?,
-        sisRep: ArrayList<Long>?
-    ) {
+    fun setPerformanceData(numMatches: String, vitories: String, sisCardio: ArrayList<Long>?, sisDigest: ArrayList<Long>?,
+                           sisOsteo: ArrayList<Long>?, sisRep: ArrayList<Long>?)
+    {
         cardioSis?.get(0)?.text  = String.format(Locale.getDefault(), "%s", sisCardio!![0].toString())
         cardioSis?.get(1)?.text  = String.format(Locale.getDefault(), "%s", sisCardio[1].toString())
         digestSis?.get(0)?.text  = String.format(Locale.getDefault(), "%s", sisDigest!![0].toString())
@@ -120,5 +110,7 @@ class PerformanceFragment
         }
         screen.victoryText.text = screen.victoryProgress.progress.toString() + "%"
         screen.defeatText.text = screen.defeatProgress.progress.toString() + "%"
+        screen.mainContent.visibility = View.VISIBLE
+        screen.progress.visibility  = View.GONE
     }
 }

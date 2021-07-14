@@ -230,6 +230,7 @@ class LocalOpponent(game_scene: LocalGameActivity, matchCreator: Boolean, roomNa
      * Método utilizado para obter a configuração relativa a posição de cada um dos 4 players dessa
      * partida, para que possamos saber quem é dupla de quem
      */
+    @Suppress("UNCHECKED_CAST")
     fun addListenerToPlayerPos() {
         gameScene.creator!!.actualRoomName?.let { firestore.collection("partidaLocal").document(it) }
             ?.addSnapshotListener { documentSnapshot: DocumentSnapshot?, _: FirebaseFirestoreException? ->

@@ -15,6 +15,6 @@
     <color name="red">#e83737</color>
     <color name="yellow">#E2FFEB3B</color>
     <color name="green">#6fd664</color>
-
+    <color name="link">#5C056A</color>
     <color name="black_overlay">#66000000</color>
 </resources>

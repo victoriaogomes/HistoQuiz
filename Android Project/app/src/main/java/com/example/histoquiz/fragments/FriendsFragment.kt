@@ -23,19 +23,20 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Classe utilizada para manipular a view "Amigos" que é exibida em "Minha conta", mostrando os
  * amigos desse usuário, as solicitações de amizade dele e dando a opção para ele enviar convite
  * para adicionar outro usuário.
  */
-class FriendsFragment
-/**
- * Construtor da classe desse fragmento.
- */
-    : Fragment() {
+class FriendsFragment : Fragment(), CoroutineScope {
     private var friendsSource: ArrayList<Friend>? = null
     var friendRequestSource: ArrayList<FriendRequest>? = null
     private var aux1: MutableList<String>? = null
@@ -53,6 +54,11 @@ class FriendsFragment
     private val screen get() = _screen!!
     var friendsList: RecyclerView? = null
     var friendshipRequestList: RecyclerView? = null
+
+    private var job: Job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     /**
      * Método chamado no instante que um fragment desse tipo é instanciado, para que ele instancie
@@ -86,8 +92,12 @@ class FriendsFragment
         configureSendFriendRequest()
         params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         params!!.setMargins(10, 0, 10, 0)
-        friends
-        friendRequests
+        screen.mainContent.visibility = View.INVISIBLE
+        screen.progress.visibility = View.VISIBLE
+        launch {
+            getFriends()
+            getFriendsRequest()
+        }
     }
 
     /**
@@ -112,106 +122,104 @@ class FriendsFragment
      * adapter que será utilizado para exibi-los. Caso não hajam amigos para esse usuário, exibe
      * uma mensagem informando isso.
      */
-    val friends: Unit
-        get() {
-            aux1 = ArrayList()
-            friendsSource = ArrayList()
-            val friends = firestore!!.document("amizades/amigos").collection(user!!.uid).get()
-            friends.addOnSuccessListener { queryDocumentSnapshots: QuerySnapshot ->
-                if (!queryDocumentSnapshots.isEmpty) {
-                    friendsList = context?.let { RecyclerView(it) }
-                    friendsList?.layoutParams = params
-                    friendsList?.layoutManager = recyclerViewLM
-                    friendsList?.layoutManager = horizontalLayout1
-                    screen.friendsPlace.removeViewAt(2)
-                    screen.friendsPlace.addView(friendsList)
-                    val usuarios = firestore!!.collection("usuarios")
-                    for (documentSnapshot in queryDocumentSnapshots) {
-                        (aux1 as ArrayList<String>).add(documentSnapshot.id)
-                    }
-                    usuarios.whereIn(FieldPath.documentId(), aux1 as ArrayList<String>).get().addOnSuccessListener { queryDocumentSnapshots1: QuerySnapshot ->
-                        for (documentSnapshot in queryDocumentSnapshots1) {
-                            var name = Objects.requireNonNull(documentSnapshot["nome"]).toString()
-                            val separatedName = name.split(" ").toTypedArray()
-                            name = if (separatedName.size > 1) {
-                                separatedName[0] + " " + separatedName[1]
-                            } else {
-                                separatedName[0]
-                            }
-                            friendsSource!!.add(Friend(name, documentSnapshot.id))
-                        }
-                        adapter = FriendsAdapter(friendsSource!!, this)
-                        friendsList!!.adapter = adapter
-                    }
-                } else {
-                    val message = TextView(context)
-                    message.text = activity?.resources?.getString(R.string.semAmg)
-                    message.textSize = 20f
-                    message.setTextColor(requireActivity().resources.getColor(R.color.white))
-                    val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                    params.setMargins(20, 10, 10, 10)
-                    message.layoutParams = params
-                    message.gravity = Gravity.CENTER
-                    message.setPadding(10, 20, 10, 20)
-                    val tp = context?.let { ResourcesCompat.getFont(it, R.font.pinkchicken) }
-                    message.typeface = tp
-                    screen.friendsPlace.removeView(friendsList)
-                    screen.friendsPlace.addView(message)
-                }
+    suspend fun getFriends() {
+        screen.mainContent.visibility = View.INVISIBLE
+        screen.progress.visibility = View.VISIBLE
+        aux1 = ArrayList()
+        friendsSource = ArrayList()
+        val friends = firestore!!.document("amizades/amigos").collection(user!!.uid).get()
+        if(friends.await().documents.isNotEmpty()){
+            friendsList = context?.let { RecyclerView(it) }
+            friendsList?.layoutParams = params
+            friendsList?.layoutManager = recyclerViewLM
+            friendsList?.layoutManager = horizontalLayout1
+            screen.friendsPlace.removeViewAt(2)
+            screen.friendsPlace.addView(friendsList)
+            val usuarios = firestore!!.collection("usuarios")
+            for (documentSnapshot in friends.await().documents) {
+                (aux1 as ArrayList<String>).add(documentSnapshot.id)
             }
+            val usersRef = usuarios.whereIn(FieldPath.documentId(), aux1 as ArrayList<String>).get()
+            for(document in usersRef.await().documents){
+                var name = Objects.requireNonNull(document["nome"]).toString()
+                val separatedName = name.split(" ").toTypedArray()
+                name = if (separatedName.size > 1) {
+                    separatedName[0] + " " + separatedName[1]
+                } else {
+                    separatedName[0]
+                }
+                friendsSource!!.add(Friend(name, document.id))
+            }
+            adapter = FriendsAdapter(friendsSource!!, this)
+            friendsList!!.adapter = adapter
         }
+        else {
+                val message = TextView(context)
+                message.text = activity?.resources?.getString(R.string.semAmg)
+                message.textSize = 20f
+                message.setTextColor(requireActivity().resources.getColor(R.color.white))
+                val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                params.setMargins(20, 10, 10, 10)
+                message.layoutParams = params
+                message.gravity = Gravity.CENTER
+                message.setPadding(10, 20, 10, 20)
+                val tp = context?.let { ResourcesCompat.getFont(it, R.font.pinkchicken) }
+                message.typeface = tp
+                screen.friendsPlace.removeView(friendsList)
+                screen.friendsPlace.addView(message)
+        }
+    }
 
     /**
      * Método utilizado para obter do firebase as solicitações de amizade cadastradas para esse
      * usuário e, após obtê-las, setar o adapter que será utilizado para exibi-las. Caso não hajam
      * solicitações, exibe um texto informando isso ao usuário
      */
-    val friendRequests: Unit
-        get() {
-            aux2 = ArrayList()
-            friendRequestSource = ArrayList()
-            val friends = firestore!!.document("amizades/solicitacoes").collection(user!!.uid).get()
-            friends.addOnSuccessListener { queryDocumentSnapshots: QuerySnapshot ->
-                if (!queryDocumentSnapshots.isEmpty) {
-                    friendshipRequestList = context?.let { RecyclerView(it) }
-                    friendshipRequestList!!.layoutParams = params
-                    friendshipRequestList!!.layoutManager = recyclerViewLM
-                    friendshipRequestList!!.layoutManager = horizontalLayout2
-                    screen.friendsRequestsPlace.removeViewAt(2)
-                    screen.friendsRequestsPlace.addView(friendshipRequestList)
-                    val usuarios = firestore!!.collection("usuarios")
-                    for (documentSnapshot in queryDocumentSnapshots) {
-                        (aux2 as ArrayList<String>).add(documentSnapshot.id)
-                    }
-                    usuarios.whereIn(FieldPath.documentId(), aux2 as ArrayList<String>).get().addOnSuccessListener { queryDocumentSnapshots1: QuerySnapshot ->
-                        for (documentSnapshot in queryDocumentSnapshots1) {
-                            var name = Objects.requireNonNull(documentSnapshot["nome"]).toString()
-                            val separatedName = name.split(" ").toTypedArray()
-                            name = if (separatedName.size > 1) {
-                                separatedName[0] + " " + separatedName[separatedName.size - 1]
-                            } else {
-                                separatedName[0]
-                            }
-                            friendRequestSource!!.add(FriendRequest(name, documentSnapshot.id))
-                        }
-                        adapter2 = FriendshipRequestAdapter(friendRequestSource!!, this)
-                        friendshipRequestList!!.adapter = adapter2
-                    }
-                } else {
-                    val message = TextView(context)
-                    message.text = activity?.resources?.getString(R.string.semSolic)
-                    message.textSize = 20f
-                    message.setTextColor(requireActivity().resources.getColor(R.color.white))
-                    val params2 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                    params2.setMargins(20, 10, 10, 10)
-                    message.layoutParams = params2
-                    message.gravity = Gravity.CENTER
-                    message.setPadding(10, 20, 10, 20)
-                    val tp = context?.let { ResourcesCompat.getFont(it, R.font.pinkchicken) }
-                    message.typeface = tp
-                    screen.friendsRequestsPlace.removeView(friendshipRequestList)
-                    screen.friendsRequestsPlace.addView(message)
-                }
+    suspend fun getFriendsRequest() {
+        aux2 = ArrayList()
+        friendRequestSource = ArrayList()
+        val friendRequests = firestore!!.document("amizades/solicitacoes").collection(user!!.uid).get()
+        if(friendRequests.await().documents.isNotEmpty()){
+            friendshipRequestList = context?.let { RecyclerView(it) }
+            friendshipRequestList!!.layoutParams = params
+            friendshipRequestList!!.layoutManager = recyclerViewLM
+            friendshipRequestList!!.layoutManager = horizontalLayout2
+            screen.friendsRequestsPlace.removeViewAt(2)
+            screen.friendsRequestsPlace.addView(friendshipRequestList)
+            val usuarios = firestore!!.collection("usuarios")
+            for (documentSnapshot in friendRequests.await().documents) {
+                (aux2 as ArrayList<String>).add(documentSnapshot.id)
             }
+            val usersRef = usuarios.whereIn(FieldPath.documentId(), aux2 as ArrayList<String>).get()
+            for(document in usersRef.await().documents){
+                var name = Objects.requireNonNull(document["nome"]).toString()
+                val separatedName = name.split(" ").toTypedArray()
+                name = if (separatedName.size > 1) {
+                    separatedName[0] + " " + separatedName[separatedName.size - 1]
+                } else {
+                    separatedName[0]
+                }
+                friendRequestSource!!.add(FriendRequest(name, document.id))
+            }
+            adapter2 = FriendshipRequestAdapter(friendRequestSource!!, this)
+            friendshipRequestList!!.adapter = adapter2
         }
+        else {
+            val message = TextView(context)
+            message.text = activity?.resources?.getString(R.string.semSolic)
+            message.textSize = 20f
+            message.setTextColor(requireActivity().resources.getColor(R.color.white))
+            val params2 = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            params2.setMargins(20, 10, 10, 10)
+            message.layoutParams = params2
+            message.gravity = Gravity.CENTER
+            message.setPadding(10, 20, 10, 20)
+            val tp = context?.let { ResourcesCompat.getFont(it, R.font.pinkchicken) }
+            message.typeface = tp
+            screen.friendsRequestsPlace.removeView(friendshipRequestList)
+            screen.friendsRequestsPlace.addView(message)
+        }
+        screen.mainContent.visibility = View.VISIBLE
+        screen.progress.visibility = View.GONE
+    }
 }

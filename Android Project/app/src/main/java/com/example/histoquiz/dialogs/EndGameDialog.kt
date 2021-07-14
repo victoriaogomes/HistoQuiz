@@ -30,7 +30,6 @@ class EndGameDialog
  * @param parent - activity do tipo GameActivity, que é responsável por gerenciar partidas e
  * que criou esse dialog
  */(var parent: GameActivity) : AppCompatDialogFragment() {
-    var inflater: LayoutInflater? = null
     var playerScore: TextView? = null
     var opponentScore: TextView? = null
     private var winner: TextView? = null

@@ -13,6 +13,11 @@
     <string name="universidade">Universidade</string>
     <string name="anoIngresso">Ano de ingresso</string>
     <string name="cadastrar">Cadastrar</string>
+    <string name="termoUso1">Eu declaro que estou devidamente informado(a) e esclarecido(a) sobre a pesquisa, concordo em participar desse estudo e
+        autorizo que meus dados de desempenho sejam utilizados na pesquisa</string>
+    <string name="termoUso2">Eu autorizo que os desenvolvedores enviem um questionário de satisfação para o e-mail que cadastrei</string>
+    <string name="acessoTermos">- <u>Acessar termo de consentimento</u></string>
+    <string name="profImg">Imagem de perfil</string>
 
     <!--    Tela de menu   -->
     <string name="minhaConta">Minha conta</string>
@@ -36,6 +41,7 @@
     <string name="tempo">Informe o tempo para a realização de cada jogada (em segundos):</string>
     <string name="informeCod">Informe o código da sala de jogo:</string>
     <string name="codigo">Código da sala</string>
+    <string name="flag">Bandeira de time</string>
 
     <!--    Tela sobre o jogo   -->
     <string name="oQue">O que é</string>
@@ -124,6 +130,19 @@
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 
+    <!--    Tela de entrar em contato com desenvolvedor   -->
+    <string name="contatoTitle">Contato</string>
+    <string name="contatoDescrip">Gostaria de fazer algum comentário sobre o HistoQuiz?\n\nEntre em
+        contato conosco pelo e-mail histoquiz.contato@gmail.com ou clique em um dos tópicos abaixo para ser redirecionado!</string>
+    <string name="problemasTecnicos">Problemas técnicos</string>
+    <string name="sugestoes">Sugestões de melhorias</string>
+    <string name="compartExpr">Comentar experiência</string>
+    <string name="outrosAssuntos">Outros assuntos</string>
+
+
+    <!-- Fechar visualização de detalhes da lâmina -->
+    <string name="close">Fechar</string>
+
     <!--    Tela de desempenho   -->
     <string name="numPartidas">Partidas jogadas</string>
     <string name="vitorias">Vitórias</string>
@@ -193,22 +212,8 @@
     <string name="sisRepFeminTitle">Sistema Reprodutor Feminino</string>
     <string name="sisRepFeminDescr"> Os componentes a serem revisados serão: vagina, útero, tubas uterinas e ovários.</string>
 
-    <!--    Lâmina: Testículos    -->
-    <string name="testiculosTile">Testículos</string>
-    <string name="testiculosDescr">É revestido por três camadas diferentes, de fora para dentro:</string>
-    <string name="testiculosTopic1">Túnica Vaginal: Evaginação peritoneal derivada da sua descida da cavidade abdominal (retroperitônio) ao
-        escroto. Forma uma cavidade serosa que envolve a região anterolateral de cada testículo e permite certo grau de mobilidade na bolsa
-        escrotal.</string>
-    <string name="testiculosTopic2">Túnica Albugínea: Cápsula de tecido conjuntivo denso modelado que envolve o testículo completamente e da qual
-        irradiam septos de tecido conjuntivo que dividem o testículo em 250 compartimentos piramidais intercomunicantes (lóbulos testiculares)
-        .</string>
-    <string name="testiculosTopic2Extra1">Cada lóbulo testicular possui 4 túbulos seminíferos revestidos por epitélio seminífero, tecido conjuntivo
-        frouxo altamente vascularizado derivado da túnica vasculosa e células de Leydig (grandes, poligonais, eosinofílicas, geralmente com
-        gotículas de lipídios e cristais de Reinke em seu citoplasma).</string>
-    <string name="testiculosTopic2Extra2">Cada túbulo seminífero possui um epitélio estratificado composto por células espermatogênicas e células
-        de Sertoli (células colunares com extensos prolongamentos apicais e laterais, geralmente só é visível seu núcleo em preparações
-        convencionais).</string>
-    <string name="testiculosTopic2Extra3">Os túbulos são revestidos por um tecido peritubular, denominado túnica ou lâmina própria, composto por um
-        tecido conjuntivo com diversas camadas de células mióides (células contráteis) e fibras colágenas</string>
-    <string name="testiculosTopic3">Túnica Vasculosa: Cápsula de tecido conjuntivo frouxo altamente vascularizado</string>
+    <!--    Sistema osteomuscular    -->
+    <string name="sistOsteoDescricao">Para que o corpo seja capaz de dar um passo, é necessário um enorme grupo de células estritamente organizadas
+        em ossos, cartilagens e músculos. Em cada um desses grupos, essas estruturas desempenham funções específicas que lhes conferem
+        características histológicas únicas. </string>
 </resources>

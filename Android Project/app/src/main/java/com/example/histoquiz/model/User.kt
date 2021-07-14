@@ -60,6 +60,10 @@ class User {
      */
     var photoName: String? = null
 
+    var okTermosUso: Boolean? = null
+
+    var enviarQuest: Boolean? = null
+
     /**
      * Construtor da classe que não recebe parâmetros
      */
@@ -74,11 +78,14 @@ class User {
      * @param registrationToken - token de registro desse usuário no firebase, usado para enviar
      * notificações especificamente para ele
      */
-    constructor(anoIng: String?, dataConta: String?, nome: String?, univers: String?, registrationToken: String?) {
+    constructor(anoIng: String?, dataConta: String?, nome: String?, univers: String?, okTermosUso: Boolean?, enviarQuest: Boolean?,
+                registrationToken: String?) {
         this.anoIng = anoIng
         this.dataConta = dataConta
         this.nome = nome
         this.univers = univers
         this.registrationToken = registrationToken
+        this.okTermosUso = okTermosUso
+        this.enviarQuest = enviarQuest
     }
 }

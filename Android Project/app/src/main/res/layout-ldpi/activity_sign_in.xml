@@ -74,7 +74,6 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pinkchicken"
                     android:textSize="@dimen/_10sdp"
-                    android:autofillHints=""
                     android:textColor="@color/black"
                     android:hint="@string/textBoxHint"
                     android:inputType="textEmailAddress"/>
@@ -96,7 +95,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:autofillHints=""
                     android:fontFamily="@font/pinkchicken"
                     android:textSize="@dimen/_10sdp"
                     android:hint="@string/textBoxHint"

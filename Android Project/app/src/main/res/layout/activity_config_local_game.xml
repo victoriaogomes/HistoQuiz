@@ -122,7 +122,6 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:autofillHints=""
                             android:fontFamily="@font/pinkchicken"
                             android:textSize="@dimen/_17sdp"
                             android:textColor="@color/black"
@@ -163,7 +162,6 @@
                             android:id="@+id/tempoText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:autofillHints=""
                             android:fontFamily="@font/pinkchicken"
                             android:textSize="@dimen/_17sdp"
                             android:textColor="@color/black"

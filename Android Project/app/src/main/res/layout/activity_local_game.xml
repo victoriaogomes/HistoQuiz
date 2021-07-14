@@ -41,7 +41,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/pinkchicken"
-                        android:text="Cód. da sala: ??????"
+                        tools:text="Cód da sala: ??????"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_15sdp" />
                 </RelativeLayout>
@@ -69,7 +69,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_flag"
-                            android:contentDescription="flag" />
+                            android:contentDescription="@string/flag" />
                         <TextView
                             android:layout_marginStart="10dp"
                             android:layout_width="wrap_content"
@@ -112,7 +112,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_flag"
-                            android:contentDescription="flag" />
+                            android:contentDescription="@string/flag" />
                         <TextView
                             android:layout_marginStart="10dp"
                             android:layout_width="wrap_content"
@@ -141,7 +141,7 @@
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tempo para realizar uma jogada: 00:00"
+            tools:text="Tempo para realizar uma jogada: 00:00"
             android:fontFamily="@font/pinkchicken"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/black">
@@ -255,7 +255,8 @@
                         android:fontFamily="@font/pinkchicken"
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:background="@drawable/button_light_style"
-                        android:visibility="gone"/>
+                        android:visibility="gone"
+                        style="?android:attr/borderlessButtonStyle"/>
                     <Button
                         android:id="@+id/finalizarJogo"
                         android:layout_marginStart="10dp"
@@ -272,7 +273,7 @@
                         android:fontFamily="@font/pinkchicken"
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:background="@drawable/button_light_style"
-                        />
+                        style="?android:attr/borderlessButtonStyle"/>
                 </LinearLayout>
             </FrameLayout>
             <RelativeLayout
@@ -306,7 +307,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Feedback da partida ffffff"
+                tools:text="Feedback da partida ffffff"
                 android:fontFamily="@font/pinkchicken"
                 android:textSize="@dimen/_15sdp"
                 android:background="@color/purple"

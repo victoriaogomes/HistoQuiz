@@ -2,16 +2,20 @@ package com.example.histoquiz.activities
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.histoquiz.R
 import com.example.histoquiz.databinding.ActivityRevisionBinding
+import com.example.histoquiz.dialogs.SlideDetailsDialog
 import com.example.histoquiz.model.Slide
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
@@ -23,8 +27,8 @@ import kotlin.coroutines.CoroutineContext
 class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListener {
     // Sistema selecionado para ver a revisão
     private var selectedSystem: String? = null
-    private lateinit var screen: ActivityRevisionBinding
-    private var id: Int = 1
+    lateinit var screen: ActivityRevisionBinding
+    var id: Int = 1
     var slides = HashMap<Int, Slide>()
     var firestoreDatabase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var job: Job = Job()
@@ -42,12 +46,54 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
             getData()// onResult is called on the main thread
             initGUI()
         }
+        hideSystemUI()
+    }
+    /**
+     * Método chamado quando a janela atual da activity ganha ou perde o foco, é utilizado para es-
+     * conder novamente a barra de status e a navigation bar.
+     * @param hasFocus - booleano que indica se a janela desta atividade tem foco.
+     */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        hideSystemUI()
+    }
+
+    /**
+     * Método utilizado para fazer com que a barra de status e a navigation bar não sejam exibidas
+     * na activity. Caso o usuário queira visualizá-las, ele deve realizar um movimento de arrastar
+     * para cima (na navigation bar), ou para baixo (na status bar), o que fará com que elas apare-
+     * çam por um momento e depois sumam novamente.
+     */
+    private fun hideSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            if (controller != null) {
+                controller.hide(WindowInsetsCompat.Type.statusBars())
+                controller.hide(WindowInsetsCompat.Type.navigationBars())
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
     }
 
     private suspend fun getData() {
         screen.progress.visibility = View.VISIBLE
         screen.contentSection.visibility = View.GONE
-        val ref = firestoreDatabase.collection("laminas").whereEqualTo("system", 0).get()
+        var systemId: Int? = null
+        when (selectedSystem?.lowercase()) {
+            "sistema reprodutor" -> { systemId = 0 }
+            "sistema digestório" -> { systemId = 2 }
+            "sistema cardiopulmonar" -> { systemId = 1 }
+            "sistema osteomuscular" -> { systemId = 3 }
+        }
+        val ref = firestoreDatabase.collection("laminas").whereEqualTo("system", systemId).get()
         for (documentSnapshot in ref.await().documents) {
             val slide = documentSnapshot.toObject(Slide::class.java)
             slide?.name = documentSnapshot.id
@@ -67,7 +113,7 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
                 newTextView("Lâminas contempladas no HistoQuiz:", "#FFFFFF", block.findViewById(R.id.cardContent))
                 for (item in slides) {
                     if (item.value.code >= 7){
-                        newTextView(item.value.name.toString(), "#FFFFFF", block.findViewById(R.id.cardContent), true)
+                        newTextView(item.value.name.toString(), "#FFFFFF", block.findViewById(R.id.cardContent), true, item.value.code)
                     }
                 }
                 screen.contentSection.addView(block)
@@ -76,28 +122,47 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
                 newTextView("Lâminas contempladas no HistoQuiz:", "#FFFFFF", block.findViewById(R.id.cardContent))
                 for (item in slides) {
                     if (item.value.code < 7){
-                        newTextView(item.value.name.toString(), "#FFFFFF", block.findViewById(R.id.cardContent), true)
+                        newTextView(item.value.name.toString(), "#FFFFFF", block.findViewById(R.id.cardContent), true, item.value.code)
                     }
                 }
                 screen.contentSection.addView(block)
             }
             "sistema digestório" -> {
+                id = screen.mainRelLayout.childCount
+                newTextView("Lâminas contempladas no HistoQuiz:", "#FFFFFF", screen.mainRelLayout)
+                for (item in slides) {
+                    newTextView(item.value.name.toString(), "#FFFFFF", screen.mainRelLayout, true, item.value.code)
+                }
+                //screen.contentSection.addView(block)
             }
             "sistema cardiopulmonar" -> {
+                id = screen.mainRelLayout.childCount
+                newTextView("Lâminas contempladas no HistoQuiz:", "#FFFFFF", screen.mainRelLayout)
+                for (item in slides) {
+                    newTextView(item.value.name.toString(), "#FFFFFF", screen.mainRelLayout, true, item.value.code)
+                }
             }
             "sistema osteomuscular" -> {
+                screen.systemDescription.text = getString(R.string.sistOsteoDescricao)
+                val block = infoBlock("Lâminas")
+                block.id = screen.contentSection.getChildAt(screen.contentSection.childCount - 1).id + 1
+                newTextView("Lâminas contempladas no HistoQuiz:", "#FFFFFF", block.findViewById(R.id.cardContent))
+                for (item in slides) {
+                    newTextView(item.value.name.toString(), "#FFFFFF", block.findViewById(R.id.cardContent), true, item.value.code)
+                }
+                screen.contentSection.addView(block)
             }
         }
     }
 
-    fun newTextView(text: String, color: String, contentPlace: RelativeLayout, underline: Boolean = false) {
+    fun newTextView(text: String, color: String, contentPlace: RelativeLayout, underline: Boolean = false, slideCode: Int = -1) {
         val textView: TextView = LayoutInflater.from(this).inflate(R.layout.special_textview, null) as TextView
         textView.text = text
         textView.id = this.id
         textView.setTextColor(Color.parseColor(color))
         if (underline) {
             textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-            textView.tag = text
+            textView.tag = slideCode
             textView.setOnClickListener(this)
         }
         contentPlace.addView(textView, relativeLayoutParams(contentPlace.getChildAt(contentPlace.childCount - 1).id))
@@ -118,6 +183,6 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
     }
 
     override fun onClick(v: View?) {
-        Toast.makeText(this, v?.tag.toString(), Toast.LENGTH_SHORT).show()
+        SlideDetailsDialog(this, v?.tag.toString().toInt()).show(supportFragmentManager, "slide detail")
     }
 }

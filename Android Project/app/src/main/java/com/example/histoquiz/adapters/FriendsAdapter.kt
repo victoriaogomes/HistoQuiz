@@ -12,6 +12,11 @@ import com.example.histoquiz.fragments.FriendsFragment
 import com.example.histoquiz.model.Friend
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Classe utilizada para auxiliar na exibição da lista de amigos que o usuário logado no momento
@@ -22,7 +27,13 @@ class FriendsAdapter
  * Método construtor da classe, recebe a lista de amigos desse usuário que deve ser exibida
  * @param list - lista de amigos do usuário logado no momento
  * @param manager - fragmento que onde essa lista será exibida
- */(private val list: MutableList<Friend>, private val manager: FriendsFragment) : RecyclerView.Adapter<FriendsHolder>() {
+ */(private val list: MutableList<Friend>, private val manager: FriendsFragment) : RecyclerView.Adapter<FriendsHolder>(), CoroutineScope {
+
+    private var job: Job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
     /**
      * Método chamado quando o RecyclerView precisa de um novo ViewHolder para listar mais um
      * item (nesse caso, mais um usuário)
@@ -67,7 +78,7 @@ class FriendsAdapter
         /**
          * Método utilizado para remover um usuário da sua lista de amigos
          */
-        private fun configureRemoveFriend() {
+        private suspend fun configureRemoveFriend() {
             removeFriend.setOnClickListener {
                 for (friend in list) {
                     if (friend.name.contentEquals(textView.text)) {
@@ -77,7 +88,9 @@ class FriendsAdapter
                         list.removeAt(bindingAdapterPosition)
                         notifyItemRemoved(bindingAdapterPosition)
                         notifyItemRangeChanged(bindingAdapterPosition, list.size)
-                        manager.friends
+                        launch {
+                            manager.getFriends()
+                        }
                         break
                     }
                 }
@@ -87,7 +100,9 @@ class FriendsAdapter
         init {
             accept.visibility = View.GONE
             removeFriend = itemView.findViewById(R.id.recusarAmigo)
-            configureRemoveFriend()
+            launch {
+                configureRemoveFriend()
+            }
         }
     }
 }

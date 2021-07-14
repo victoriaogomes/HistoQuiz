@@ -118,7 +118,7 @@
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tempo para realizar uma jogada: 00:00"
+            tools:text="Tempo para realizar uma jogada: 00:00"
             android:fontFamily="@font/pinkchicken"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/black">
@@ -188,7 +188,8 @@
                             android:textSize="@dimen/_15sdp"
                             android:fontFamily="@font/pinkchicken"
                             android:layout_gravity="center_horizontal|center_vertical"
-                            android:background="@drawable/button_yes_style" />
+                            android:background="@drawable/button_yes_style"
+                            style="?android:attr/borderlessButtonStyle"/>
                         <Button
                             android:id="@+id/noBTN"
                             android:layout_marginStart="10dp"
@@ -203,7 +204,7 @@
                             android:fontFamily="@font/pinkchicken"
                             android:layout_gravity="center_horizontal|center_vertical"
                             android:background="@drawable/button_no_style"
-                            />
+                            style="?android:attr/borderlessButtonStyle"/>
                     </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
@@ -293,108 +294,82 @@
                     android:gravity="bottom|center_horizontal"
                     android:src="@drawable/ic_lentes" />
             </FrameLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-                <ImageButton
-                    android:visibility="gone"
-                    android:id="@+id/selectQuestionBTN"
-                    android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal|center_vertical">
+                <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_list_alt"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/escolherPerg">
-                </ImageButton>
-                <ImageButton
-                    android:id="@+id/guessSlide"
-                    android:visibility="gone"
-                    android:layout_marginStart="10dp"
-                    android:layout_below="@+id/escolherPergunta"
+                    android:layout_height="wrap_content">
+                    <ImageButton
+                        android:id="@+id/oponenteLamina1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitCenter"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/lamina"
+                        android:src="@drawable/ic_card"
+                        android:text="@string/sobreJogo">
+                    </ImageButton>
+                    <ImageView
+                        android:id="@+id/oponenteCheckSlide1"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:src="@drawable/ic_check"
+                        android:contentDescription="@string/check">
+                    </ImageView>
+                </FrameLayout>
+                <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_question"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/adivinharLamina">
-                </ImageButton>
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal|center_vertical">
-                    <FrameLayout
+                    android:layout_height="wrap_content">
+                    <ImageButton
+                        android:id="@+id/oponenteLamina2"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitCenter"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/lamina"
+                        android:src="@drawable/ic_card"
+                        android:text="@string/sobreJogo">
+                    </ImageButton>
+                    <ImageView
+                        android:id="@+id/oponenteCheckSlide2"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <ImageButton
-                            android:id="@+id/oponenteLamina1"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:scaleType="fitCenter"
-                            android:background="@android:color/transparent"
-                            android:contentDescription="@string/lamina"
-                            android:src="@drawable/ic_card"
-                            android:text="@string/sobreJogo">
-                        </ImageButton>
-                        <ImageView
-                            android:id="@+id/oponenteCheckSlide1"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:src="@drawable/ic_check"
-                            android:contentDescription="@string/check">
-                        </ImageView>
-                    </FrameLayout>
-                    <FrameLayout
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:src="@drawable/ic_check"
+                        android:contentDescription="@string/check">
+                    </ImageView>
+                </FrameLayout>
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageButton
+                        android:id="@+id/oponenteLamina3"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitCenter"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/lamina"
+                        android:src="@drawable/ic_card"
+                        android:text="@string/sobreJogo">
+                    </ImageButton>
+                    <ImageView
+                        android:id="@+id/oponenteCheckSlide3"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <ImageButton
-                            android:id="@+id/oponenteLamina2"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:scaleType="fitCenter"
-                            android:background="@android:color/transparent"
-                            android:contentDescription="@string/lamina"
-                            android:src="@drawable/ic_card"
-                            android:text="@string/sobreJogo">
-                        </ImageButton>
-                        <ImageView
-                            android:id="@+id/oponenteCheckSlide2"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:src="@drawable/ic_check"
-                            android:contentDescription="@string/check">
-                        </ImageView>
-                    </FrameLayout>
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <ImageButton
-                            android:id="@+id/oponenteLamina3"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:scaleType="fitCenter"
-                            android:background="@android:color/transparent"
-                            android:contentDescription="@string/lamina"
-                            android:src="@drawable/ic_card"
-                            android:text="@string/sobreJogo">
-                        </ImageButton>
-                        <ImageView
-                            android:id="@+id/oponenteCheckSlide3"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:src="@drawable/ic_check"
-                            android:contentDescription="@string/check">
-                        </ImageView>
-                    </FrameLayout>
-                </LinearLayout>
-            </RelativeLayout>
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:src="@drawable/ic_check"
+                        android:contentDescription="@string/check">
+                    </ImageView>
+                </FrameLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

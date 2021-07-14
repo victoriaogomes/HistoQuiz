@@ -142,7 +142,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         screen.button3.text = getString(R.string.jogarPC)
         screen.button3.tag = "JOGAR_PC"
         screen.button3.isEnabled = true
-        screen.button4.visibility = View.INVISIBLE
+        screen.button4.visibility = View.GONE
         screen.button4.isEnabled = false
         screen.goBackBTN.visibility = View.VISIBLE
         screen.goBackBTN.isEnabled = true
@@ -202,13 +202,13 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
      * uma sala ou entrar em uma já existente
      */
     private fun playLocalGame() {
-        screen.button1.visibility = View.INVISIBLE
+        screen.button1.visibility = View.GONE
         screen.button1.isEnabled = false
         screen.button2.text = getString(R.string.criarSala)
         screen.button2.tag = "CRIAR_SALA"
         screen.button3.text = getString(R.string.entrarSala)
         screen.button3.tag = "ENTRAR_SALA"
-        screen.button4.visibility = View.INVISIBLE
+        screen.button4.visibility = View.GONE
         screen.button4.isEnabled = false
         screen.goBackBTN.visibility = View.VISIBLE
         screen.goBackBTN.isEnabled = true
@@ -264,7 +264,10 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
      * Método utilizado para redirecionar dessa activity para a que permite
      * ao usuário enviar um email para os desenvolvedores do HistoQuiz
      */
-    private fun contactUs() {}
+    private fun contactUs() {
+        val troca = Intent(this@MenuActivity, ContactActivity::class.java)
+        startActivity(troca)
+    }
 
     /**
      * Método utilizado para redirecionar dessa activity para a que exibe ao usuário
@@ -302,7 +305,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         screen.button4.tag = "SOBRE_O_JOGO"
         screen.button4.visibility = View.VISIBLE
         screen.button4.isEnabled = true
-        screen.goBackBTN.visibility = View.INVISIBLE
+        screen.goBackBTN.visibility = View.GONE
         screen.goBackBTN.isEnabled = false
     }
 

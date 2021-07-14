@@ -120,6 +120,10 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         screen.goBackBTN.tag = "VOLTAR"
         screen.goBackBTN.setOnClickListener(this)
         fieldValidator = FormFieldValidator(this)
+        screen.useTermsTXT.setOnClickListener{
+            val intent = Intent(this, PdfViewActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     /**
@@ -299,7 +303,11 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.tag as String) {
             "CADASTRAR" -> if (checkAllFields()) {
-                newUser()
+                if(screen.checkbox1.isChecked){
+                    newUser()
+                }else{
+                    Toast.makeText(this, "É necessário, no mínimo, aceitar os termos da pesquisa (Checkbox 1)", Toast.LENGTH_LONG).show()
+                }
             }
             "VOLTAR" -> goBack()
             "SELECIONAR_IMAGEM" -> selectImage()
@@ -330,6 +338,8 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 dadosUsuario["univers"] = screen.collegeEDT.editText?.text.toString()
                 dadosUsuario["anoIng"] = screen.entryYearEDT.editText?.text.toString()
                 dadosUsuario["dataConta"] = dataConta
+                dadosUsuario["okTermosUso"] = screen.checkbox1.isChecked
+                dadosUsuario["enviarQuest"] = screen.checkbox2.isChecked
                 if (selectedImage != null) {
                     val riversRef = mStorageRef!!.child("profilePics/" + user!!.uid)
                     riversRef.putFile(selectedImage!!)

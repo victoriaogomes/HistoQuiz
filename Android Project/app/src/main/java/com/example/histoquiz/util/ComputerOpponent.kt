@@ -153,6 +153,7 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
      * @param trueAnswer - resposta verdadeira da pergunta selecionada pelo PC para o jogador
      * responder
      */
+    @Suppress("UNCHECKED_CAST")
     fun estadoE(trueAnswer: Boolean) {
         var delay = 1000
         val copy = slides.clone() as HashMap<Int, Slide>

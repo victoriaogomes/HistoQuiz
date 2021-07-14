@@ -126,7 +126,8 @@ class QuestionFeedBackDialog
     private fun handleButtonsClicks() {
         nextRound!!.setOnClickListener {
             parentActivity.closeQuestionFeedback()
-            if (parentActivity.pcOpponent) parentActivity.computerOpponent!!.estadoA() else {
+            if (parentActivity.pcOpponent) parentActivity.computerOpponent!!.estadoA()
+            else {
                 parentActivity.onlineOpponent!!.myRoomRef?.child("nextRound")?.setValue("sim")
                 parentActivity.onlineOpponent!!.estadoA()
             }

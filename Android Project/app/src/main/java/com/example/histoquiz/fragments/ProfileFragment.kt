@@ -93,6 +93,8 @@ class ProfileFragment
      * cadastradas no banco de dados atualmente
      */
     fun setUserInfos() {
+        screen.mainContent.visibility = View.INVISIBLE
+        screen.progress.visibility = View.VISIBLE
         screen.email.editText?.setText(usuario!!.email)
         screen.senha.editText?.setText(getString(R.string.senha))
         val userData = database!!.collection("usuarios").document(usuario!!.uid).get()
@@ -106,6 +108,8 @@ class ProfileFragment
                 val photo = mStorageRef!!.child(String.format("profilePics/%s", dadosUser!!.photoName))
                 Glide.with(activity).load(photo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(screen.selectImage)
             }
+            screen.progress.visibility = View.GONE
+            screen.mainContent.visibility = View.VISIBLE
         }
     }
 

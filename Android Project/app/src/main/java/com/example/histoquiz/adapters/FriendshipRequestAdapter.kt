@@ -12,7 +12,12 @@ import com.example.histoquiz.fragments.FriendsFragment
 import com.example.histoquiz.model.FriendRequest
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Classe utilizada para auxiliar na exibição da lista de solicitações de amizade que o usuário
@@ -24,7 +29,13 @@ class FriendshipRequestAdapter
  * ser exibida
  * @param list - lista de solicitações de amizade do usuário logado no momento
  * @param manager - fragmento que onde essa lista será exibida
- */(private val list: MutableList<FriendRequest>, private val manager: FriendsFragment) : RecyclerView.Adapter<FriendshipRequestHolder>() {
+ */(private val list: MutableList<FriendRequest>, private val manager: FriendsFragment) : RecyclerView.Adapter<FriendshipRequestHolder>(),
+    CoroutineScope {
+
+    private var job: Job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
     /**
      * Método chamado quando o RecyclerView precisa de um novo ViewHolder para listar mais um
      * item (nesse caso, mais uma solicitação de amizade)
@@ -88,8 +99,10 @@ class FriendshipRequestAdapter
                         list.removeAt(bindingAdapterPosition)
                         notifyItemRemoved(bindingAdapterPosition)
                         notifyItemRangeChanged(bindingAdapterPosition, list.size)
-                        manager.friends
-                        manager.friendRequests
+                        launch {
+                            manager.getFriends()
+                            manager.getFriendsRequest()
+                        }
                         break
                     }
                 }
@@ -109,7 +122,9 @@ class FriendshipRequestAdapter
                         list.removeAt(bindingAdapterPosition)
                         notifyItemRemoved(bindingAdapterPosition)
                         notifyItemRangeChanged(bindingAdapterPosition, list.size)
-                        manager.friendRequests
+                        launch {
+                            manager.getFriendsRequest()
+                        }
                         break
                     }
                 }
