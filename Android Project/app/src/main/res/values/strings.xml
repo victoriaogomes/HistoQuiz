@@ -25,6 +25,8 @@
     <string name="revisar">Revisar</string>
     <string name="sobreJogo">Sobre o jogo</string>
     <string name="voltar">Voltar</string>
+    <string name="tutorialTxt">Tutorial textual</string>
+    <string name="tutorialGraph">Tutorial gráfico</string>
 
     <!--    Modos de jogo   -->
     <string name="jogarPC">Contra o PC</string>
@@ -90,7 +92,8 @@
     <string name="sim">Sim</string>
     <string name="nao">Não</string>
     <string name="naoResp">Não \n respondeu</string>
-    <string name="vezOponente">Jogada do seu oponente…Aguarde!</string>
+    <string name="vezOponente">É a vez do seu oponente!</string>
+    <string name="oponenteSelecPerg">Aguardando oponente selecionar uma pergunta...</string>
     <string name="adivinharLamina">Qual é a lâmina?</string>
     <string name="enviar">Enviar</string>
     <string name="escolherCat">Selecione uma categoria</string>
@@ -112,7 +115,7 @@
     <string name="empate">Houve um empate!</string>
     <string name="pontFinalVc">Você:</string>
     <string name="pontFinalOponente">Oponente:</string>
-    <string name="configJogo">Configurando jogo. Por favor, aguarde...</string>
+    <string name="configJogo">Vamos começar a partida...</string>
     <string name="semSolic">Não há nenhuma solicitação de amizade para você no momento!</string>
     <string name="semAmg">Poxa, você ainda não adicionou nenhum amigo!</string>
     <string name="fimJogo">Partida finalizada!</string>
@@ -175,16 +178,16 @@
     <string name="topic6Local">6. O jogo terminará quando todas as lâminas disponíveis forem utilizadas ou quando todos os jogadores selecionarem
         “Finalizar jogo”. Neste momento, os pontos obtidos durante a partida serão computados e aquele que obtiver a maior pontuação será o
         ganhador.</string>
-    <string name="onlineGame">Modo online</string>
+    <string name="onlineGame">Modo online - com amigo ou contra o PC</string>
     <string name="topic1Online">1. Ao iniciar a partida, cada jogador receberá uma imagem de lâmina histológica, que não estará visível para o seu
         adversário.</string>
     <string name="topic2Online">2. Assim, caso você seja o primeiro a jogar, poderá selecionar uma pergunta disponível no banco de perguntas do
         HistoQuiz para seu adversário, na tentativa de adivinhar a estrutura representada pela lâmina que ele possui</string>
     <string name="topic3Online">3. O adversário deverá responder “sim” ou “não” à pergunta feita e, em seguida, o HistoQuiz informará o gabarito
         correto da pergunta.</string>
-    <string name="topic4Online">4. Caso o adversário responda corretamente, receberá 2 ponto. Caso contrário, perderá 1 ponto</string>
+    <string name="topic4Online">4. Caso o adversário responda corretamente, receberá 2 pontos. Caso contrário, perderá 1 ponto</string>
     <string name="topic5Online">5. Após obter a resposta para sua pergunta, você terá a oportunidade de tentar adivinhar a lâmina representada,
-        selecionando uma das opções presente no banco de lâminas do HistoQuiz.</string>
+        selecionando uma das opções presentes no banco de lâminas do HistoQuiz.</string>
     <string name="topic6Online">6. Se você acertar, ganhará 3 pontos e o seu adversário receberá outra lâmina. Caso o contrário, a pontuação (3
         pontos) irá para o outro jogador.</string>
 
@@ -192,12 +195,14 @@
     <string name="OqueTitle">O que é o HistoQuiz?</string>
     <string name="oQueEh">O HistoQuiz é um jogo digital, disponível para Android, desenvolvido por discentes e docentes dos cursos de Medicina e
         Engenharia da Computação da Universidade Estadual de Feira de Santana a partir do Laboratório de Entretenimento Digital Aplicado (LEnDA).
-        \n\nIdealizado desde 2018 por uma aluna do curso de Medicina a partir das suas próprias experiências com a disciplina, o projeto HistoQuiz
-        nasceu da necessidade crescente por ferramentas de ensino capazes de acessar o estudante no contexto tecnológico da sua geração, minimizar
-        os obstáculos e limitações estruturais do curso, bem como estimular o interesse no estudo de uma disciplina que é peça-chave na formação do
-        profissional de saúde. \n\nSeu formato permite que o aluno exercite um pensamento lógico acerca das estruturas histológicas, bem como fornece
-        um espaço de treinamento lúdico, sem as limitações de espaço físico e recursos do laboratório, servindo assim como uma ferramenta auxiliar
-        de reforço teórico e aprendizado continuado.</string>
+        \n\nO projeto HistoQuiz nasceu da necessidade crescente por ferramentas de ensino capazes de acessar o estudante no contexto tecnológico
+        da sua geração, minimizar os obstáculos e limitações estruturais do curso, bem como estimular o interesse no estudo de uma disciplina que
+        é peça-chave na formação do profissional de saúde. \n\nSeu formato permite que o aluno exercite um pensamento lógico acerca das estruturas
+        histológicas, bem como fornece um espaço de treinamento lúdico, sem as limitações de espaço físico e recursos do laboratório, servindo
+        assim como uma ferramenta auxiliar de reforço teórico e aprendizado continuado.
+        \n\nIdealizadores: \n1. Marcella Araújo Pires Bastos\n2. Maria da Conceição Andrade
+        \n\nDesenvolvedores: \n1. Victória Oliveira Gomes\n2. Victor Travassos Sarinho
+    </string>
 
     <!--    Revisão do jogo    -->
 

@@ -40,25 +40,25 @@
                 app:tabTextColor="@color/white">
 
                 <com.google.android.material.tabs.TabItem
-
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:icon="@drawable/ic_id_card"
-                    android:text="@string/perfil" />
+                    android:text="@string/perfil">
+                </com.google.android.material.tabs.TabItem>
 
                 <com.google.android.material.tabs.TabItem
 
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:icon="@drawable/ic_user_friends"
-                    android:text="@string/amigos" />
+                    android:text="@string/amigos"/>
 
                 <com.google.android.material.tabs.TabItem
 
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:icon="@drawable/ic_chart_pie"
-                    android:text="@string/desempenho" />
+                    android:text="@string/desempenho"/>
 
             </com.google.android.material.tabs.TabLayout>
 

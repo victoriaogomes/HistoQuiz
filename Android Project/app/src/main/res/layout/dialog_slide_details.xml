@@ -95,6 +95,7 @@
                     </FrameLayout>
                 </RelativeLayout>
             </ScrollView>
+
             <Button
                 android:id="@+id/closeBTN"
                 style="?android:attr/buttonBarStyle"
@@ -103,13 +104,15 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
                 android:background="@drawable/button_light_style"
                 android:fontFamily="@font/pinkchicken"
                 android:text="@string/close"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15sdp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </RelativeLayout>
         <ProgressBar
             android:id="@+id/progress"

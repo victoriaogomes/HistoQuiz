@@ -64,3 +64,8 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# Arquivo de config para acesso ao firebase
+firebase.json
+
+

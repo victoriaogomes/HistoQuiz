@@ -51,18 +51,19 @@
                                 android:layout_height="5dp"
                                 android:layout_gravity="center"
                                 android:background="@color/white"/>
+
                             <TextView
                                 android:id="@+id/systemDescription"
-                                android:layout_below="@+id/line1"
-                                android:layout_marginTop="5dp"
-                                android:textColor="@color/white"
-                                android:background="@android:color/transparent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_below="@+id/line1"
+                                android:layout_marginTop="5dp"
+                                android:background="@android:color/transparent"
                                 android:fontFamily="@font/pinkchicken"
-                                android:textSize="@dimen/_15sdp"
                                 android:justificationMode="inter_word"
-                                android:text="@string/oQueEh" />
+                                android:text="@string/oQueEh"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
                         </RelativeLayout>
                     </ScrollView>
                 </androidx.cardview.widget.CardView>
