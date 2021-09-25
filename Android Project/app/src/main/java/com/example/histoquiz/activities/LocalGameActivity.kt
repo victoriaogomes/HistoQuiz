@@ -26,7 +26,7 @@ import com.google.firebase.storage.StorageReference
 import java.util.*
 
 class LocalGameActivity : AppCompatActivity(), View.OnClickListener {
-    var systemCode = 0
+    private var systemCode = 0
     private var slideAmount = 0
     var roundTime = 0
     var firestoreDatabase: FirebaseFirestore? = null
@@ -49,15 +49,15 @@ class LocalGameActivity : AppCompatActivity(), View.OnClickListener {
     var matchSlides: MutableMap<Int, Slide> = HashMap()
     var actualSlide = 0
     var creator: RoomCreator? = null
-    private var docIdRef: DocumentReference? = null
     var matchCreator = false
     var nomeJogadores: ArrayList<String>? = null
     var uidJogadores: ArrayList<String>? = null
     var playersId: Array<Int?>? = null
-    var roomName: String? = null
     var localOpponent: LocalOpponent? = null
+    private var roomName: String? = null
     private var setTeamsDialog: SetTeamsDialog? = null
     private var myImageView:ImageView? = null
+    private var docIdRef: DocumentReference? = null
 
     // Dialogs utilizados para exibir as "subtelas" necessárias no jogo
     private var guessSlideDialog: GuessSlideDialogv2? = null
@@ -252,10 +252,6 @@ class LocalGameActivity : AppCompatActivity(), View.OnClickListener {
         screen.imageSW.visibility = View.VISIBLE
         screen.slideVisibToggleBTN.visibility = View.VISIBLE
         GlideApp.with(this).load(storageReference).into((screen.imageSW.currentView as ImageView))
-    }
-
-    fun setTeams() {
-
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -38,7 +38,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class FriendsFragment : Fragment(), CoroutineScope {
     private var friendsSource: ArrayList<Friend>? = null
-    var friendRequestSource: ArrayList<FriendRequest>? = null
+    private var friendRequestSource: ArrayList<FriendRequest>? = null
     private var aux1: MutableList<String>? = null
     private var aux2: MutableList<String>? = null
     private var recyclerViewLM: RecyclerView.LayoutManager? = null
@@ -52,8 +52,8 @@ class FriendsFragment : Fragment(), CoroutineScope {
     private var params: LinearLayout.LayoutParams? = null
     private var _screen: FragmentFriendsBinding? = null
     private val screen get() = _screen!!
-    var friendsList: RecyclerView? = null
-    var friendshipRequestList: RecyclerView? = null
+    private var friendsList: RecyclerView? = null
+    private var friendshipRequestList: RecyclerView? = null
 
     private var job: Job = Job()
 
@@ -104,7 +104,7 @@ class FriendsFragment : Fragment(), CoroutineScope {
      * Método utilizado para configurar como resposta ao botão de convidar amigo uma função que
      * salva no firebase o convite enviado para um usuário, para adicioná-lo a sua lista de amigos.
      */
-    fun configureSendFriendRequest() {
+    private fun configureSendFriendRequest() {
         screen.sendFriendRequest.setOnClickListener {
             if (validateForm!!.isFilled(screen.adicionarAmigos)) {
                 val friendUID = firestore!!.collection("tabelaAuxiliar").document(screen.adicionarAmigos.editText?.text.toString()).get()
@@ -168,6 +168,8 @@ class FriendsFragment : Fragment(), CoroutineScope {
                 screen.friendsPlace.removeView(friendsList)
                 screen.friendsPlace.addView(message)
         }
+        screen.mainContent.visibility = View.VISIBLE
+        screen.progress.visibility = View.GONE
     }
 
     /**

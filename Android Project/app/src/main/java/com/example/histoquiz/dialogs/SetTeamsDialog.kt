@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -27,19 +26,18 @@ class SetTeamsDialog
  * @param parentActivity - activity do tipo GameActivity, que é responsável por gerenciar
  * partidas e que criou esse dialog
  */(private var parentActivity: LocalGameActivity) : AppCompatDialogFragment() {
-    var continuar: Button? = null
-    var inflater: LayoutInflater? = null
-    var player1: TextInputLayout? = null
-    var player2: TextInputLayout? = null
-    var player3: TextInputLayout? = null
-    var player4: TextInputLayout? = null
+    private var continuar: Button? = null
+    private var player1: TextInputLayout? = null
+    private var player2: TextInputLayout? = null
+    private var player3: TextInputLayout? = null
+    private var player4: TextInputLayout? = null
     private var playersNames: Array<String>? = null
     private var aux = 0
     private var player1Dropdown: AutoCompleteTextView? = null
     private var player2Dropdown: AutoCompleteTextView? = null
     private var player3Dropdown: AutoCompleteTextView? = null
     private var player4Dropdown: AutoCompleteTextView? = null
-    var newview: View? = null
+    private var newview: View? = null
 
     /**
      * Método chamado no instante que o dialog é criado, seta qual view será associada a essa classe
@@ -168,7 +166,7 @@ class SetTeamsDialog
      * relativa a categoria e a pergunta, para posteriormente repassar para as classes que irão lidar
      * com essa informação
      */
-    fun handleSpinnersClicks() {
+    private fun handleSpinnersClicks() {
         player1Dropdown!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             aux = parentActivity.playersId!![0]!!
             parentActivity.playersId!![0] = position

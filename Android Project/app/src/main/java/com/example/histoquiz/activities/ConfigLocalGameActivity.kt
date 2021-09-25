@@ -20,11 +20,11 @@ import java.text.Collator
 import java.util.*
 
 class ConfigLocalGameActivity : AppCompatActivity() {
-    var firestoreDatabase: FirebaseFirestore? = null
-    var systems: HashMap<String, Int>? = null
-    var systemsNames: Array<String>? = null
-    var systemName: String? = null
-    var systemCode = 0
+    private var firestoreDatabase: FirebaseFirestore? = null
+    private var systems: HashMap<String, Int>? = null
+    private var systemsNames: Array<String>? = null
+    private var systemName: String? = null
+    private var systemCode = 0
     private lateinit var screen: ActivityConfigLocalGameBinding
 
     /**
@@ -95,6 +95,7 @@ class ConfigLocalGameActivity : AppCompatActivity() {
                 controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         } else {
+            @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

@@ -2,7 +2,6 @@ package com.example.histoquiz.activities
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +29,7 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
     lateinit var screen: ActivityRevisionBinding
     var id: Int = 1
     var slides = HashMap<Int, Slide>()
-    var firestoreDatabase: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private var firestoreDatabase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var job: Job = Job()
 
     override val coroutineContext: CoroutineContext
@@ -43,7 +42,7 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
         val intent = intent
         selectedSystem = intent.getStringExtra("selectedSystem")
         launch {
-            getData()// onResult is called on the main thread
+            getData()
             initGUI()
         }
         hideSystemUI()
@@ -65,21 +64,12 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
      * çam por um momento e depois sumam novamente.
      */
     private fun hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val controller = WindowCompat.getInsetsController(window, window.decorView)
-            if (controller != null) {
-                controller.hide(WindowInsetsCompat.Type.statusBars())
-                controller.hide(WindowInsetsCompat.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (controller != null) {
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
@@ -169,7 +159,7 @@ class RevisionActivity : AppCompatActivity(), CoroutineScope, View.OnClickListen
         this.id = this.id + 1
     }
 
-    fun relativeLayoutParams(bellowId: Int): RelativeLayout.LayoutParams {
+    private fun relativeLayoutParams(bellowId: Int): RelativeLayout.LayoutParams {
         val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         params.addRule(RelativeLayout.BELOW, bellowId)
         return params

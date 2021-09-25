@@ -165,7 +165,7 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
      * Método chamado sempre que seu oponente adivinhar uma das suas lâminas disponíveis, para indi-
      * car que o alvo agora é a lâmina seguinte
      */
-    fun addListenerToSlideToGuess() {
+    private fun addListenerToSlideToGuess() {
         opponentRoomRef!!.child("slideToGuess").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.value != null) {
@@ -185,7 +185,7 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
 
     /**
      * Método invocado sempre que o oponente responder a pergunta solicitada por esse usuário e ar-
-     * mazená-la no firebae
+     * mazená-la no firebase
      */
     private fun addListenerToAnswer() {
         opponentRoomRef!!.child("answer").addValueEventListener(object : ValueEventListener {
@@ -271,7 +271,13 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
         opponentRoomRef!!.child("score").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.value != null) {
-                    game_scene.screen.scorePlayer2TXT.text = String.format(Locale.getDefault(), "%d", snapshot.value.toString().toInt())
+                    if(snapshot.value.toString().toInt() - Integer.parseInt(game_scene.screen.scorePlayer2TXT.text.toString()) == 3){
+                        game_scene.showTextToPlayer("Seu oponente acertou a lâmina! Clique nas cartas para ver sua próxima lâmina...")
+                        Handler(Looper.getMainLooper()).postDelayed({game_scene.screen.scorePlayer2TXT.text = String.format(Locale.getDefault(), "%d", snapshot.value.toString().toInt())}, 5000)
+                    }
+                    else{
+                        game_scene.screen.scorePlayer2TXT.text = String.format(Locale.getDefault(), "%d", snapshot.value.toString().toInt())
+                    }
                 }
             }
 
@@ -295,7 +301,8 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
     fun estadoA() {
         if (mTimerRunning) stopTimer()
         myPersonalMatchState = "waiting"
-        game_scene.showTextToPlayer("Aguardando oponente selecionar uma pergunta...")
+        game_scene.showTextToPlayer(game_scene.getString(R.string.vezOponente))
+        Handler(Looper.getMainLooper()).postDelayed({ game_scene.showTextToPlayer(game_scene.getString(R.string.oponenteSelecPerg)) }, 5000)
     }
 
     /**
@@ -332,7 +339,6 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
      */
     private fun estadoD(answer: Boolean?) {
         myPersonalMatchState = "waiting"
-        val text: String
         val keySet = opponentSlides.keys.toTypedArray()
         Arrays.sort(keySet)
         when (opponentSlideToGuess) {
@@ -341,17 +347,16 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
             "thirdSlide" -> trueAnswer = game_scene.getQuestionRealAnswer(opponentCategoryId, opponentQuestionId, keySet[2])
         }
         if (answer != null) {
-            text = if (trueAnswer == answer) {
+            if (trueAnswer == answer) {
                 game_scene.changePlayerScore(1, 1)
-                "ganhou 1 ponto!"
+                game_scene.showTextToPlayer("Parabéns, você acertou! Aguardando oponente analisar a resposta...")
             } else {
                 game_scene.changePlayerScore(1, -1)
-                "perdeu 1 ponto!"
+                game_scene.showTextToPlayer("Resposta incorreta, não foi dessa vez! Aguardando seu oponente analisar a resposta...")
             }
-            game_scene.showTextToPlayer("Você $text Aguardando oponente analisar sua resposta...")
             if (answer) myRoomRef!!.child("answer").setValue("sim") else myRoomRef!!.child("answer").setValue("não")
         } else {
-            game_scene.showTextToPlayer("Aguardando seu oponente analisar a resposta correta da sua pergunta...")
+            game_scene.showTextToPlayer("Resposta incorreta, não foi dessa vez! Aguardando seu oponente analisar a resposta...")
             myRoomRef!!.child("answer").setValue("null")
         }
     }
@@ -363,9 +368,12 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
      */
     fun estadoE() {
         myPersonalMatchState = "playing"
-        game_scene.showQuestionSelection()
-        state = "E"
-        startTimer()
+        game_scene.showTextToPlayer("É a sua vez de jogar!")
+        Handler(Looper.getMainLooper()).postDelayed({
+            game_scene.showQuestionSelection()
+            state = "E"
+            startTimer()
+        }, 5000)
     }
 
     /**
@@ -483,16 +491,18 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
     private fun estadoK(answerValidation: Boolean, matchEnded: Boolean) {
         game_scene.closeGuessSlide()
         if (answerValidation) {
-            if (matchEnded) game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Fim de jogo...") else game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...")
+            game_scene.showTextToPlayer("Você acertou a lâmina. Bom trabalho!")
         } else {
-            game_scene.showTextToPlayer("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...")
+            game_scene.showTextToPlayer("Você errou a lâmina. Não desanime, que sabe na próxima!")
         }
         if (matchEnded) {
-            mySlideToGuess = "allDone"
-            realtimeDatabase.getReference("partida/jogo/$roomName").child("matchState").setValue("ended")
+            Handler(Looper.getMainLooper()).postDelayed({
+                mySlideToGuess = "allDone"
+                realtimeDatabase.getReference("partida/jogo/$roomName").child("matchState").setValue("ended")
+            }, 5000)
         } else {
             myRoomRef!!.child("nextRound").setValue("sim")
-            Handler(Looper.getMainLooper()).postDelayed({ estadoA() }, 2000)
+            Handler(Looper.getMainLooper()).postDelayed({ estadoA() }, 5000)
         }
     }
 
@@ -540,7 +550,7 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
     /**
      * Método utilizado para iniciar o timer utilizado na partida
      */
-    fun startTimer() {
+    private fun startTimer() {
         if (mTimerRunning) stopTimer()
         countDownTimer.start()
         mTimerRunning = true

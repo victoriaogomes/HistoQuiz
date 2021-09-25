@@ -1,11 +1,10 @@
 package com.example.histoquiz.activities
 
-import android.graphics.PorterDuff
-import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -24,7 +23,7 @@ import java.util.*
 class MyAccountActivity : AppCompatActivity() {
     var tabSelectedIconColor = 0
     var tabUnselectedIconColor = 0
-    var myAccountAdapter: MyAccountAdapter? = null
+    private var myAccountAdapter: MyAccountAdapter? = null
     private lateinit var screen: ActivityMyAccountBinding
 
     /**
@@ -60,21 +59,12 @@ class MyAccountActivity : AppCompatActivity() {
      * çam por um momento e depois sumam novamente.
      */
     private fun hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val controller = WindowCompat.getInsetsController(window, window.decorView)
-            if (controller != null) {
-                controller.hide(WindowInsetsCompat.Type.statusBars())
-                controller.hide(WindowInsetsCompat.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (controller != null) {
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
@@ -94,23 +84,21 @@ class MyAccountActivity : AppCompatActivity() {
                 0 -> {
                     tab.setIcon(R.drawable.ic_id_card)
                     tab.text = getString(R.string.perfil)
-                    tab.icon?.setColorFilter(tabSelectedIconColor, PorterDuff.Mode.SRC_IN)
                 }
                 1 -> {
                     tab.setIcon(R.drawable.ic_user_friends)
                     tab.text = getString(R.string.amigos)
-                    tab.icon?.setColorFilter(tabSelectedIconColor, PorterDuff.Mode.SRC_IN)
                 }
                 2 -> {
                     tab.setIcon(R.drawable.ic_chart_pie)
                     tab.text = getString(R.string.desempenho)
-                    tab.icon?.setColorFilter(tabSelectedIconColor, PorterDuff.Mode.SRC_IN)
                 }
             }
+            tab.icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(tabSelectedIconColor, BlendModeCompat.SRC_IN)
         }.attach()
-        screen.tabBarLYT.getTabAt(0)?.icon?.setColorFilter(tabSelectedIconColor, PorterDuff.Mode.SRC_IN)
-        screen.tabBarLYT.getTabAt(1)?.icon?.setColorFilter(tabUnselectedIconColor, PorterDuff.Mode.SRC_IN)
-        screen.tabBarLYT.getTabAt(2)?.icon?.setColorFilter(tabUnselectedIconColor, PorterDuff.Mode.SRC_IN)
+        screen.tabBarLYT.getTabAt(0)?.icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(tabUnselectedIconColor, BlendModeCompat.SRC_IN)
+        screen.tabBarLYT.getTabAt(1)?.icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(tabUnselectedIconColor, BlendModeCompat.SRC_IN)
+        screen.tabBarLYT.getTabAt(2)?.icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(tabUnselectedIconColor, BlendModeCompat.SRC_IN)
     }
 
     /**
@@ -121,11 +109,11 @@ class MyAccountActivity : AppCompatActivity() {
         screen.tabBarLYT.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 screen.viewPager.currentItem = tab.position
-                tab.icon?.setColorFilter(tabSelectedIconColor, PorterDuff.Mode.SRC_IN)
+                tab.icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(tabSelectedIconColor, BlendModeCompat.SRC_IN)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                tab.icon?.setColorFilter(tabUnselectedIconColor, PorterDuff.Mode.SRC_IN)
+                tab.icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(tabUnselectedIconColor, BlendModeCompat.SRC_IN)
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {}

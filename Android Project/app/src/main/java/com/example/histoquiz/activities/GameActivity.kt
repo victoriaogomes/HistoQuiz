@@ -10,10 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.creativityapps.gmailbackgroundlibrary.BackgroundMail
 import com.example.histoquiz.R
 import com.example.histoquiz.databinding.ActivityGameBinding
 import com.example.histoquiz.dialogs.*
 import com.example.histoquiz.model.Slide
+import com.example.histoquiz.model.User
 import com.example.histoquiz.util.ComputerOpponent
 import com.example.histoquiz.util.OnlineOpponent
 import com.google.firebase.auth.FirebaseAuth
@@ -24,13 +26,14 @@ import com.google.firebase.firestore.QuerySnapshot
 import java.text.Collator
 import java.util.*
 
+
 /**
  * Classe utilizada para manipular atividades relativas a uma partida que são comuns a todas as mo-
  * dalidades de jogo (online - 1 vs 1, contra o computador e local - 2 vs 2)
  */
 class GameActivity : AppCompatActivity(), View.OnClickListener {
     var mySlides: MutableMap<Int, Slide?> = HashMap()
-    var firestoreDatabase: FirebaseFirestore? = null
+    private var firestoreDatabase: FirebaseFirestore? = null
     var opponentUID: String? = null
     private var user: FirebaseUser? = null
     var matchCreator = false
@@ -90,7 +93,14 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     if (!pcOpponent) { // Caso o oponente dessa partida NÃO seja o computador
                         onlineOpponent = opponentUID?.let { OnlineOpponent(this@GameActivity, it, matchCreator) }
-                    } else {
+                        val opponentData = firestoreDatabase!!.collection("usuarios").document(opponentUID!!).get()
+                        opponentData.addOnSuccessListener {documentSnapshot: DocumentSnapshot ->
+                            val data: User? = documentSnapshot.toObject(User::class.java)
+                            screen.opponentName.text = data!!.nome
+                        }
+                        } else {
+                        // Nesse caso, o oponente do jogador é o próprio dispositivo
+                        screen.opponentName.text = "Computador"
                         computerOpponent = perguntas?.let { ComputerOpponent(this@GameActivity, it, slides) }
                     }
                 }
@@ -288,20 +298,19 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     private fun raffleSlides(slidesAmount: Int, slides: HashMap<Int, Slide>, raffleNumber: Int) {
         val rndGenerator = Random()
         var raffledValue: Int
-        mySlides[41] = slides[41] // Fibrocartilagem
-        mySlides[40] = slides[40] // Cartilagem hialina
-        mySlides[42] = slides[42] // Cartilagem elástica
-        mySlides[43] = slides[43] // Tecido ósseo
-        mySlides[46] = slides[46] // Placa metafisária
-        mySlides[44] = slides[44] // Osteócito
-
-//        for (int i = 0; i < raffleNumber; i++) {
-//            raffledValue = rndGenerator.nextInt(slidesAmount);
-//            while (mySlides.containsKey(raffledValue)) {
-//                raffledValue = rndGenerator.nextInt(slidesAmount);
-//            }
-//            mySlides.put(raffledValue, slides.get(raffledValue));
-//        }
+//        mySlides[41] = slides[41] // Fibrocartilagem
+//        mySlides[40] = slides[40] // Cartilagem hialina
+//        mySlides[42] = slides[42] // Cartilagem elástica
+//        mySlides[43] = slides[43] // Tecido ósseo
+//        mySlides[46] = slides[46] // Placa metafisária
+//        mySlides[44] = slides[44] // Osteócito
+        for (i in 0 until raffleNumber step 1) {
+            raffledValue = rndGenerator.nextInt(slidesAmount)
+            while (mySlides.containsKey(raffledValue)) {
+                raffledValue = rndGenerator.nextInt(slidesAmount)
+            }
+            mySlides[raffledValue] = slides[raffledValue]
+        }
     }
 
     /**
@@ -536,11 +545,43 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         val ref = firestoreDatabase!!.document("desempenho/" + (FirebaseAuth.getInstance().currentUser?.uid))
         if (part == 0 || winner && part == 1) {
             ref.get().addOnSuccessListener { documentSnapshot: DocumentSnapshot ->
-                if (part == 0) ref.update(
-                    "numPartidas", Objects.requireNonNull(
-                        documentSnapshot["numPartidas"]
-                    ).toString().toInt() + 1
-                ) else {
+                if (part == 0){
+                    if(documentSnapshot["numPartidas"].toString().toInt() == 0){
+                        firestoreDatabase!!.collection("usuarios")
+                                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                                .get()
+                                .addOnSuccessListener { docSnapshot: DocumentSnapshot ->
+                                    //Enviar email com questionário
+                                    val dadosUser = docSnapshot.toObject(User::class.java)
+                                    if (dadosUser != null) {
+                                        if(dadosUser.enviarQuest!!){
+                                            val msg = "Olá, " + dadosUser.nome!!.split(" ")[0] +
+                                                    "<br><br>Obrigada por utilizar nosso aplicativo! Agora que já jogou uma partida, " +
+                                                    "poderia compartilhar conosco suas impressões sobre o jogo? É só clicar " +
+                                                    "<a href='https://docs.google.com/forms/d/e/1FAIpQLSccCmnp9nZdMbDg1X8CgIyDWP_" +
+                                                    "kjfLBb-5fgnacnMLs55zthA/viewform'>aqui</a>!" +
+                                                    "<br><br>Muito obrigada pela sua contribuição!<br><br>Equipe do HistoQuiz."
+                                            BackgroundMail.newBuilder(this)
+                                                    .withUsername("histoquiz.contato@gmail.com")
+                                                    .withPassword("histoquiz1234")
+                                                    .withMailto(FirebaseAuth.getInstance().currentUser?.email.toString())
+                                                    .withType(BackgroundMail.TYPE_HTML)
+                                                    .withSubject("[HistoQuiz] Questionário de avaliação")
+                                                    .withBody(msg).withProcessVisibility(false)
+                                                    .withOnSuccessCallback {
+                                                        //do some magic
+                                                    }
+                                                    .withOnFailCallback {
+                                                        //do some magic
+                                                    }
+                                                    .send()
+                                        }
+                                    }
+                        }
+                    }
+                    ref.update("numPartidas", documentSnapshot["numPartidas"].toString().toInt() + 1)
+                }
+                else {
                     if (winner) {
                         ref.update("vitorias", Objects.requireNonNull(documentSnapshot["vitorias"]).toString().toInt() + 1)
                     }

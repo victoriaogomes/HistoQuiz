@@ -1,7 +1,6 @@
 package com.example.histoquiz.activities
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -50,21 +49,12 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
      * çam por um momento e depois sumam novamente.
      */
     private fun hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val controller = WindowCompat.getInsetsController(window, window.decorView)
-            if (controller != null) {
-                controller.hide(WindowInsetsCompat.Type.statusBars())
-                controller.hide(WindowInsetsCompat.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (controller != null) {
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
@@ -88,24 +78,26 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
      */
     override fun onClick(v: View) {
         when (v.tag as String) {
-            "MINHA_CONTA" -> myAccount()
-            "JOGAR", "LOCAL_GAME" -> setPlayOptions()
-            "REVISAR" -> setReviewOptions()
-            "SOBRE_O_JOGO" -> setAboutOptions()
-            "JOGAR_PC" -> playAgainstPC()
-            "JOGAR_LOCAL" -> playLocalGame()
-            "CONVIDAR_AMIGO" -> inviteFriend()
-            "O_QUE_E" -> whatItIs()
-            "COMO_JOGAR" -> howToPlay()
-            "FALE_CONOSCO" -> contactUs()
-            "SISTEMA_REPRODUTOR" -> showReview("Sistema Reprodutor")
-            "SISTEMA_DIGESTORIO" -> showReview("Sistema Digestório")
+            "MINHA_CONTA"            -> myAccount()
+            "JOGAR", "LOCAL_GAME"    -> setPlayOptions()
+            "REVISAR"                -> setReviewOptions()
+            "SOBRE_O_JOGO"           -> setAboutOptions()
+            "JOGAR_PC"               -> playAgainstPC()
+            "JOGAR_LOCAL"            -> playLocalGame()
+            "CONVIDAR_AMIGO"         -> inviteFriend()
+            "O_QUE_E"                -> whatItIs()
+            "COMO_JOGAR"             -> howToPlay()
+            "FALE_CONOSCO"           -> contactUs()
+            "SISTEMA_REPRODUTOR"     -> showReview("Sistema Reprodutor")
+            "SISTEMA_DIGESTORIO"     -> showReview("Sistema Digestório")
             "SISTEMA_CARDIOPULMONAR" -> showReview("Sistema Cardiopulmonar")
-            "SISTEMA_OSTEOMUSCULAR" -> showReview("Sistema Osteomuscular")
-            "MENU_INICIAL" -> setInicialMenuOptions()
-            "CRIAR_SALA" -> createGameRoom()
-            "ENTRAR_SALA" -> joinGameRoom()
-            "SIGN_OUT" -> {
+            "SISTEMA_OSTEOMUSCULAR"  -> showReview("Sistema Osteomuscular")
+            "MENU_INICIAL"           -> setInicialMenuOptions()
+            "CRIAR_SALA"             -> createGameRoom()
+            "ENTRAR_SALA"            -> joinGameRoom()
+            "TUTORIAL_TXT"           -> textualTutorial()
+            "TUTORIAL_GRAPH"         -> graphicTutorial()
+            "SIGN_OUT"               -> {
                 FirebaseAuth.getInstance().signOut()
                 val troca = Intent(this@MenuActivity, SignInActivity::class.java)
                 startActivity(troca)
@@ -129,10 +121,14 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
      * putador". Os demais botões são desabilitados e ficam invisíveis
      */
     private fun setPlayOptions() {
-        screen.button1.visibility = View.VISIBLE
-        screen.button1.text = getString(R.string.local)
-        screen.button1.tag = "JOGAR_LOCAL"
-        screen.button1.isEnabled = true
+        // Modo local removido para envio a google play
+//         screen.button1.visibility = View.VISIBLE
+//         screen.button1.text = getString(R.string.local)
+//         screen.button1.tag = "JOGAR_LOCAL"
+//         screen.button1.isEnabled = true
+        screen.button1.visibility = View.GONE
+        screen.button1.isEnabled = false
+
         screen.button2.visibility = View.VISIBLE
         screen.button2.text
         screen.button2.text = getString(R.string.convidarAmigo)
@@ -251,12 +247,34 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(troca)
     }
 
+
+    private fun howToPlay() {
+        screen.button1.visibility = View.GONE
+        screen.button2.text = getString(R.string.tutorialTxt)
+        screen.button2.tag = "TUTORIAL_TXT"
+        screen.button3.text = getString(R.string.tutorialGraph)
+        screen.button3.tag = "TUTORIAL_GRAPH"
+        screen.button4.visibility = View.GONE
+        screen.goBackBTN.visibility = View.VISIBLE
+        screen.goBackBTN.isEnabled = true
+        screen.goBackBTN.tag = "SOBRE_O_JOGO"
+    }
+
     /**
      * Método utilizado para redirecionar dessa activity para a que descreve
-     * como jogar o HistoQuiz
+     * como jogar o HistoQuiz de maneira textual
      */
-    private fun howToPlay() {
+    private fun textualTutorial(){
         val troca = Intent(this@MenuActivity, RulesActivity::class.java)
+        startActivity(troca)
+    }
+
+    /**
+     * Método utilizado para redirecionar dessa activity para a que descreve
+     * como jogar o HistoQuiz de maneira gráfica
+     */
+    private fun graphicTutorial(){
+        val troca = Intent(this@MenuActivity, GraphicalRulesActivity::class.java)
         startActivity(troca)
     }
 
@@ -288,7 +306,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
      * Método utilizado para setar tags para os botões presentes na view relacionada
      * a essa activity para a sua primeira execução, que exibe o menu principal
      */
-    fun setInicialMenuOptions() {
+    private fun setInicialMenuOptions() {
         screen.button1.text = getString(R.string.minhaConta)
         screen.button1.tag = "MINHA_CONTA"
         screen.button1.visibility = View.VISIBLE

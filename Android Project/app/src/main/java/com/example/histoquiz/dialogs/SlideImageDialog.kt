@@ -36,11 +36,11 @@ class SlideImageDialog
     private var imageSwitcher: ImageSwitcher? = null
     private var goBack: Button? = null
     private var storageReference: StorageReference? = null
-    var slideName: TextView? = null
     var position = 0
     private var myImageView: ImageView? = null
     private var imagesAmount = 0
-    var newview: View? = null
+    private var newview: View? = null
+    private var slideName: TextView? = null
 
     /**
      * Método chamado no instante que o dialog é criado, seta qual view será associada a essa classe

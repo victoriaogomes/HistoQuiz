@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.histoquiz.databinding.ActivityEnterLocalGameBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -15,7 +18,7 @@ import java.util.*
 
 class EnterLocalGameActivity : AppCompatActivity() {
 
-    var firestoreDatabase: FirebaseFirestore? = null
+    private var firestoreDatabase: FirebaseFirestore? = null
     private lateinit var screen: ActivityEnterLocalGameBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +26,33 @@ class EnterLocalGameActivity : AppCompatActivity() {
         screen = ActivityEnterLocalGameBinding.inflate(layoutInflater)
         setContentView(screen.root)
         initGUI()
+        hideSystemUI()
+    }
+
+    /**
+     * Método chamado quando a janela atual da activity ganha ou perde o foco, é utilizado para es-
+     * conder novamente a barra de status e a navigation bar.
+     * @param hasFocus - booleano que indica se a janela desta atividade tem foco.
+     */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        hideSystemUI()
+    }
+
+    /**
+     * Método utilizado para fazer com que a barra de status e a navigation bar não sejam exibidas
+     * na activity. Caso o usuário queira visualizá-las, ele deve realizar um movimento de arrastar
+     * para cima (na navigation bar), ou para baixo (na status bar), o que fará com que elas apare-
+     * çam por um momento e depois sumam novamente.
+     */
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (controller != null) {
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
     fun initGUI() {

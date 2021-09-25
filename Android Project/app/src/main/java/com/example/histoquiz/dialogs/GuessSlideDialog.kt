@@ -35,11 +35,10 @@ class GuessSlideDialog
     private var guess: TextInputLayout? = null
     private var goBack: Button? = null
     private var send: Button? = null
-    var inflater: LayoutInflater? = null
     var slides: Array<String?>? = null
     private var slidesDropdown: AutoCompleteTextView? = null
     private var slideChoosed = ""
-    var newview: View? = null
+    private var newview: View? = null
 
     /**
      * Método chamado no instante que o dialog é criado, seta qual view será associada a essa classe
@@ -117,7 +116,7 @@ class GuessSlideDialog
         slidesDropdown!!.setText(slideChoosed, false)
     }
 
-    fun handleSpinnersClicks() {
+    private fun handleSpinnersClicks() {
         slidesDropdown!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             slideChoosed = slidesDropdown!!.adapter.getItem(position).toString()
             slidesDropdown!!.setText(slideChoosed, false)

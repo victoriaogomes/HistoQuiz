@@ -3,6 +3,7 @@ package com.example.histoquiz.util
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import com.example.histoquiz.R
 import com.example.histoquiz.activities.GameActivity
 import com.example.histoquiz.model.Slide
 import java.util.*
@@ -17,10 +18,10 @@ import java.util.*
  */
 class ComputerOpponent(var game_scene: GameActivity, private var perguntas: HashMap<String, Map<String, Any>>, slides: HashMap<Int, Slide>) {
     var slideToGuess = "firstSlide"
-    var numberOfQuestions = 0
     var slides: HashMap<Int, Slide>
     var state: String? = null
     var mTimeLeftInMillis = START_TIME_IN_MILLIS
+    private var numberOfQuestions = 0
     private var mTimerRunning = false
     private var rndGenerator: Random
     private var raffledCategory = 0
@@ -73,8 +74,9 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
      * para que ele responda
      */
     fun estadoA() {
-        game_scene.showTextToPlayer("Aguardando oponente selecionar uma pergunta...")
-        Handler(Looper.getMainLooper()).postDelayed({ estadoB() }, 2000)
+        game_scene.showTextToPlayer(game_scene.getString(R.string.vezOponente))
+        Handler(Looper.getMainLooper()).postDelayed({ game_scene.showTextToPlayer(game_scene.getString(R.string.oponenteSelecPerg)) }, 5000)
+        Handler(Looper.getMainLooper()).postDelayed({ estadoB() }, 7000)
     }
 
     /**
@@ -87,7 +89,7 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
      * Um timer de 2 minutos deve ser iniciado, que é o tempo que o jogador tem para responder a
      * pergunta
      */
-    fun estadoB() {
+    private fun estadoB() {
         if (!general) {
             raffledCategory = generateRaffledValue(perguntas.keys.size, 0)
         }
@@ -125,7 +127,6 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
     private fun estadoD(answer: Boolean?) {
         val keySet: Array<Any> = game_scene.mySlides.keys.toTypedArray()
         Arrays.sort(keySet)
-        val text: String
         when (slideToGuess) {
             "firstSlide" -> trueAnswer = game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, keySet[3].toString().toInt())
             "secondSlide" -> trueAnswer = game_scene.getQuestionRealAnswer(raffledCategory, raffledQuestion, keySet[4].toString().toInt())
@@ -133,14 +134,13 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
         }
         if (trueAnswer) general = false
         if (answer != null) {
-            text = if (trueAnswer == answer) {
+            if (trueAnswer == answer) {
                 game_scene.changePlayerScore(1, 1)
-                "ganhou 1 ponto!"
+                game_scene.showTextToPlayer("Parabéns, você acertou! Aguardando oponente analisar a resposta...")
             } else {
                 game_scene.changePlayerScore(1, -1)
-                "perdeu 1 ponto!"
+                game_scene.showTextToPlayer("Resposta incorreta, não foi dessa vez! Aguardando seu oponente analisar a resposta...")
             }
-            game_scene.showTextToPlayer("Você $text Aguardando oponente analisar sua resposta...")
         }
         Handler(Looper.getMainLooper()).postDelayed({ estadoE(trueAnswer) }, 2000)
     }
@@ -184,7 +184,6 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
                 }
             }
             if (slideName == slides[slides.keys.toTypedArray()[0]]?.name) {
-                game_scene.showTextToPlayer("Seu oponente adivinhou sua lâmina e ganhou 3 pontos!")
                 game_scene.checkSlide(position, 2)
                 game_scene.changePlayerScore(2, 3)
                 slides = game_scene.slides.clone() as HashMap<Int, Slide>
@@ -197,13 +196,14 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
                     }
                 }
                 askedQuestions = LinkedList()
+                Handler(Looper.getMainLooper()).postDelayed({game_scene.showTextToPlayer("Seu oponente acertou a lâmina! Clique nas cartas para ver sua próxima lâmina...")}, 5000)
                 if (position == 2) {
                     estadoM()
                 }
             } else {
-                game_scene.showTextToPlayer("Seu oponente tentou adivinhar sua lâmina e errou. Você ganhou 3 pontos!")
                 game_scene.changePlayerScore(1, 3)
                 slides.remove(slides.keys.toTypedArray()[0].toString().toInt())
+                Handler(Looper.getMainLooper()).postDelayed({game_scene.showTextToPlayer("Seu oponente errou a lâmina!")}, 5000)
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({ estadoF() }, delay.toLong())
@@ -215,9 +215,12 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
      * para realizar essa ação
      */
     private fun estadoF() {
-        game_scene.showQuestionSelection()
-        state = "F"
-        startTimer()
+        game_scene.showTextToPlayer("É a sua vez de jogar!")
+        Handler(Looper.getMainLooper()).postDelayed({
+            game_scene.showQuestionSelection()
+            state = "F"
+            startTimer()
+        }, 5000)
     }
 
     /**
@@ -331,7 +334,7 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
     /**
      * Método utilizado para exibir ao jogador o feedback relativo a sua tentativa de advinhar sua
      * lâmina e:
-     * - Seguir para a próxima rodada,caso ainda hajam lâminas para serem adivinhadas
+     * - Seguir para a próxima rodada, caso ainda hajam lâminas para serem adivinhadas
      * - Seguir para o fim do jogo, caso o jogador já tenha advinhado todas as suas lâminas
      * @param answerValidation - validação da resposta; true se o jogador tiver acertado a lâmina,
      * e false caso tenha errado
@@ -340,15 +343,17 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
     private fun estadoL(answerValidation: Boolean, matchEnded: Boolean) {
         game_scene.closeGuessSlide()
         if (answerValidation) {
-            if (matchEnded) game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Fim de jogo...") else game_scene.showTextToPlayer("Resposta correta! Você ganhou 3 pontos! Vamos para a próxima rodada...")
+            game_scene.showTextToPlayer("Você acertou a lâmina. Bom trabalho!")
         } else {
-            game_scene.showTextToPlayer("Resposta incorreta! Seu oponente ganhou 3 pontos! Vamos para a próxima rodada...")
+            game_scene.showTextToPlayer("Você errou a lâmina. Não desanime, quem sabe na próxima!")
         }
         if (matchEnded) {
-            game_scene.slideToGuess = "allDone"
-            Handler(Looper.getMainLooper()).postDelayed({ estadoM() }, 2000)
+            Handler(Looper.getMainLooper()).postDelayed({
+                game_scene.slideToGuess = "allDone"
+                estadoM()
+            }, 5000)
         } else {
-            Handler(Looper.getMainLooper()).postDelayed({ estadoA() }, 2000)
+            Handler(Looper.getMainLooper()).postDelayed({ estadoA() }, 5000)
         }
     }
 
@@ -391,7 +396,7 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
     /**
      * Método utilizado para iniciar o timer utilizado na partida
      */
-    fun startTimer() {
+    private fun startTimer() {
         if (mTimerRunning) stopTimer()
         countDownTimer.start()
         mTimerRunning = true

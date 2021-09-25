@@ -30,15 +30,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 
 class SlideDetailsDialog(var parent: RevisionActivity, var slideCode: Int): AppCompatDialogFragment(), CoroutineScope, View.OnClickListener {
 
-    var newview: View? = null
-    var closeBTN: Button? = null
     var progress: ProgressBar? = null
     var progress2: ProgressBar? = null
     var fullContent: RelativeLayout? = null
@@ -50,6 +47,8 @@ class SlideDetailsDialog(var parent: RevisionActivity, var slideCode: Int): AppC
     private var imageSwitcher: ImageSwitcher? = null
     private var storageReference: StorageReference? = null
     private var job: Job = Job()
+    private var newview: View? = null
+    private var closeBTN: Button? = null
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job

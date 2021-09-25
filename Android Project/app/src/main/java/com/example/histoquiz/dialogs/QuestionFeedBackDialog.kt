@@ -3,7 +3,6 @@ package com.example.histoquiz.dialogs
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -12,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -40,10 +40,9 @@ class QuestionFeedBackDialog
     private var cardOpponentAnswer: CardView? = null
     private var correctAnswer: TextView? = null
     private var opponentAnswer: TextView? = null
-    var guessSlide: Button? = null
+    private var guessSlide: Button? = null
     private var nextRound: Button? = null
-    var inflater: LayoutInflater? = null
-    var newview: View? = null
+    private var newview: View? = null
 
     /**
      * Método chamado no instante que o dialog é criado, seta qual view será associada a essa classe
@@ -98,13 +97,11 @@ class QuestionFeedBackDialog
             } else {
                 opponentAnswer?.text = getString(R.string.nao)
             }
-            if (auxCorrectAnswer == auxOpponentAnswer) cardOpponentAnswer?.setCardBackgroundColor(resources.getColor(R.color.green)) else
-                cardOpponentAnswer?.setCardBackgroundColor(
-                resources.getColor(R.color.red)
-            )
+            if (auxCorrectAnswer == auxOpponentAnswer) context?.let { it -> cardOpponentAnswer!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.green))}
+            else context?.let {cardOpponentAnswer!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.red)) }
         } else {
             opponentAnswer?.text = getString(R.string.naoResp)
-            cardOpponentAnswer?.setCardBackgroundColor(resources.getColor(R.color.yellow))
+            context?.let {cardOpponentAnswer!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.yellow)) }
         }
         if (auxCorrectAnswer) {
             correctAnswer?.text = String.format(Locale.getDefault(), "%s %s", getString(R.string.feedbackPergunta), getString(R.string.simCaps))

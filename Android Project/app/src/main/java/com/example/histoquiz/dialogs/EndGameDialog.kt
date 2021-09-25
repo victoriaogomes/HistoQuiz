@@ -3,7 +3,6 @@ package com.example.histoquiz.dialogs
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -12,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -30,13 +30,13 @@ class EndGameDialog
  * @param parent - activity do tipo GameActivity, que é responsável por gerenciar partidas e
  * que criou esse dialog
  */(var parent: GameActivity) : AppCompatDialogFragment() {
-    var playerScore: TextView? = null
-    var opponentScore: TextView? = null
+    private var playerScore: TextView? = null
+    private var opponentScore: TextView? = null
     private var winner: TextView? = null
-    var playerCard: CardView? = null
-    var opponentCard: CardView? = null
+    private var playerCard: CardView? = null
+    private var opponentCard: CardView? = null
     private var backToMenu: Button? = null
-    var newview: View? = null
+    private var newview: View? = null
 
     /**
      * Método chamado no instante que o dialog é criado, seta qual view será associada a essa classe
@@ -101,18 +101,18 @@ class EndGameDialog
         when {
             parent.getPlayerScore(1) > parent.getPlayerScore(2) -> {
                 winner!!.text = getString(R.string.vc)
-                playerCard!!.setCardBackgroundColor(resources.getColor(R.color.green))
-                opponentCard!!.setCardBackgroundColor(resources.getColor(R.color.red))
+                context?.let {playerCard!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.green)) }
+                context?.let {opponentCard!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.red)) }
             }
             parent.getPlayerScore(1) == parent.getPlayerScore(2) -> {
                 winner!!.text = getString(R.string.empate)
-                playerCard!!.setCardBackgroundColor(resources.getColor(R.color.green))
-                opponentCard!!.setCardBackgroundColor(resources.getColor(R.color.green))
+                context?.let {playerCard!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.green)) }
+                context?.let {opponentCard!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.green)) }
             }
             else -> {
                 winner!!.text = getString(R.string.seuOponente)
-                playerCard!!.setCardBackgroundColor(resources.getColor(R.color.red))
-                opponentCard!!.setCardBackgroundColor(resources.getColor(R.color.green))
+                context?.let {playerCard!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.red)) }
+                context?.let {opponentCard!!.setCardBackgroundColor(ContextCompat.getColor(it, R.color.green)) }
             }
         }
     }

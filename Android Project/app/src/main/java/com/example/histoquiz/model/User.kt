@@ -67,7 +67,7 @@ class User {
     /**
      * Construtor da classe que não recebe parâmetros
      */
-    constructor() {}
+//    constructor() {}
 
     /**
      * Construtor da classe que recebe como parâmetro todas as informações relativas a esse usuário
@@ -78,14 +78,14 @@ class User {
      * @param registrationToken - token de registro desse usuário no firebase, usado para enviar
      * notificações especificamente para ele
      */
-    constructor(anoIng: String?, dataConta: String?, nome: String?, univers: String?, okTermosUso: Boolean?, enviarQuest: Boolean?,
-                registrationToken: String?) {
-        this.anoIng = anoIng
-        this.dataConta = dataConta
-        this.nome = nome
-        this.univers = univers
-        this.registrationToken = registrationToken
-        this.okTermosUso = okTermosUso
-        this.enviarQuest = enviarQuest
-    }
+//    constructor(anoIng: String?, dataConta: String?, enviarQuest: Boolean?, nome: String?,
+//                okTermosUso: Boolean?, univers: String?, registrationToken: String?) {
+//        this.anoIng = anoIng
+//        this.dataConta = dataConta
+//        this.nome = nome
+//        this.univers = univers
+//        this.registrationToken = registrationToken
+//        this.okTermosUso = okTermosUso
+//        this.enviarQuest = enviarQuest
+//    }
 }

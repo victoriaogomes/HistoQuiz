@@ -72,7 +72,7 @@ class FriendsAdapter
      */
     inner class FriendsHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textView: TextView = itemView.findViewById(R.id.textview)
-        var accept: ImageButton = itemView.findViewById(R.id.aceitarAmigo)
+        private var accept: ImageButton = itemView.findViewById(R.id.aceitarAmigo)
         private var removeFriend: ImageButton
 
         /**

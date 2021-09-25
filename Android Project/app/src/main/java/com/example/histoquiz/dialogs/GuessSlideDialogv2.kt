@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -35,11 +34,10 @@ class GuessSlideDialogv2
     private var guess: TextInputLayout? = null
     private var goBack: Button? = null
     private var send: Button? = null
-    var inflater: LayoutInflater? = null
     var slides: Array<String?>? = null
     private var slidesDropdown: AutoCompleteTextView? = null
     private var slideChoosed = ""
-    var newview: View? = null
+    private var newview: View? = null
 
     /**
      * Método chamado no instante que o dialog é criado, seta qual view será associada a essa classe
@@ -116,7 +114,7 @@ class GuessSlideDialogv2
         slidesDropdown!!.setText(slideChoosed, false)
     }
 
-    fun handleSpinnersClicks() {
+    private fun handleSpinnersClicks() {
         slidesDropdown!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             slideChoosed = slidesDropdown!!.adapter.getItem(position).toString()
             slidesDropdown!!.setText(slideChoosed, false)
@@ -128,6 +126,6 @@ class GuessSlideDialogv2
      */
     private fun dealWithButtons() {
         send!!.setOnClickListener { parent.localOpponent!!.estadoC(slideChoosed) }
-        goBack!!.setOnClickListener { v: View? -> }
+        goBack!!.setOnClickListener { }
     }
 }
