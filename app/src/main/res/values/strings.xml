@@ -1,0 +1,224 @@
+<resources>
+    <string name="app_name">HistoQuiz</string>
+
+    <!--    Tela de login e de cadastro   -->
+    <string name="email">Email</string>
+    <string name="senha">Senha</string>
+    <string name="textBoxHint"> </string>
+    <string name="entrar">Entrar</string>
+    <string name="esqueciSenha">Esqueceu a senha?</string>
+    <string name="novoAqui">Novo aqui?</string>
+    <string name="cadastre">Cadastre-se</string>
+    <string name="nome">Nome</string>
+    <string name="universidade">Universidade</string>
+    <string name="anoIngresso">Ano de ingresso</string>
+    <string name="cadastrar">Cadastrar</string>
+    <string name="termoUso1">Eu declaro que estou devidamente informado(a) e esclarecido(a) sobre a pesquisa, concordo em participar desse estudo e
+        autorizo que meus dados de desempenho sejam utilizados na pesquisa</string>
+    <string name="termoUso2">Eu autorizo que os desenvolvedores enviem um questionário de satisfação para o e-mail que cadastrei</string>
+    <string name="acessoTermos">- <u>Acessar termo de consentimento</u></string>
+    <string name="profImg">Imagem de perfil</string>
+
+    <!--    Tela de menu   -->
+    <string name="minhaConta">Minha conta</string>
+    <string name="jogar">Jogar</string>
+    <string name="revisar">Revisar</string>
+    <string name="sobreJogo">Sobre o jogo</string>
+    <string name="voltar">Voltar</string>
+    <string name="tutorialTxt">Tutorial textual</string>
+    <string name="tutorialGraph">Tutorial gráfico</string>
+
+    <!--    Modos de jogo   -->
+    <string name="jogarPC">Contra o PC</string>
+
+    <!--    Modos de jogo online   -->
+    <string name="convidarAmigo">Convidar amigo</string>
+    <string name="local">Modo local</string>
+    <string name="entrarSala">Entrar em sala</string>
+
+    <!-- Modo de jogo logal -->
+    <string name="selecSist">Selecione um sistema:</string>
+    <string name="qntdlaminas">Selecione a quantidade de lâminas a ser adivinhada na partida:</string>
+    <string name="criarSala">Criar sala</string>
+    <string name="tempo">Informe o tempo para a realização de cada jogada (em segundos):</string>
+    <string name="informeCod">Informe o código da sala de jogo:</string>
+    <string name="codigo">Código da sala</string>
+    <string name="flag">Bandeira de time</string>
+
+    <!--    Tela sobre o jogo   -->
+    <string name="oQue">O que é</string>
+    <string name="comoJogar">Como jogar</string>
+    <string name="faleConosco">Fale conosco</string>
+
+    <!--    Sistemas que podem ser revisados   -->
+    <string name="sistemaReprodutor">Sist. Reprodutor</string>
+    <string name="sistemaDigestorio">Sist. Digestório</string>
+    <string name="sistemaCardiopulmonar">Sist. Cardiopul.</string>
+    <string name="sistemaOsteomuscular">Sist. Osteomusc.</string>
+
+    <!--    Erros durante o login   -->
+    <string name="ok">OK</string>
+
+    <!--    Erros durante o cadastro   -->
+    <string name="obrigatorio">Preenchimento obrigatório.</string>
+
+    <!--    Tela de minha conta   -->
+    <string name="perfil">Perfil</string>
+    <string name="amigos">Amigos</string>
+    <string name="desempenho">Desempenho</string>
+
+    <!--    Tela perfil   -->
+    <string name="salvar">Salvar</string>
+    <string name="sair">Sair</string>
+
+    <!--    Tela de amigos   -->
+    <string name="adicionar">Adicionar amigos</string>
+    <string name="enviarConvite">Enviar convite</string>
+    <string name="removerAmigo">Remover amigo</string>
+    <string name="pedidosAmizade">Pedidos de amizade</string>
+
+    <!--    Tela de jogo   -->
+    <string name="rodada">#1 Rodada</string>
+    <string name="player1">Sua pontuação:</string>
+    <string name="team1">Pontuação do seu time:</string>
+    <string name="player2">Pontuação do seu adversário:</string>
+    <string name="team2">Pontuação do time adversário:</string>
+    <string name="lamina">lâminas</string>
+    <string name="pontuacaoInicial">0</string>
+    <string name="lentes">Lentes</string>
+    <string name="pergunta">Pergunta/Instrução</string>
+    <string name="microscopio">Microscópio</string>
+    <string name="centro">Imagem central do jogo</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="naoResp">Não \n respondeu</string>
+    <string name="vezOponente">É a vez do seu oponente!</string>
+    <string name="oponenteSelecPerg">Aguardando oponente selecionar uma pergunta...</string>
+    <string name="adivinharLamina">Qual é a lâmina?</string>
+    <string name="enviar">Enviar</string>
+    <string name="escolherCat">Selecione uma categoria</string>
+    <string name="escolherPerg">Selecione uma pergunta</string>
+    <string name="feedbackPergunta">A resposta correta é </string>
+    <string name="adivinhar">Adivinhar lâmina</string>
+    <string name="proxima">Próxima rodada</string>
+    <string name="resp">NÃO!</string>
+    <string name="respAdversario">Resposta do seu adversário:</string>
+    <string name="simCaps">SIM!</string>
+    <string name="naoCaps">NÃO!</string>
+    <string name="prox">Próxima</string>
+    <string name="check">Check</string>
+    <string name="endGame">Fim do jogo!</string>
+    <string name="pontuacao">Pontuação final:</string>
+    <string name="menuInicial">Retornar ao menu inicial</string>
+    <string name="vc">O vencedor é você!</string>
+    <string name="seuOponente">O vencedor é seu oponente!</string>
+    <string name="empate">Houve um empate!</string>
+    <string name="pontFinalVc">Você:</string>
+    <string name="pontFinalOponente">Oponente:</string>
+    <string name="configJogo">Vamos começar a partida...</string>
+    <string name="semSolic">Não há nenhuma solicitação de amizade para você no momento!</string>
+    <string name="semAmg">Poxa, você ainda não adicionou nenhum amigo!</string>
+    <string name="fimJogo">Partida finalizada!</string>
+    <string name="endMessage">Seu oponente se desconectou da partida.</string>
+    <string name="dica">Dica</string>
+    <string name="finalizar">Finalizar jogo</string>
+    <string name="hideLamina">Ocultar lâmina</string>
+    <string name="showLamina">Exibir lâmina</string>
+    <string name="team1Comp">Componentes do time 1: </string>
+    <string name="team2Comp">Componentes do time 2: </string>
+    <string name="continuar">Continuar</string>
+
+    <!--    Tela de convidar amigo para jogar   -->
+    <string name="convidar">Convidar</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+
+    <!--    Tela de entrar em contato com desenvolvedor   -->
+    <string name="contatoTitle">Contato</string>
+    <string name="contatoDescrip">Gostaria de fazer algum comentário sobre o HistoQuiz?\n\nEntre em
+        contato conosco pelo e-mail histoquiz.contato@gmail.com ou clique em um dos tópicos abaixo para ser redirecionado!</string>
+    <string name="problemasTecnicos">Problemas técnicos</string>
+    <string name="sugestoes">Sugestões de melhorias</string>
+    <string name="compartExpr">Comentar experiência</string>
+    <string name="outrosAssuntos">Outros assuntos</string>
+
+
+    <!-- Fechar visualização de detalhes da lâmina -->
+    <string name="close">Fechar</string>
+
+    <!--    Tela de desempenho   -->
+    <string name="numPartidas">Partidas jogadas</string>
+    <string name="vitorias">Vitórias</string>
+    <string name="derrotas">Derrotas</string>
+    <string name="desempMod">Desempenho por módulo</string>
+    <string name="sistema">Sistema</string>
+    <string name="erros">Erros</string>
+    <string name="acertos">Acertos</string>
+    <string name="sisReprodutor">Reprodutor</string>
+    <string name="sisDigestorio">Digestório</string>
+    <string name="sisCardiopulmonar">Cardiopulmonar</string>
+    <string name="sisOsteomuscular">Osteomuscular</string>
+    <string name="placeholder">0</string>
+    <string name="conquistas">Conquistas</string>
+    <string name="placeholderConquistas">Você ainda não possui conquistas :(</string>
+
+    <!--    Regras do jogo    -->
+    <string name="regrasTitle">Regras</string>
+    <string name="localGame">Modo local</string>
+    <string name="topic1Local">1. Neste modo, os jogadores deverão formar duplas</string>
+    <string name="topic2Local">2. No início do jogo, será revelada uma imagem de lâmina histológica a um membro de cada dupla por meio da tela do
+        HistoQuiz</string>
+    <string name="topic3Local">3. O HistoQuiz sorteará uma dupla para começar</string>
+    <string name="topic4Local">4. O membro da dupla sorteada que possui a imagem deverá dar uma dica ao seu parceiro para que este tente adivinhar
+        o conteúdo da sua imagem. Para tal, o parceiro deve selecionar uma opção no banco de respostas do HistoQuiz. Caso acerte, a dupla ganhará
+        pontos e a imagem será revelada a todos os jogadores.</string>
+    <string name="topic5Local">5. Se o jogador errar, o membro da outra dupla que possui a imagem também poderá dar uma dica ao seu parceiro. Este,
+        deve agora considerar as duas dicas já mencionadas no jogo para tentar adivinhar. Isto se seguirá até que alguma dupla acerte a
+        lâmina</string>
+    <string name="topic6Local">6. O jogo terminará quando todas as lâminas disponíveis forem utilizadas ou quando todos os jogadores selecionarem
+        “Finalizar jogo”. Neste momento, os pontos obtidos durante a partida serão computados e aquele que obtiver a maior pontuação será o
+        ganhador.</string>
+    <string name="onlineGame">Modo online - com amigo ou contra o PC</string>
+    <string name="topic1Online">1. Ao iniciar a partida, cada jogador receberá uma imagem de lâmina histológica, que não estará visível para o seu
+        adversário.</string>
+    <string name="topic2Online">2. Assim, caso você seja o primeiro a jogar, poderá selecionar uma pergunta disponível no banco de perguntas do
+        HistoQuiz para seu adversário, na tentativa de adivinhar a estrutura representada pela lâmina que ele possui</string>
+    <string name="topic3Online">3. O adversário deverá responder “sim” ou “não” à pergunta feita e, em seguida, o HistoQuiz informará o gabarito
+        correto da pergunta.</string>
+    <string name="topic4Online">4. Caso o adversário responda corretamente, receberá 2 pontos. Caso contrário, perderá 1 ponto</string>
+    <string name="topic5Online">5. Após obter a resposta para sua pergunta, você terá a oportunidade de tentar adivinhar a lâmina representada,
+        selecionando uma das opções presentes no banco de lâminas do HistoQuiz.</string>
+    <string name="topic6Online">6. Se você acertar, ganhará 3 pontos e o seu adversário receberá outra lâmina. Caso o contrário, a pontuação (3
+        pontos) irá para o outro jogador.</string>
+
+    <!--  O que é o HistoQuiz?   -->
+    <string name="OqueTitle">O que é o HistoQuiz?</string>
+    <string name="oQueEh">O HistoQuiz é um jogo digital, disponível para Android, desenvolvido por discentes e docentes dos cursos de Medicina e
+        Engenharia da Computação da Universidade Estadual de Feira de Santana a partir do Laboratório de Entretenimento Digital Aplicado (LEnDA).
+        \n\nO projeto HistoQuiz nasceu da necessidade crescente por ferramentas de ensino capazes de acessar o estudante no contexto tecnológico
+        da sua geração, minimizar os obstáculos e limitações estruturais do curso, bem como estimular o interesse no estudo de uma disciplina que
+        é peça-chave na formação do profissional de saúde. \n\nSeu formato permite que o aluno exercite um pensamento lógico acerca das estruturas
+        histológicas, bem como fornece um espaço de treinamento lúdico, sem as limitações de espaço físico e recursos do laboratório, servindo
+        assim como uma ferramenta auxiliar de reforço teórico e aprendizado continuado.
+        \n\nIdealizadores: \n1. Marcella Araújo Pires Bastos\n2. Maria da Conceição Andrade
+        \n\nDesenvolvedores: \n1. Victória Oliveira Gomes\n2. Victor Travassos Sarinho
+    </string>
+
+    <!--    Revisão do jogo    -->
+
+    <!--    Sistema reprodutor    -->
+    <string name="sistRepDescricao">Os sistemas reprodutores do corpo humano compõem estruturas que diferenciam os sexos - feminino e masculino - e
+        são responsáveis por gerar e abrigar novos indivíduos.</string>
+
+    <string name="sisRepMascTitle">Sistema Reprodutor Masculino</string>
+    <string name="sisRepMascDescr"> Revisaremos os componentes histológicos encontrados nos testículos, no epidídimo, no ducto deferente, nas
+        vesículas seminíferas, na próstata e no pênis.</string>
+
+    <string name="sisRepFeminTitle">Sistema Reprodutor Feminino</string>
+    <string name="sisRepFeminDescr"> Os componentes a serem revisados serão: vagina, útero, tubas uterinas e ovários.</string>
+
+    <!--    Sistema osteomuscular    -->
+    <string name="sistOsteoDescricao">Para que o corpo seja capaz de dar um passo, é necessário um enorme grupo de células estritamente organizadas
+        em ossos, cartilagens e músculos. Em cada um desses grupos, essas estruturas desempenham funções específicas que lhes conferem
+        características histológicas únicas. </string>
+</resources>

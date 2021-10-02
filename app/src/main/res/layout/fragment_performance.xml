@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:scrollbars="vertical"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.PerformanceFragment">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mainContent"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/layout2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="@color/darkPurple">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pinkchicken"
+                        android:textSize="@dimen/_15sdp"
+                        android:text="@string/numPartidas"/>
+                    <View
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_gravity="center"
+                        android:background="@color/white"/>
+                    <TextView
+                        android:id="@+id/playedMatches"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/pinkchicken"
+                        android:textSize="@dimen/_15sdp"
+                        android:textColor="@color/white"
+                        android:layout_margin="10dp"
+                        tools:text="0"
+                        />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/layout2"
+                app:layout_constraintTop_toBottomOf="@+id/card1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/card4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="10">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardBackgroundColor="@color/darkPurple">
+                    <LinearLayout
+                        android:id="@+id/vitorias"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/white"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/pinkchicken"
+                            android:textSize="@dimen/_15sdp"
+                            android:text="@string/vitorias"/>
+                        <View
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_gravity="center"
+                            android:background="@color/white"/>
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_margin="10dp"
+                            android:layout_height="wrap_content">
+                            <ProgressBar
+                                android:id="@+id/victoryProgress"
+                                style="@android:style/Widget.ProgressBar.Horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:progress="70"
+                                android:progressDrawable="@drawable/progress"
+                                android:max="100"/>
+                            <TextView
+                                android:id="@+id/victoryText"
+                                tools:text="70%"
+                                android:layout_margin="2dp"
+                                android:textSize="@dimen/_15sdp"
+                                android:textColor="@color/white"
+                                android:fontFamily="@font/pinkchicken"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_marginStart="10dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardBackgroundColor="@color/darkPurple">
+                    <LinearLayout
+                        android:id="@+id/derrotas"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/white"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/pinkchicken"
+                            android:textSize="@dimen/_15sdp"
+                            android:text="@string/derrotas"/>
+                        <View
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_gravity="center"
+                            android:background="@color/white"/>
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_margin="10dp"
+                            android:layout_height="wrap_content">
+                            <ProgressBar
+                                android:id="@+id/defeatProgress"
+                                style="@android:style/Widget.ProgressBar.Horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:progress="30"
+                                android:progressDrawable="@drawable/progress"
+                                android:max="100"/>
+                            <TextView
+                                android:id="@+id/defeatText"
+                                tools:text="30%"
+                                android:layout_margin="2dp"
+                                android:textSize="@dimen/_15sdp"
+                                android:textColor="@color/white"
+                                android:fontFamily="@font/pinkchicken"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card4"
+                app:layout_constraintTop_toBottomOf="@+id/layout2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/card5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="@color/darkPurple">
+                <LinearLayout
+                    android:id="@+id/pedidosAmz"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pinkchicken"
+                        android:textSize="@dimen/_15sdp"
+                        android:text="@string/desempMod"/>
+                    <View
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_gravity="center"
+                        android:background="@color/white"/>
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:divider="@color/white"
+                        android:showDividers="middle"
+                        android:stretchColumns="0,1,2">
+
+                        <TableRow
+                            android:divider="@color/white"
+                            android:showDividers="middle">
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/sistema"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/erros"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/acertos"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:divider="@color/white"
+                            android:showDividers="middle">
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="start"
+                                android:padding="3dip"
+                                android:text="@string/sisReprodutor"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/erroSisRepro"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/hitSisRepro"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:divider="@color/white"
+                            android:showDividers="middle">
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="start"
+                                android:padding="3dip"
+                                android:text="@string/sisDigestorio"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/erroSisDiges"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/hitSisDiges"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:divider="@color/white"
+                            android:showDividers="middle">
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="start"
+                                android:padding="3dip"
+                                android:text="@string/sisCardiopulmonar"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/erroSisCardio"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/hitSisCardio"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:divider="@color/white"
+                            android:showDividers="middle">
+
+                            <TextView
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="start"
+                                android:padding="3dip"
+                                android:text="@string/sisOsteomuscular"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/erroSisOsteo"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+
+                            <TextView
+                                android:id="@+id/hitSisOsteo"
+                                android:fontFamily="@font/pinkchicken"
+                                android:gravity="center"
+                                android:padding="3dip"
+                                android:text="@string/placeholder"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_15sdp" />
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card5"
+                app:layout_constraintTop_toBottomOf="@+id/card4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="@color/darkPurple">
+                <LinearLayout
+                    android:id="@+id/conquistas"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pinkchicken"
+                        android:textSize="@dimen/_15sdp"
+                        android:text="@string/conquistas"/>
+                    <View
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_gravity="center"
+                        android:background="@color/white"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pinkchicken"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/_15sdp"
+                        android:textColor="@color/white"
+                        android:text="@string/placeholderConquistas"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+</ScrollView>
