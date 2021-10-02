@@ -1,8 +1,10 @@
-# **HistoQuiz**
+<h1>
+	<img src="https://github.com/victoriaogomes/HistoQuiz/blob/8e8af42e8ef67a0bb6611473f1817195d6bb8032/app/src/main/ic_launcher-playstore.png" width="50" height="50"> HistoQuiz</img>
+</h1>
 
 ## About the project
 
-HistoQuiz is a android app developed in Kotlin language and aims to help in knowledge development related to histology . 
+HistoQuiz is a android app developed in Kotlin language and aims to help in knowledge development related to histology. 
 
 ![Badge](https://img.shields.io/badge/build-passing-brightgreen)
 
@@ -10,6 +12,7 @@ HistoQuiz is a android app developed in Kotlin language and aims to help in know
 
 - [About the project](#about-the-project)
 - [Features](#features)
+- [Technologies](#technologies)
 - [Development](#development)
   - [Setup](#setup)
   - [Configuration](#configuration)
@@ -25,6 +28,14 @@ HistoQuiz is a android app developed in Kotlin language and aims to help in know
 - [x] Review the contents about histology covered in the game
 - [x] Keep track of your performance in the game
 - [ ] Play the game with one pair of players against another
+
+## ⚔️Technologies
+
+The following technologies were using to develop histoquiz:
+
+- Kotlin
+- Typescript
+- Xml
 
 ## :computer:Development
 
