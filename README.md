@@ -15,6 +15,7 @@ HistoQuiz is a android app developed in Kotlin language and aims to help in know
 - [Technologies](#technologies)
 - [Development](#development)
   - [Setup](#setup)
+  - [Files organization](#files-organization)
   - [Configuration](#configuration)
   - [Building the project](#building-the-project)
 - [Author](#author)
@@ -46,6 +47,17 @@ You will need to download and install in your computer:
 - [Java 11](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
 - [Android Studio IDE](https://developer.android.com/studio)
 - [Gradle 7.0.2](https://gradle.org/install/)
+
+### :open_file_folder: Files organization
+
+This project has just one module, which is divided in the following directories:
+
+- **Activities**: here goes all your files that implements logic directly for some activity and updates their related layout
+- **Adapters**: here goes all custom RecyclerView adapters
+- **Dialogs**: here goes all custom dialogs
+- **Fragments**: here goes all custom fragments
+- **Model**: here goes all the modeling needed to pass data between the database (firebase) and user interface, which is mediated by some activity
+- **Util**: here goes all java classes that serves as base to the activities run properly
 
 ### :gear:Configuration
 
