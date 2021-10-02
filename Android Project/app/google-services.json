@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:512107409572:android:9957ed03f98a8f9385b631",
+        "mobilesdk_app_id": "1:512107409572:android:5fd42128c038a4f585b631",
         "android_client_info": {
-          "package_name": "com.example.histoquiz"
+          "package_name": "com.lenda.histoquiz"
         }
       },
       "oauth_client": [
