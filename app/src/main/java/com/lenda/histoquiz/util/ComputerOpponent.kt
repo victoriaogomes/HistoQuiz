@@ -409,6 +409,7 @@ class ComputerOpponent(var game_scene: GameActivity, private var perguntas: Hash
         countDownTimer.cancel()
         mTimerRunning = false
         mTimeLeftInMillis = START_TIME_IN_MILLIS
+        game_scene.screen.timerTXT.text = ""
     }
 
     /**

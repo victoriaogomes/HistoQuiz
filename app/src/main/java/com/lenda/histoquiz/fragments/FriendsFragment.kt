@@ -45,8 +45,6 @@ class FriendsFragment : Fragment(), CoroutineScope {
     private var recyclerViewLM: RecyclerView.LayoutManager? = null
     var adapter: FriendsAdapter? = null
     private var adapter2: FriendshipRequestAdapter? = null
-    private var horizontalLayout1: LinearLayoutManager? = null
-    private var horizontalLayout2: LinearLayoutManager? = null
     private var validateForm: FormFieldValidator? = null
     private var user: FirebaseUser? = null
     var firestore: FirebaseFirestore? = null
@@ -87,8 +85,6 @@ class FriendsFragment : Fragment(), CoroutineScope {
         validateForm = context?.let { FormFieldValidator(it) }
         validateForm!!.monitorField(screen.adicionarAmigos)
         recyclerViewLM = LinearLayoutManager(context)
-        horizontalLayout1 = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        horizontalLayout2 = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         user = FirebaseAuth.getInstance().currentUser
         configureSendFriendRequest()
         params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -114,7 +110,6 @@ class FriendsFragment : Fragment(), CoroutineScope {
                         documentSnapshot["UID"].toString()
                     ).document(user!!.uid).set(HashMap<String, Any>())
                     .addOnSuccessListener {
-                        screen.adicionarAmigos.editText?.text?.clear()
                         Toast.makeText(context, "Convite enviado com sucesso!", Toast.LENGTH_LONG).show()
                     }
                     .addOnFailureListener {
@@ -137,11 +132,11 @@ class FriendsFragment : Fragment(), CoroutineScope {
         friendsSource = ArrayList()
         val friends = firestore!!.document("amizades/amigos").collection(user!!.uid).get()
         if(friends.await().documents.isNotEmpty()){
+            screen.friendsPlace.removeViewAt(screen.friendsPlace.childCount-1)
             friendsList = context?.let { RecyclerView(it) }
             friendsList?.layoutParams = params
             friendsList?.layoutManager = recyclerViewLM
-            friendsList?.layoutManager = horizontalLayout1
-            screen.friendsPlace.removeViewAt(2)
+            friendsList?.layoutManager = getHorizontalLayout()
             screen.friendsPlace.addView(friendsList)
             val usuarios = firestore!!.collection("usuarios")
             for (documentSnapshot in friends.await().documents) {
@@ -171,8 +166,7 @@ class FriendsFragment : Fragment(), CoroutineScope {
                 message.layoutParams = params
                 message.gravity = Gravity.CENTER
                 message.setPadding(10, 20, 10, 20)
-                val tp = context?.let { ResourcesCompat.getFont(it, R.font.pinkchicken) }
-                message.typeface = tp
+                message.typeface = context?.let { ResourcesCompat.getFont(it, R.font.pinkchicken) }
                 screen.friendsPlace.removeView(friendsList)
                 screen.friendsPlace.addView(message)
         }
@@ -193,8 +187,8 @@ class FriendsFragment : Fragment(), CoroutineScope {
             friendshipRequestList = context?.let { RecyclerView(it) }
             friendshipRequestList!!.layoutParams = params
             friendshipRequestList!!.layoutManager = recyclerViewLM
-            friendshipRequestList!!.layoutManager = horizontalLayout2
-            screen.friendsRequestsPlace.removeViewAt(2)
+            friendshipRequestList!!.layoutManager = getHorizontalLayout()
+            screen.friendsRequestsPlace.removeViewAt(screen.friendsRequestsPlace.childCount-1)
             screen.friendsRequestsPlace.addView(friendshipRequestList)
             val usuarios = firestore!!.collection("usuarios")
             for (documentSnapshot in friendRequests.await().documents) {
@@ -231,5 +225,9 @@ class FriendsFragment : Fragment(), CoroutineScope {
         }
         screen.mainContent.visibility = View.VISIBLE
         screen.progress.visibility = View.GONE
+    }
+
+    protected fun getHorizontalLayout() : LinearLayoutManager{
+        return LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     }
 }

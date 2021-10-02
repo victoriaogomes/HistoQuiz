@@ -563,7 +563,7 @@ class OnlineOpponent(var game_scene: GameActivity, private var opponentUID: Stri
         countDownTimer.cancel()
         mTimerRunning = false
         mTimeLeftInMillis = START_TIME_IN_MILLIS
-        game_scene.screen.timerTXT.text = game_scene.getString(R.string.vezOponente)
+        game_scene.screen.timerTXT.text = ""
     }
 
     /**
